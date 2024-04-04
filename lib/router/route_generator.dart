@@ -5,7 +5,7 @@ import '../Pages/connexion_page.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case '/connexion' :
+      case '/' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
       case '/scan' :
         return MaterialPageRoute(builder: (context) => const ScanPage());

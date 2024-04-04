@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Turbo Market',
-      initialRoute: '/connexion',
+      initialRoute: '/',
       onGenerateRoute: (settings)=> RouteGenerator.generateRoute(settings),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
