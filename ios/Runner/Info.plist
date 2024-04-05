@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>NFCReaderUsageDescription</key>
-    <string>To Scan NFC</string>
+    <string>Need access to NFC to read tags.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
