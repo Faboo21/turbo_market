@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:turbo_market/api/api_request.dart';
 
 class ConnexionPage extends StatefulWidget {
   const ConnexionPage({super.key});
@@ -15,7 +17,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Connexion"),
       ),
@@ -23,7 +25,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            Image.asset('images/logo-obsolete-noir.png', fit: BoxFit.cover,width: 500,),
+            Image.asset('images/logo-obsolete-noir.png', fit: BoxFit.cover,),
             ListView.builder(
               shrinkWrap: true,
               itemCount: accountTypes.length,
@@ -59,22 +61,37 @@ class _ConnexionPageState extends State<ConnexionPage> {
             // Bouton de connexion
             ElevatedButton(
               style: ButtonStyle(
-                  backgroundColor:
-                  MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)
+                backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary),
               ),
               onPressed: () {
+                final currentContext = context;
+                verifyPassword(selectedButtonIndex+1, password).then((isAuthenticated) async {
+                  if (mounted) {
+                    if (isAuthenticated) {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      prefs.setInt("tea_id",selectedButtonIndex + 1);
+                      prefs.setString("date",DateTime.now().toString());
+                      Navigator.pushNamed(currentContext, '/scan');
+                    } else {
+                      showDialog(
+                        context: currentContext,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Erreur'),
+                          content: const Text('Identifiants invalides.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  }
+                });
+              },
 
-              },
               child: const Text('Se connecter'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, "/scan");
-              },
-              style: ButtonStyle(
-                  backgroundColor:
-                  MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
-              child: const Text('Page Scan'),
             ),
           ],
         ),

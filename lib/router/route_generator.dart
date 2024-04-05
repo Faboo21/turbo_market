@@ -12,7 +12,7 @@ class RouteGenerator {
       default :
         return MaterialPageRoute(builder: (context) =>
             Scaffold(
-              appBar: AppBar(title: const Text("Error"),centerTitle:true,backgroundColor: Theme.of(context).colorScheme.error),
+              appBar: AppBar(title: const Text("Error", ),centerTitle:true,backgroundColor: Theme.of(context).colorScheme.error, automaticallyImplyLeading: false,),
               body: const Center(
                 child: Text('Page not found'),
               ),

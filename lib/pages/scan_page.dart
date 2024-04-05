@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -16,11 +17,9 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Scan NFC"),
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
         child: Column(
@@ -47,6 +46,17 @@ class _ScanPageState extends State<ScanPage> {
                           .colorScheme
                           .inversePrimary : Colors.white10)),
               child: const Text('Stop NFC Reading'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove('tea_id');
+                prefs.remove('date');
+                Navigator.pushReplacementNamed(context, '/');
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
+              child: const Text('LogOut'),
             ),
           ],
         ),
