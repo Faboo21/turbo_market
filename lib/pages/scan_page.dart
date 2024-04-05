@@ -31,20 +31,14 @@ class _ScanPageState extends State<ScanPage> {
               onPressed: isScanning ? null : _startNFCReading,
               style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll<Color>(
-                      !isScanning ? Theme
-                          .of(context)
-                          .colorScheme
-                          .inversePrimary : Colors.white10)),
+                      !isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
               child: const Text('Start NFC Reading'),
             ),
             ElevatedButton(
               onPressed: isScanning ? _stopNFCReading : null,
               style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll<Color>(
-                      isScanning ? Theme
-                          .of(context)
-                          .colorScheme
-                          .inversePrimary : Colors.white10)),
+                      isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
               child: const Text('Stop NFC Reading'),
             ),
             ElevatedButton(
@@ -57,6 +51,14 @@ class _ScanPageState extends State<ScanPage> {
               style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
               child: const Text('LogOut'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/ajout_user');
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
+              child: const Text('Ajout d\'utilisateur'),
             ),
           ],
         ),

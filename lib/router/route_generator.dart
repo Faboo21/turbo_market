@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/scan_page.dart';
+import 'package:turbo_market/pages/ajout_membre.dart';
 import '../Pages/connexion_page.dart';
 
 class RouteGenerator {
@@ -9,6 +10,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
       case '/scan' :
         return MaterialPageRoute(builder: (context) => const ScanPage());
+      case '/ajout_user' :
+        return MaterialPageRoute(builder: (context) => const UserFormPage());
       default :
         return MaterialPageRoute(builder: (context) =>
             Scaffold(
