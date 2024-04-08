@@ -16,7 +16,7 @@ class _ScanPageState extends State<ScanPage> {
   String? scannedNfcId;
   User? scannedNfcUser;
   bool isScanning = false;
-  late int role = 3;
+  late int role = 0;
   late Game game = Game(id: 0, name: "Chargement", rules: "rules", createdAt: "createdAt", price: 1000000000000);
 
   @override
@@ -29,10 +29,14 @@ class _ScanPageState extends State<ScanPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? stockRole = prefs.getInt('tea_id');
     int? stockGame = prefs.getInt('gam_id');
-    Game getGame = await getGameById(stockGame!);
+    if (stockGame != null){
+      Game getGame = await getGameById(stockGame);
+      setState(() {
+        game = getGame;
+      });
+    }
     setState(() {
-      game = getGame;
-      role = stockRole ?? 3;
+      role = stockRole!;
     });
   }
 
