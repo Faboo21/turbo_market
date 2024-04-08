@@ -14,7 +14,7 @@ class _ScanPageState extends State<ScanPage> {
   String? scannedNfcId;
   String? scannedNfcUsername;
   bool isScanning = false;
-  late int role = 1;
+  late int role = 3;
 
   @override
   void initState() {
@@ -42,50 +42,47 @@ class _ScanPageState extends State<ScanPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (scannedNfcId != null)
-              Text('Scanned NFC ID: $scannedNfcId'),
+            if (scannedNfcId != null) Text('Scanned NFC ID: $scannedNfcId'),
             if (scannedNfcUsername != null && scannedNfcUsername != "")
               Text('Tag de $scannedNfcUsername'),
             if (scannedNfcUsername != null && scannedNfcUsername == "")
               const Text("Tag NFC non attribué"),
-            ElevatedButton(
-              onPressed: isScanning ? null : _startNFCReading,
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color>(
-                      !isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
-              child: const Text('Start NFC Reading'),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            if (role == 2 || role == 1)
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () async {
+                  Navigator.pushNamed(context, '/ajout_user');
+                },
+              ),
+            IconButton(
+              icon: isScanning ? const Icon(Icons.stop) : Image.asset('images/logo-obsolete-noir.png', fit: BoxFit.cover,),
+              onPressed: _toggleNFCReading,
             ),
-            ElevatedButton(
-              onPressed: isScanning ? _stopNFCReading : null,
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color>(
-                      isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
-              child: const Text('Stop NFC Reading'),
-            ),
-            ElevatedButton(
+            IconButton(
+              icon: const Icon(Icons.logout),
               onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.remove('tea_id');
-                prefs.remove('date');
-                prefs.remove('game_id');
-                Navigator.pushReplacementNamed(context, '/');
+                _showLogoutConfirmationDialog(context);
               },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
-              child: const Text('LogOut'),
-            ),
-            if (role == 2 || role == 1) ElevatedButton(
-              onPressed: () async {
-                Navigator.pushNamed(context, '/ajout_user');
-              },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
-              child: const Text('Ajout d\'utilisateur'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _toggleNFCReading() async {
+    if (isScanning) {
+      _stopNFCReading();
+    } else {
+      _startNFCReading();
+    }
   }
 
   void _startNFCReading() async {
@@ -101,8 +98,7 @@ class _ScanPageState extends State<ScanPage> {
             List<int>? identifier = tag.data['nfca']?['identifier'];
 
             if (identifier != null) {
-              String tagId = identifier.map((byte) => byte.toRadixString(16))
-                  .join('');
+              String tagId = identifier.map((byte) => byte.toRadixString(16)).join('');
               getUsernameByNfc(tagId).then((scannedUsername) {
                 setState(() {
                   scannedNfcId = tagId;
@@ -130,5 +126,35 @@ class _ScanPageState extends State<ScanPage> {
     });
 
     NfcManager.instance.stopSession();
+  }
+
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Êtes-vous sûr de vouloir vous déconnecter ?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove('tea_id');
+                prefs.remove('date');
+                prefs.remove('game_id');
+                Navigator.pushReplacementNamed(context, '/');
+              },
+              child: const Text('Déconnexion'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

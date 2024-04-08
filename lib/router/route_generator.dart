@@ -9,7 +9,7 @@ class RouteGenerator {
     switch (settings.name) {
       case '/' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
-      case '/scan' :
+      case '/home' :
         return MaterialPageRoute(builder: (context) => const ScanPage());
       case '/ajout_user' :
         return MaterialPageRoute(builder: (context) => const UserFormPage());
