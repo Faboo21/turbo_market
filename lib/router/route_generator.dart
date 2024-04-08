@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/home_page.dart';
 import 'package:turbo_market/pages/ajout_membre_page.dart';
 import 'package:turbo_market/pages/choix_jeu_page.dart';
+import 'package:turbo_market/pages/reward_page.dart';
 import '../Pages/connexion_page.dart';
 
 class RouteGenerator {
@@ -15,6 +16,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/choixGames' :
         return MaterialPageRoute(builder: (context) => const GameChoicePage());
+      case '/reward' :
+        return MaterialPageRoute(builder: (context) => const RewardPage());
       default :
         return MaterialPageRoute(builder: (context) =>
             Scaffold(

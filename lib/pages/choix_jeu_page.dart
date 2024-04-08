@@ -42,7 +42,7 @@ class _GameChoicePageState extends State<GameChoicePage> {
               title: Text(gameList[index].name),
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setInt("game_id", gameList[index].id);
+                prefs.setInt("gam_id", gameList[index].id);
                 Navigator.pushReplacementNamed(context, "/home");
               },
             ),

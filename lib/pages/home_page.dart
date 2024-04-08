@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/type/game.dart';
+import 'package:turbo_market/type/user.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -12,9 +14,10 @@ class ScanPage extends StatefulWidget {
 
 class _ScanPageState extends State<ScanPage> {
   String? scannedNfcId;
-  String? scannedNfcUsername;
+  User? scannedNfcUser;
   bool isScanning = false;
   late int role = 3;
+  late Game game = Game(id: 0, name: "Chargement", rules: "rules", createdAt: "createdAt", price: 1000000000000);
 
   @override
   void initState() {
@@ -25,7 +28,10 @@ class _ScanPageState extends State<ScanPage> {
   Future<void> loadSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? stockRole = prefs.getInt('tea_id');
+    int? stockGame = prefs.getInt('gam_id');
+    Game getGame = await getGameById(stockGame!);
     setState(() {
+      game = getGame;
       role = stockRole ?? 3;
     });
   }
@@ -42,11 +48,47 @@ class _ScanPageState extends State<ScanPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (scannedNfcId != null) Text('Scanned NFC ID: $scannedNfcId'),
-            if (scannedNfcUsername != null && scannedNfcUsername != "")
-              Text('Tag de $scannedNfcUsername'),
-            if (scannedNfcUsername != null && scannedNfcUsername == "")
+            if (role == 3)
+              Text("Jeu : ${game.name}, Prix : ${game.price.toString()}"),
+            if (scannedNfcId != null)
+              Text('Scanned NFC ID: $scannedNfcId'),
+            if (scannedNfcUser != null)
+              Column(
+                children: [
+                  Text('Tag de ${scannedNfcUser?.username}'),
+                  Text("Solde : ${scannedNfcUser?.balance.toString()}")
+                ],
+              ),
+            if (scannedNfcUser == null && scannedNfcId != null)
               const Text("Tag NFC non attribué"),
+            if (scannedNfcUser != null && role == 3)
+              Column (
+                children: [
+                  ElevatedButton(
+                    onPressed: scannedNfcUser!.balance >= game.price ? () async {
+                      if (await updateUserBalance(scannedNfcUser!, scannedNfcUser!.balance-game.price)) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Solde mis à jour avec succès"),
+                        ));
+                        scannedNfcUser = null;
+                        scannedNfcId = null;
+                        if (isScanning) _toggleNFCReading();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Probleme lors de la mise à jour du solde"),
+                        ));
+                      }
+                    } : null,
+                    child: const Text("Décrémenter le compte")
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/reward");
+                    },
+                    child: const Text("Augmenter le compte")
+                  )
+                ],
+              )
           ],
         ),
       ),
@@ -99,10 +141,10 @@ class _ScanPageState extends State<ScanPage> {
 
             if (identifier != null) {
               String tagId = identifier.map((byte) => byte.toRadixString(16)).join('');
-              getUsernameByNfc(tagId).then((scannedUsername) {
+              getUserByNfc(tagId).then((scannedUser) {
                 setState(() {
                   scannedNfcId = tagId;
-                  scannedNfcUsername = scannedUsername;
+                  scannedNfcUser = scannedUser;
                 });
               });
             }
@@ -147,7 +189,7 @@ class _ScanPageState extends State<ScanPage> {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('tea_id');
                 prefs.remove('date');
-                prefs.remove('game_id');
+                prefs.remove('gam_id');
                 Navigator.pushReplacementNamed(context, '/');
               },
               child: const Text('Déconnexion'),
