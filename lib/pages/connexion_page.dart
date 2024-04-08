@@ -71,7 +71,10 @@ class _ConnexionPageState extends State<ConnexionPage> {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       prefs.setInt("tea_id",selectedButtonIndex + 1);
                       prefs.setString("date",DateTime.now().toString());
-                      Navigator.pushNamed(currentContext, '/scan');
+                      if (selectedButtonIndex + 1 == 3)
+                        Navigator.pushNamed(currentContext, '/choixGames');
+                      else
+                        Navigator.pushNamed(currentContext, '/home');
                     } else {
                       showDialog(
                         context: currentContext,

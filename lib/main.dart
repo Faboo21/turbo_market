@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/private/config.dart';
 import 'Router/route_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +19,8 @@ Future<void> main() async {
       }
     }
   }
-  String route = prefs.getInt("tea_id") != null ? "/scan" : "/";
+  AppConfig.taux = await getExchangeRate();
+  String route = prefs.getInt("tea_id") != null ? "/home" : "/";
   runApp(MyApp(initialRoute: route,));
 }
 
@@ -33,7 +36,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings)=> RouteGenerator.generateRoute(settings),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
     );

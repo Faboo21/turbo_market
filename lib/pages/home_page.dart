@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:turbo_market/api/api_request.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -11,14 +12,30 @@ class ScanPage extends StatefulWidget {
 
 class _ScanPageState extends State<ScanPage> {
   String? scannedNfcId;
+  String? scannedNfcUsername;
   bool isScanning = false;
+  late int role = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    loadSharedPreferences();
+  }
+
+  Future<void> loadSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? stockRole = prefs.getInt('tea_id');
+    setState(() {
+      role = stockRole ?? 3;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Scan NFC"),
+        title: const Text("Turbo Market"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
@@ -27,6 +44,10 @@ class _ScanPageState extends State<ScanPage> {
           children: [
             if (scannedNfcId != null)
               Text('Scanned NFC ID: $scannedNfcId'),
+            if (scannedNfcUsername != null && scannedNfcUsername != "")
+              Text('Tag de $scannedNfcUsername'),
+            if (scannedNfcUsername != null && scannedNfcUsername == "")
+              const Text("Tag NFC non attribué"),
             ElevatedButton(
               onPressed: isScanning ? null : _startNFCReading,
               style: ButtonStyle(
@@ -46,14 +67,15 @@ class _ScanPageState extends State<ScanPage> {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('tea_id');
                 prefs.remove('date');
+                prefs.remove('game_id');
                 Navigator.pushReplacementNamed(context, '/');
               },
               style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
               child: const Text('LogOut'),
             ),
-            ElevatedButton(
-              onPressed: () {
+            if (role == 2 || role == 1) ElevatedButton(
+              onPressed: () async {
                 Navigator.pushNamed(context, '/ajout_user');
               },
               style: ButtonStyle(
@@ -68,13 +90,12 @@ class _ScanPageState extends State<ScanPage> {
 
   void _startNFCReading() async {
     try {
-      setState(() {
-        isScanning = true;
-      });
-
       bool isAvailable = await NfcManager.instance.isAvailable();
 
       if (isAvailable) {
+        setState(() {
+          isScanning = true;
+        });
         NfcManager.instance.startSession(
           onDiscovered: (NfcTag tag) async {
             List<int>? identifier = tag.data['nfca']?['identifier'];
@@ -82,24 +103,30 @@ class _ScanPageState extends State<ScanPage> {
             if (identifier != null) {
               String tagId = identifier.map((byte) => byte.toRadixString(16))
                   .join('');
-              setState(() {
-                scannedNfcId = tagId;
+              getUsernameByNfc(tagId).then((scannedUsername) {
+                setState(() {
+                  scannedNfcId = tagId;
+                  scannedNfcUsername = scannedUsername;
+                });
               });
             }
           },
         );
       } else {
-        debugPrint('NFC not available.');
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("NFC non disponible"),
+        ));
       }
     } catch (e) {
-      debugPrint('Error reading NFC: $e');
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Erreur de lecture NFC"),
+      ));
     }
   }
 
   void _stopNFCReading() {
     setState(() {
       isScanning = false;
-      scannedNfcId = null;
     });
 
     NfcManager.instance.stopSession();

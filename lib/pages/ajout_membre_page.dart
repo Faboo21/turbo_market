@@ -13,6 +13,7 @@ class _UserFormPageState extends State<UserFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _montantController = TextEditingController();
   String? scannedNfcId;
   bool isScanning = false;
 
@@ -20,36 +21,35 @@ class _UserFormPageState extends State<UserFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Form'),
+        title: const Text('Ajout d\'un utilisateur'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: <Widget>[
               TextFormField(
                 controller: _usernameController,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter username';
+                    return 'Merci d\'entrer un pseudo';
                   }
                   return null;
                 },
                 decoration: const InputDecoration(
-                  labelText: 'Username',
+                  labelText: 'Pseudo',
                 ),
               ),
               TextFormField(
                 controller: _emailController,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter email';
+                    return 'Merci d\'entrer un email';
                   }
                   if (!value.contains('@')) {
-                    return 'Please enter a valid email';
+                    return 'Merci d\'entrer un email valide';
                   }
                   return null;
                 },
@@ -58,36 +58,62 @@ class _UserFormPageState extends State<UserFormPage> {
                   labelText: 'Email',
                 ),
               ),
+              TextFormField(
+                controller: _montantController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Merci d\'entrer une valeur positive';
+                  }
+                  if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                    return 'Merci d\'entrer un entier positive';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Montant',
+                ),
+              ),
               Center (child:
                 Column (children: [
                   const SizedBox(height: 20),
                   if (scannedNfcId != null)
-                    Text('Scanned NFC ID: $scannedNfcId'),
+                    Text('NFC ID: $scannedNfcId'),
                   ElevatedButton(
                     onPressed: isScanning ? null : _startNFCReading,
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll<Color>(
                             !isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
-                    child: const Text('Start NFC Reading'),
+                    child: const Text('Demarrer le scan NFC'),
                   ),
                   ElevatedButton(
                     onPressed: isScanning ? _stopNFCReading : null,
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll<Color>(
                             isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
-                    child: const Text('Stop NFC Reading'),
+                    child: const Text('Arreter le scan NFC'),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: _usernameController.text != "" && _emailController.text != "" && scannedNfcId != null ? () {
+                    onPressed: _usernameController.text != "" && _emailController.text != "" && _montantController.text != "" && scannedNfcId != null ? () async {
                       if (_formKey.currentState!.validate() && scannedNfcId != null) {
                         String username = _usernameController.text;
                         String email = _emailController.text;
-                        insertUser(username, email, scannedNfcId!);
+                        int montant = int.parse(_montantController.text);
+                        if (await insertUser(username, email, scannedNfcId!, montant)){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("Utilisateur ajouté"),
+                          ));
+                          Navigator.pop(context);
+                        }else {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("Probleme d'insertion : un des paramettres n'est pas unique"),
+                          ));
+                        }
                       }
                     } : null,
                     style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
-                    child: const Text('Submit'),
+                    child: const Text("Valider"),
                   ),
                 ])
               )
@@ -99,13 +125,11 @@ class _UserFormPageState extends State<UserFormPage> {
   }
   void _startNFCReading() async {
     try {
-      setState(() {
-        isScanning = true;
-      });
-
       bool isAvailable = await NfcManager.instance.isAvailable();
-
       if (isAvailable) {
+        setState(() {
+          isScanning = true;
+        });
         NfcManager.instance.startSession(
           onDiscovered: (NfcTag tag) async {
             List<int>? identifier = tag.data['nfca']?['identifier'];
@@ -120,17 +144,20 @@ class _UserFormPageState extends State<UserFormPage> {
           },
         );
       } else {
-        debugPrint('NFC not available.');
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("NFC non disponible"),
+        ));
       }
     } catch (e) {
-      debugPrint('Error reading NFC: $e');
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Erreur de lecture NFC"),
+      ));
     }
   }
 
   void _stopNFCReading() {
     setState(() {
       isScanning = false;
-      scannedNfcId = null;
     });
 
     NfcManager.instance.stopSession();
