@@ -5,19 +5,20 @@ import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/user.dart';
 
-class ScanPage extends StatefulWidget {
-  const ScanPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<ScanPage> createState() => _ScanPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _ScanPageState extends State<ScanPage> {
+class _HomePageState extends State<HomePage> {
   String? scannedNfcId;
   User? scannedNfcUser;
   bool isScanning = false;
   late int role = 0;
   late Game game = Game(id: 0, name: "Chargement", rules: "rules", createdAt: "createdAt", price: 1000000000000);
+  final TextEditingController _manualEntryController = TextEditingController();
 
   @override
   void initState() {
@@ -142,7 +143,6 @@ class _ScanPageState extends State<ScanPage> {
         NfcManager.instance.startSession(
           onDiscovered: (NfcTag tag) async {
             List<int>? identifier = tag.data['nfca']?['identifier'];
-
             if (identifier != null) {
               String tagId = identifier.map((byte) => byte.toRadixString(16)).join('');
               getUserByNfc(tagId).then((scannedUser) {
@@ -155,16 +155,52 @@ class _ScanPageState extends State<ScanPage> {
           },
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("NFC non disponible"),
-        ));
+         _showManualEntryDialog();
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Erreur de lecture NFC"),
-      ));
+      _showManualEntryDialog();
     }
   }
+
+  void _showManualEntryDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Entrer manuellement l\'ID NFC'),
+          content: TextField(
+            controller: _manualEntryController,
+            decoration: const InputDecoration(
+              hintText: 'Entrez l\'ID NFC',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () {
+                String manuallyEnteredId = _manualEntryController.text;
+                getUserByNfc(manuallyEnteredId).then((scannedUser) {
+                  setState(() {
+                    scannedNfcId = manuallyEnteredId;
+                    scannedNfcUser = scannedUser;
+                  });
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Valider'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   void _stopNFCReading() {
     setState(() {

@@ -11,7 +11,7 @@ class RouteGenerator {
       case '/' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
       case '/home' :
-        return MaterialPageRoute(builder: (context) => const ScanPage());
+        return MaterialPageRoute(builder: (context) => const HomePage());
       case '/ajout_user' :
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/choixGames' :
