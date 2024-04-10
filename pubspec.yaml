@@ -38,6 +38,7 @@ dependencies:
   nfc_manager: ^3.4.0
   http: ^1.2.1
   shared_preferences: ^2.2.2
+  simple_barcode_scanner: ^0.1.1
 
 dev_dependencies:
   flutter_test:

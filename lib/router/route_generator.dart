@@ -7,11 +7,15 @@ import '../Pages/connexion_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    final args = settings.arguments;
     switch (settings.name) {
       case '/' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
       case '/home' :
-        return MaterialPageRoute(builder: (context) => const HomePage());
+        if (args is String) {
+          return MaterialPageRoute(builder: (_) => HomePage(scannedQrId: args));
+        }
+        return MaterialPageRoute(builder: (_) => const HomePage());
       case '/ajout_user' :
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/choixGames' :

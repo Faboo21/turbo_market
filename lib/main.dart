@@ -20,8 +20,8 @@ Future<void> main() async {
     }
   }
   AppConfig.taux = await getExchangeRate();
-  String route = prefs.getInt("tea_id") != null ? "/home" : "/";
-  runApp(MyApp(initialRoute: route,));
+  String initialRoute = prefs.getInt("tea_id") != null ? "/home" : "/";
+  runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatelessWidget {
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Turbo Market',
       initialRoute: initialRoute,
-      onGenerateRoute: (settings)=> RouteGenerator.generateRoute(settings),
+      onGenerateRoute: (settings) => RouteGenerator.generateRoute(settings),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),

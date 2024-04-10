@@ -7,7 +7,7 @@ import 'package:turbo_market/type/user.dart';
 
 Future<bool> verifyPassword(int roleId, String password) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/api/password?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -26,7 +26,7 @@ Future<bool> verifyPassword(int roleId, String password) async {
 
 Future<bool> insertUser(String username, String mail, String nfc, int rising) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/api/users?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -46,7 +46,7 @@ Future<bool> insertUser(String username, String mail, String nfc, int rising) as
 
 
 Future<int> getExchangeRate() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/api/exchange_rate?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/exchange_rate?api_key=${AppConfig.apiKey}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     if (responseData.isNotEmpty) {
@@ -60,7 +60,7 @@ Future<int> getExchangeRate() async {
 }
 
 Future<User?> getUserByNfc(String nfcId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/api/users?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -75,7 +75,7 @@ Future<User?> getUserByNfc(String nfcId) async {
 }
 
 Future<List<Game>> getAllGames() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/api/games?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -87,7 +87,7 @@ Future<List<Game>> getAllGames() async {
 }
 
 Future<List<Level>> getAllLevels(int gameId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/api/levels?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -101,7 +101,7 @@ Future<List<Level>> getAllLevels(int gameId) async {
 
 Future<bool> updateUserBalance(User user, int newBalance) async {
   http.Response response = await http.put(
-      Uri.parse("https://obsolete-events.com/api/users?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -120,7 +120,7 @@ Future<bool> updateUserBalance(User user, int newBalance) async {
 }
 
 Future<Level> getLevelById(int levStep, int gamId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/api/levels?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -134,7 +134,7 @@ Future<Level> getLevelById(int levStep, int gamId) async {
 }
 
 Future<Game> getGameById(int gamId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/api/games?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
