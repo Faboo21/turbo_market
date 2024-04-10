@@ -6,8 +6,7 @@ import 'package:turbo_market/type/user.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, this.scannedQrId});
-  final String? scannedQrId;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,7 +23,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    scannedQrId = widget.scannedQrId;
     loadSharedPreferences();
   }
 
