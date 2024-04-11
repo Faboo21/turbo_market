@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/level.dart';
 
+import '../type/game.dart';
+import '../type/user.dart';
+
 class RewardPage extends StatefulWidget {
-  const RewardPage({super.key});
+  const RewardPage({super.key, required this.selectedUser});
+
+  final User selectedUser;
 
   @override
   State<RewardPage> createState() => _RewardPageState();
@@ -21,17 +27,21 @@ class _RewardPageState extends State<RewardPage> {
 
   Future<void> loadLevels() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var resLevelsList = await getAllLevels(prefs.getInt("game_id")!);
+    var resLevelsList = await getAllLevels(prefs.getInt("gam_id")!);
     setState(() {
       levelslist = resLevelsList;
     });
+  }
+
+  bool awardSuccess() {
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choix du jeu'),
+        title: const Text('Recompense'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: levelslist.isEmpty ? const Center(child: CircularProgressIndicator()) :
@@ -40,10 +50,11 @@ class _RewardPageState extends State<RewardPage> {
         itemBuilder: (context, index) {
           return Card(
             child: ListTile(
-              title: Text("${levelslist[index].step.toString()} : ${levelslist[index].cashPrize.toString()} Floppies"),
+              title: Text("${levelslist[index].step.toString()} : ${levelslist[index].cashPrize * AppConfig.taux} Floppies"),
               onTap: () async {
-                print(levelslist[index].step);
-                print(levelslist[index].gameId);
+                Game game = await getGameById(levelslist[index].gameId);
+                bool? res = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + levelslist[index].cashPrize - game.price);
+                Navigator.pop(context, res);
               },
             ),
           );

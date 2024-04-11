@@ -4,6 +4,7 @@ class Game {
   final String rules;
   final String createdAt;
   final int price;
+  final int nbPlayers;
 
   Game({
     required this.id,
@@ -11,6 +12,7 @@ class Game {
     required this.rules,
     required this.createdAt,
     required this.price,
+    required this.nbPlayers
   });
 
   factory Game.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Game {
       rules: json['gam_rules'],
       createdAt: json['gam_created_at'],
       price: int.parse(json['gam_price']),
+      nbPlayers : int.parse(json['gam_nb_players'])
     );
   }
 }

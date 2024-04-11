@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/game.dart';
@@ -7,7 +8,8 @@ import 'package:turbo_market/type/user.dart';
 
 Future<bool> verifyPassword(int roleId, String password) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -15,8 +17,8 @@ Future<bool> verifyPassword(int roleId, String password) async {
         'tea_id': roleId.toString(),
         'tea_password': password
       }));
-  if (response.statusCode == 200){
-    if (json.decode(response.body)["res"]){
+  if (response.statusCode == 200) {
+    if (json.decode(response.body)["res"]) {
       return true;
     }
     return false;
@@ -24,29 +26,31 @@ Future<bool> verifyPassword(int roleId, String password) async {
   return false;
 }
 
-Future<bool> insertUser(String username, String mail, String nfc, int rising) async {
+Future<bool> insertUser(
+    String username, String mail, String qrId, int rising) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
         "usr_username": username,
         "usr_email": mail,
-        "usr_balance": (rising * AppConfig.taux).toString(),
-        "usr_nfc": nfc,
+        "usr_balance": rising.toString(),
+        "usr_qr": qrId,
       }));
 
-  if (response.statusCode == 200){
+  if (response.statusCode == 200) {
     return true;
   }
+
   return false;
 }
 
-
-
 Future<int> getExchangeRate() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/exchange_rate?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/exchange_rate?api_key=${AppConfig.apiKey}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     if (responseData.isNotEmpty) {
@@ -59,14 +63,15 @@ Future<int> getExchangeRate() async {
   return 0;
 }
 
-Future<User?> getUserByNfc(String nfcId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
+Future<User?> getUserByQr(String qrId) async {
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
 
     for (Map<String, dynamic> userData in responseData) {
-      if (userData['usr_nfc'] == nfcId) {
+      if (userData['usr_qr'] == qrId) {
         return User.fromJson(userData);
       }
     }
@@ -75,11 +80,13 @@ Future<User?> getUserByNfc(String nfcId) async {
 }
 
 Future<List<Game>> getAllGames() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
-    List<Game> games = responseData.map((gameData) => Game.fromJson(gameData)).toList();
+    List<Game> games =
+        responseData.map((gameData) => Game.fromJson(gameData)).toList();
     return games;
   }
 
@@ -87,13 +94,16 @@ Future<List<Game>> getAllGames() async {
 }
 
 Future<List<Level>> getAllLevels(int gameId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
-    List<Level> levels = responseData.map((levelData) => Level.fromJson(levelData)).toList();
+    List<Level> levels =
+        responseData.map((levelData) => Level.fromJson(levelData)).toList();
 
-    List<Level> filteredLevels = levels.where((level) => level.gameId == gameId).toList();
+    List<Level> filteredLevels =
+        levels.where((level) => level.gameId == gameId).toList();
     return filteredLevels;
   }
   return [];
@@ -101,7 +111,8 @@ Future<List<Level>> getAllLevels(int gameId) async {
 
 Future<bool> updateUserBalance(User user, int newBalance) async {
   http.Response response = await http.put(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -110,22 +121,24 @@ Future<bool> updateUserBalance(User user, int newBalance) async {
         "usr_username": user.username,
         "usr_email": user.email,
         "usr_balance": newBalance.toString(),
-        "usr_nfc": user.nfc,
+        "usr_qr": user.qr,
         "tit_id": user.titleId.toString(),
       }));
-  if (response.statusCode == 200){
+  if (response.statusCode == 200) {
     return true;
   }
   return false;
 }
 
 Future<Level> getLevelById(int levStep, int gamId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     for (Map<String, dynamic> levelData in responseData) {
-      if (levelData['lev_step'] == levStep.toString() && levelData['gam_id'] == gamId.toString()) {
+      if (levelData['lev_step'] == levStep.toString() &&
+          levelData['gam_id'] == gamId.toString()) {
         return Level.fromJson(levelData);
       }
     }
@@ -134,8 +147,8 @@ Future<Level> getLevelById(int levStep, int gamId) async {
 }
 
 Future<Game> getGameById(int gamId) async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
-
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     for (Map<String, dynamic> gameData in responseData) {
@@ -144,5 +157,11 @@ Future<Game> getGameById(int gamId) async {
       }
     }
   }
-  return Game(id: 0, name: "Probleme d'api", rules: "rules", createdAt: "createdAt", price: 1000000000000000000);
+  return Game(
+      id: 0,
+      name: "Probleme d'api",
+      rules: "rules",
+      createdAt: "createdAt",
+      price: 1000000000000000000,
+      nbPlayers: 0);
 }

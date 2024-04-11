@@ -4,9 +4,11 @@ import 'package:turbo_market/pages/ajout_membre_page.dart';
 import 'package:turbo_market/pages/choix_jeu_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import '../Pages/connexion_page.dart';
+import '../type/user.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    final args = settings.arguments;
     switch (settings.name) {
       case '/' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
@@ -17,7 +19,10 @@ class RouteGenerator {
       case '/choixGames' :
         return MaterialPageRoute(builder: (context) => const GameChoicePage());
       case '/reward' :
-        return MaterialPageRoute(builder: (context) => const RewardPage());
+        if (args is User) {
+          return MaterialPageRoute(builder: (context) => RewardPage(selectedUser: args,));
+        }
+        return MaterialPageRoute(builder: (context) => const HomePage());
       default :
         return MaterialPageRoute(builder: (context) =>
             Scaffold(

@@ -3,7 +3,7 @@ class User {
   final String username;
   final String email;
   final int balance;
-  final String nfc;
+  final String qr;
   final int titleId;
 
   User({
@@ -11,7 +11,7 @@ class User {
     required this.username,
     required this.email,
     required this.balance,
-    required this.nfc,
+    required this.qr,
     required this.titleId,
   });
 
@@ -21,7 +21,7 @@ class User {
       username: json['usr_username'],
       email: json['usr_email'],
       balance: int.parse(json['usr_balance']),
-      nfc: json['usr_nfc'],
+      qr: json['usr_qr'],
       titleId: int.parse(json['tit_id']),
     );
   }

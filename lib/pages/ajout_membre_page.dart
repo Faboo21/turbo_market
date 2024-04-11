@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_manager/nfc_manager.dart';
-import 'package:turbo_market/api/api_request.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+
+import '../api/api_request.dart';
 
 class UserFormPage extends StatefulWidget {
   const UserFormPage({super.key});
@@ -14,7 +15,7 @@ class _UserFormPageState extends State<UserFormPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _montantController = TextEditingController();
-  String? scannedNfcId;
+  String? scannedQrId;
   bool isScanning = false;
 
   @override
@@ -74,92 +75,50 @@ class _UserFormPageState extends State<UserFormPage> {
                   labelText: 'Montant',
                 ),
               ),
-              Center (child:
-                Column (children: [
-                  const SizedBox(height: 20),
-                  if (scannedNfcId != null)
-                    Text('NFC ID: $scannedNfcId'),
-                  ElevatedButton(
-                    onPressed: isScanning ? null : _startNFCReading,
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                            !isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
-                    child: const Text('Demarrer le scan NFC'),
-                  ),
-                  ElevatedButton(
-                    onPressed: isScanning ? _stopNFCReading : null,
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                            isScanning ? Theme.of(context).colorScheme.inversePrimary : Colors.white10)),
-                    child: const Text('Arreter le scan NFC'),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _usernameController.text != "" && _emailController.text != "" && _montantController.text != "" && scannedNfcId != null ? () async {
-                      if (_formKey.currentState!.validate() && scannedNfcId != null) {
-                        String username = _usernameController.text;
-                        String email = _emailController.text;
-                        int montant = int.parse(_montantController.text);
-                        if (await insertUser(username, email, scannedNfcId!, montant)){
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("Utilisateur ajouté"),
-                          ));
-                          Navigator.pop(context);
-                        }else {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("Probleme d'insertion : un des paramettres n'est pas unique"),
-                          ));
-                        }
-                      }
-                    } : null,
-                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
-                    child: const Text("Valider"),
-                  ),
-                ])
-              )
+              const SizedBox(height: 20),
+              IconButton(onPressed: () async {
+                var res = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SimpleBarcodeScannerPage(),
+                    ));
+                setState(() {
+                  if (res is String) {
+                    scannedQrId = res;
+                  }
+                });
+              }, icon: const Icon(Icons.qr_code_scanner_rounded),
+                iconSize: 80,
+              ),
+              const SizedBox(height: 20),
+              if (scannedQrId != null)
+                Center(child: Text("Scanned Qr Id : $scannedQrId")),
+              ElevatedButton(
+                onPressed: _usernameController.text != "" && _emailController.text != "" && _montantController.text != "" && scannedQrId != null ? () async {
+                  if (_formKey.currentState!.validate() && scannedQrId != null) {
+                    String username = _usernameController.text;
+                    String email = _emailController.text;
+                    int montant = int.parse(_montantController.text);
+
+                    if (await insertUser(username, email, scannedQrId!, montant)){
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Utilisateur ajouté"),
+                      ));
+                      Navigator.pop(context);
+                    }else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Probleme d'insertion : un des paramettres n'est pas unique"),
+                      ));
+                    }
+                  }
+                } : null,
+              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
+              child: const Text("Valider"),
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-  void _startNFCReading() async {
-    try {
-      bool isAvailable = await NfcManager.instance.isAvailable();
-      if (isAvailable) {
-        setState(() {
-          isScanning = true;
-        });
-        NfcManager.instance.startSession(
-          onDiscovered: (NfcTag tag) async {
-            List<int>? identifier = tag.data['nfca']?['identifier'];
-
-            if (identifier != null) {
-              String tagId = identifier.map((byte) => byte.toRadixString(16))
-                  .join('');
-              setState(() {
-                scannedNfcId = tagId;
-              });
-            }
-          },
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("NFC non disponible"),
-        ));
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Erreur de lecture NFC"),
-      ));
-    }
-  }
-
-  void _stopNFCReading() {
-    setState(() {
-      isScanning = false;
-    });
-
-    NfcManager.instance.stopSession();
   }
 }

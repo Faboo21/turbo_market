@@ -30,16 +30,19 @@ class _ConnexionPageState extends State<ConnexionPage> {
               shrinkWrap: true,
               itemCount: accountTypes.length,
               itemBuilder: (context, index) {
-                return ElevatedButton(
-                  onPressed: selectedButtonIndex == index ? null : () {
-                    setState(() {
-                      selectedButtonIndex = index;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: selectedButtonIndex == index ? Colors.grey : null,
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: ElevatedButton(
+                    onPressed: selectedButtonIndex == index ? null : () {
+                      setState(() {
+                        selectedButtonIndex = index;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedButtonIndex == index ? Colors.grey : null,
+                    ),
+                    child: Text(accountTypes[index]),
                   ),
-                  child: Text(accountTypes[index]),
                 );
               },
             ),
