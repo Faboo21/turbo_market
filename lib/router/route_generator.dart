@@ -4,6 +4,7 @@ import 'package:turbo_market/pages/ajout_membre_page.dart';
 import 'package:turbo_market/pages/choix_jeu_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import '../Pages/connexion_page.dart';
+import '../pages/choix_gagnant.dart';
 import '../type/user.dart';
 
 class RouteGenerator {
@@ -18,6 +19,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/choixGames' :
         return MaterialPageRoute(builder: (context) => const GameChoicePage());
+      case '/winner' :
+        if (args is List<User?>) {
+          return MaterialPageRoute(builder: (context) => WinnerChoicePage(playersList: args,));
+        }
+        return MaterialPageRoute(builder: (context) => const HomePage());
       case '/reward' :
         if (args is User) {
           return MaterialPageRoute(builder: (context) => RewardPage(selectedUser: args,));
