@@ -27,18 +27,14 @@ Future<bool> verifyPassword(int roleId, String password) async {
 }
 
 Future<bool> insertUser(
-    String username, String mail, String qrId, int rising) async {
+    String username, String mail, int rising) async {
   http.Response response = await http.post(
-      Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      Uri.parse("https://obsolete-events.com/turbo-market/api/create_account?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
         "usr_username": username,
         "usr_email": mail,
         "usr_balance": rising.toString(),
-        "usr_qr": qrId,
       }));
 
   if (response.statusCode == 200) {
