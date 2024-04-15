@@ -1,4 +1,4 @@
 class AppConfig {
-  static const String apiKey = "a3fe93b0-4c34-415d-911f-f7a9aff62bac";
+  static const String apiKey = "key";
   static int taux = 10000;
 }

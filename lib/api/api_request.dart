@@ -109,7 +109,7 @@ Future<List<Level>> getAllLevels(int gameId) async {
   return [];
 }
 
-Future<bool> updateUserBalance(User user, int newBalance) async {
+Future<bool> updateUserBalance(User user, double newBalance) async {
   http.Response response = await http.put(
       Uri.parse(
           "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),

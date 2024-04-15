@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                if (res is User) {
                  for (int i = 0; i < playerList.length; i++) {
                    if (playerList[i] == res) {
-                     await updateUserBalance(playerList[i]!, playerList[i]!.balance - game.price + ((game.price * game.nbPlayers) * 0.75) as int);
+                     await updateUserBalance(playerList[i]!, playerList[i]!.balance - game.price + (game.price * game.nbPlayers) * 0.75);
                    } else {
                      await updateUserBalance(playerList[i]!, playerList[i]!.balance - game.price);
                    }
@@ -260,15 +260,18 @@ class _HomePageState extends State<HomePage> {
         );
   }
 
-  ElevatedButton launchGameButton() {
-    return ElevatedButton(
-      onPressed: scannedQrUser!.balance >= game.price
-          ? () {
-        setState(() {
-          isPlaying = true;
-        });
-      } : null,
-      child: const Text("Démarrer la partie"),
+  Padding launchGameButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        onPressed: scannedQrUser!.balance >= game.price
+            ? () {
+          setState(() {
+            isPlaying = true;
+          });
+        } : null,
+        child: const Text("Démarrer la partie"),
+      ),
     );
   }
 

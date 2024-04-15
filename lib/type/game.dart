@@ -3,7 +3,7 @@ class Game {
   final String name;
   final String rules;
   final String createdAt;
-  final int price;
+  final double price;
   final int nbPlayers;
 
   Game({
@@ -21,7 +21,7 @@ class Game {
       name: json['gam_name'],
       rules: json['gam_rules'],
       createdAt: json['gam_created_at'],
-      price: int.parse(json['gam_price']),
+      price: double.parse(json['gam_price']),
       nbPlayers : int.parse(json['gam_nb_players'])
     );
   }

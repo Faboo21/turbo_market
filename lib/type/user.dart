@@ -2,7 +2,7 @@ class User {
   final int id;
   final String username;
   final String email;
-  final int balance;
+  final double balance;
   final String qr;
   final int titleId;
 
@@ -20,7 +20,7 @@ class User {
       id: int.parse(json['usr_id']),
       username: json['usr_username'],
       email: json['usr_email'],
-      balance: int.parse(json['usr_balance']),
+      balance: double.parse(json['usr_balance']),
       qr: json['usr_qr'],
       titleId: int.parse(json['tit_id']),
     );

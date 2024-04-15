@@ -1,7 +1,7 @@
 class Level {
   final int gameId;
   final int step;
-  final int cashPrize;
+  final double cashPrize;
 
   Level({
     required this.gameId,
@@ -13,7 +13,7 @@ class Level {
     return Level(
       gameId: int.parse(json['gam_id']),
       step: int.parse(json['lev_step']),
-      cashPrize: int.parse(json['lev_cashprize']),
+      cashPrize: double.parse(json['lev_cashprize']),
     );
   }
 }
