@@ -197,6 +197,21 @@ class _HomePageState extends State<HomePage> {
           endGameButton(context),
         if (scannedQrUser != null && role == 3 && game.nbPlayers == 1 && isPlaying)
           cancelGameButton(context),
+        if (scannedQrUser != null && role == 2)
+          ElevatedButton(onPressed: () async {
+            Object? res = await Navigator.pushNamed(context, "/manage_balance", arguments: scannedQrUser);
+            if (res is bool) {
+              if (res) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Compte mis à jour avec succés"),));
+                setState(() {
+                  scannedQrUser = null;
+                  scannedQrId = null;
+                });
+              }else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Probleme de mise à jour du compte"),));
+              }
+            }
+          }, child: const Text ('Recharger le compte'))
       ],
     );
   }
