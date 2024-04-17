@@ -28,14 +28,15 @@ class _ManageBalanceState extends State<ManageBalance> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'Montant',
-                hintText: 'Saisissez un montant',
-              ),
+          TextField(
+            controller: _amountController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              labelText: 'Montant',
+              hintText: '10',
+              suffixText: '€',
             ),
+          ),
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () async {
@@ -54,7 +55,7 @@ class _ManageBalanceState extends State<ManageBalance> {
             ),
             const SizedBox(height: 20.0),
             Text(
-              'Solde actuel : ${widget.selectedUser.balance * AppConfig.taux}',
+              'Solde actuel : ${widget.selectedUser.balance * AppConfig.taux} ƒ',
               style: const TextStyle(fontSize: 18.0),
             ),
           ],

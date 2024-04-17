@@ -65,6 +65,13 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: const TextStyle(color: Colors.white),
+          fillColor: Colors.grey[800],
+        ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.white,
+        ),
         dialogTheme: DialogTheme(
           backgroundColor: Colors.grey[900], // Couleur de fond de l'AlertDialog
           // Personnalisez d'autres aspects de votre AlertDialog si nécessaire

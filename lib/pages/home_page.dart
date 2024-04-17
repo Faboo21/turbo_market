@@ -188,7 +188,6 @@ class _HomePageState extends State<HomePage> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () async {
-            print(game);
             var res = await Navigator.push(
               context,
               MaterialPageRoute(
@@ -197,6 +196,9 @@ class _HomePageState extends State<HomePage> {
             );
             if (res is String) {
               var getQrUser = await getUserByQr(res);
+              if (getQrUser == null) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Code QR non attribué")));
+              }
               setState(() {
                 playerList[index] = getQrUser;
               });
@@ -220,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                   const Icon(Icons.arrow_forward),
                   const SizedBox(width: 16.0),
                   Text(
-                    (playerList[index]!.balance * AppConfig.taux).toString(),
+                    '${playerList[index]!.balance * AppConfig.taux} ƒ',
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,

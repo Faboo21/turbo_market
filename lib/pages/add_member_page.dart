@@ -37,6 +37,11 @@ class _UserFormPageState extends State<UserFormPage> {
                 },
                 decoration: const InputDecoration(
                   labelText: 'Pseudo',
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Couleur de la bordure inférieure
+                    ),
+                  ),
                 ),
               ),
               TextFormField(
@@ -53,6 +58,11 @@ class _UserFormPageState extends State<UserFormPage> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   labelText: 'Email',
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Couleur de la bordure inférieure
+                    ),
+                  ),
                 ),
               ),
               TextFormField(
@@ -69,6 +79,13 @@ class _UserFormPageState extends State<UserFormPage> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Montant',
+                  hintText: '10',
+                  suffixText: '€',
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Couleur de la bordure inférieure
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),

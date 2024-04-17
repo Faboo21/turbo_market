@@ -37,21 +37,29 @@ class _ConnexionPageState extends State<ConnexionPage> {
                 return Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: ElevatedButton(
-                    onPressed: selectedButtonIndex == index ? null : () {
+                    onPressed: () {
                       setState(() {
                         selectedButtonIndex = index;
                       });
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: selectedButtonIndex == index ? Colors.green : Colors.white,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 30,),
+                        Expanded(
+                          child: Text(
+                            accountTypes[index],
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        if (selectedButtonIndex == index) const Icon(Icons.check, color: Colors.black,size: 30,),
+                        if (selectedButtonIndex != index) const SizedBox(width: 30,)
+                      ],
                     ),
-                    child: Text(accountTypes[index]),
                   ),
                 );
               },
             ),
             const SizedBox(height: 20),
-            // Champ de mot de passe
             TextField(
               onChanged: (value) {
                 setState(() {
@@ -60,12 +68,11 @@ class _ConnexionPageState extends State<ConnexionPage> {
               },
               obscureText: true,
               decoration: const InputDecoration(
-                hintText: 'Mot de passe',
+                labelText: 'Mot de passe',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 20),
-            // Bouton de connexion
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary),
