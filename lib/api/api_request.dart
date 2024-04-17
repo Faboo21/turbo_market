@@ -6,7 +6,7 @@ import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/level.dart';
 import 'package:turbo_market/type/user.dart';
 
-Future<bool> verifyPassword(int roleId, String password) async {
+Future<String> verifyPassword(int roleId, String password) async {
   http.Response response = await http.post(
       Uri.parse(
           "https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
@@ -18,12 +18,12 @@ Future<bool> verifyPassword(int roleId, String password) async {
         'tea_password': password
       }));
   if (response.statusCode == 200) {
-    if (json.decode(response.body)["res"]) {
-      return true;
+    if (json.decode(response.body)["token"] != null) {
+      return json.decode(response.body)["token"];
     }
-    return false;
+    return "";
   }
-  return false;
+  return "";
 }
 
 Future<bool> insertUser(
@@ -160,4 +160,17 @@ Future<Game> getGameById(int gamId) async {
       createdAt: "createdAt",
       price: 1000000000000000000,
       nbPlayers: 0);
+}
+
+Future<Map<String, dynamic>> getTokenInfo(String token) async {
+  Uri uri = Uri.parse("https://obsolete-events.com/turbo-market/api/token?api_key=${AppConfig.apiKey}");
+  http.Response response = await http.post(uri,
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      body: jsonEncode(<String, String>{
+        "token": token,
+      }));
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  }
+  return {};
 }

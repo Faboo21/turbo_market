@@ -16,7 +16,7 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Choix du gagnant'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body:
       ListView.builder(

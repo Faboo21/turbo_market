@@ -19,7 +19,7 @@ class _UserFormPageState extends State<UserFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ajout d\'un utilisateur'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

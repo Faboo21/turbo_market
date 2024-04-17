@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/private/config.dart';
 
 class ConnexionPage extends StatefulWidget {
   const ConnexionPage({super.key});
@@ -18,14 +19,17 @@ class _ConnexionPageState extends State<ConnexionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text("Connexion"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            Image.asset('images/logo-obsolete-noir.png', fit: BoxFit.cover,),
+            FractionallySizedBox(
+              widthFactor: 0.7,
+              child: Image.asset('images/logo-obsolete-blanc.png', fit: BoxFit.cover),
+            ),
             ListView.builder(
               shrinkWrap: true,
               itemCount: accountTypes.length,
@@ -39,7 +43,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: selectedButtonIndex == index ? Colors.grey : null,
+                      backgroundColor: selectedButtonIndex == index ? Colors.green : Colors.white,
                     ),
                     child: Text(accountTypes[index]),
                   ),
@@ -70,10 +74,10 @@ class _ConnexionPageState extends State<ConnexionPage> {
                 final currentContext = context;
                 verifyPassword(selectedButtonIndex+1, password).then((isAuthenticated) async {
                   if (mounted) {
-                    if (isAuthenticated) {
+                    if (isAuthenticated != "") {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
-                      prefs.setInt("tea_id",selectedButtonIndex + 1);
-                      prefs.setString("date",DateTime.now().toString());
+                      prefs.setString("token",isAuthenticated);
+                      AppConfig.role = selectedButtonIndex+1;
                       if (selectedButtonIndex + 1 == 3) {
                         Navigator.pushNamed(currentContext, '/choixGames');
                       } else {

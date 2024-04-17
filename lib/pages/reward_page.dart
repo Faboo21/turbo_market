@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/level.dart';
@@ -26,8 +25,7 @@ class _RewardPageState extends State<RewardPage> {
   }
 
   Future<void> loadLevels() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var resLevelsList = await getAllLevels(prefs.getInt("gam_id")!);
+    var resLevelsList = await getAllLevels(AppConfig.game);
     setState(() {
       levelslist = resLevelsList;
     });
@@ -42,7 +40,7 @@ class _RewardPageState extends State<RewardPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Recompense'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: levelslist.isEmpty ? const Center(child: CircularProgressIndicator()) :
       ListView.builder(
