@@ -72,26 +72,17 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: playerList.length > 1 ? () async {
               dynamic res = await Navigator.pushNamed(context, '/winner', arguments: playerList);
-              try {
-                if (res is User) {
-                  for (int i = 0; i < playerList.length; i++) {
-                    if (playerList[i] == res) {
-                      await updateUserBalance(playerList[i]!, playerList[i]!.balance - game.price + (game.price * game.nbPlayers) * 0.75);
-                    } else {
-                      await updateUserBalance(playerList[i]!, playerList[i]!.balance - game.price);
+                if (res != null && res is bool && res == true) {
+                  setState(() {
+                    isPlaying = false;
+                    for (int i = 0; i < playerList.length; i++) {
+                      playerList[i] = null;
                     }
-                  }
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Partie terminée avec succès")));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour des soldes")));
                 }
-                setState(() {
-                  isPlaying = false;
-                  for (int i = 0; i < playerList.length; i++) {
-                    playerList[i] = null;
-                  }
-                });
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Partie terminée avec succès")));
-              } on Exception {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour des soldes")));
-              }
             } : () async {
               dynamic result = await Navigator.pushNamed(context, "/reward", arguments: playerList[0]);
               if (result != null && result is bool && result == true) {

@@ -174,3 +174,18 @@ Future<Map<String, dynamic>> getTokenInfo(String token) async {
   }
   return {};
 }
+
+Future<bool> addPlays(int gameId, int levStep, int userId) async {
+    http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/plays?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      body: jsonEncode(<String, String>{
+        "gam_id": gameId.toString(),
+        "lev_step": levStep.toString(),
+        "usr_id": userId.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}

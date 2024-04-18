@@ -74,11 +74,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary),
-              ),
-              onPressed: () {
-                final currentContext = context;
+              onPressed: password != "" ? () {
                 verifyPassword(selectedButtonIndex+1, password).then((isAuthenticated) async {
                   if (mounted) {
                     if (isAuthenticated != "") {
@@ -86,13 +82,13 @@ class _ConnexionPageState extends State<ConnexionPage> {
                       prefs.setString("token",isAuthenticated);
                       AppConfig.role = selectedButtonIndex+1;
                       if (selectedButtonIndex + 1 == 3) {
-                        Navigator.pushNamed(currentContext, '/choixGames');
+                        Navigator.pushNamed(context, '/choixGames');
                       } else {
-                        Navigator.pushNamed(currentContext, '/home');
+                        Navigator.pushNamed(context, '/home');
                       }
                     } else {
                       showDialog(
-                        context: currentContext,
+                        context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Erreur'),
                           content: const Text('Identifiants invalides.'),
@@ -107,7 +103,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
                     }
                   }
                 });
-              },
+              } : null,
 
               child: const Text('Se connecter'),
             ),
