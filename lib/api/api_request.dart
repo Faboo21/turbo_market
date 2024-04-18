@@ -139,7 +139,7 @@ Future<Level> getLevelById(int levStep, int gamId) async {
       }
     }
   }
-  return Level(gameId: 1, step: 1, cashPrize: 0);
+  return Level(gameId: 1, step: 1, cashPrize: 0, libelle: '');
 }
 
 Future<Game> getGameById(int gamId) async {

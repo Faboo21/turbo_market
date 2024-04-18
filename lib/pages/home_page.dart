@@ -42,6 +42,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: homeBody(context),
+      floatingActionButton: AppConfig.role == 3 ?FloatingActionButton(
+        onPressed: () {
+          _showModal(context);
+        },
+        child: const Icon(Icons.info), // Couleur du bouton flottant
+      ) : null,
       bottomNavigationBar: navBar(context),
     );
   }
@@ -292,6 +298,32 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+  void _showModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Regles du jeu : ${game.name}'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text(game.rules),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Fermer'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
 
 class NomJeu extends StatelessWidget {

@@ -57,13 +57,17 @@ class _RewardPageState extends State<RewardPage> {
         itemBuilder: (context, index) {
           return Card(
             child: ListTile(
-              title: Text("${levelslist[index].step.toString()} : ${levelslist[index].cashPrize * AppConfig.taux} ƒ"),
+              title: levelslist[index].libelle == "" ? Text("${levelslist[index].step.toString()} : ${levelslist[index].cashPrize * AppConfig.taux} ƒ") : Text("${levelslist[index].step.toString()} : ${levelslist[index].libelle}"),
               onTap: () async {
                 Game game = await getGameById(levelslist[index].gameId);
                 bool res2 = await addPlays(AppConfig.game, levelslist[index].step, widget.selectedUser.id);
                 bool res1 = false;
                 if (res2) {
-                  res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + levelslist[index].cashPrize - game.price);
+                  if (levelslist[index].libelle == "") {
+                    res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + levelslist[index].cashPrize - game.price);
+                  }else {
+                    res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - game.price);
+                  }
                 }
                 Navigator.pop(context, res1 && res2);
               },
