@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/home_page.dart';
 import 'package:turbo_market/pages/add_member_page.dart';
-import 'package:turbo_market/pages/choix_jeu_page.dart';
+import 'package:turbo_market/pages/game_choice_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import '../Pages/connexion_page.dart';
-import '../pages/choix_gagnant_page.dart';
+import '../pages/winner_page.dart';
 import '../pages/manage_balance_page.dart';
 import '../type/user.dart';
 

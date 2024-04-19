@@ -159,7 +159,7 @@ Future<Game> getGameById(int gamId) async {
       rules: "rules",
       createdAt: "createdAt",
       price: 1000000000000000000,
-      nbPlayers: 0);
+      nbPlayersMin: 0, nbPlayersMax: 0, image: '');
 }
 
 Future<Map<String, dynamic>> getTokenInfo(String token) async {

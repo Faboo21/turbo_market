@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<User?> playerList = List<User?>.filled(1, null);
   bool isPlaying = false;
-  late Game game = Game(id: 0, name: "Chargement", rules: "rules", createdAt: "createdAt", price: 1000000000000, nbPlayers: 0);
+  late Game game = Game(id: 0, name: "Chargement", rules: "rules", createdAt: "createdAt", price: 1000000000000, nbPlayersMin: 0, nbPlayersMax: 0, image: '');
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       Game getGame = await getGameById(AppConfig.game);
       setState(() {
         game = getGame;
-        playerList = List<User?>.filled(game.nbPlayers, null);
+        playerList = List<User?>.filled(game.nbPlayersMax, null);
       });
     }
   }
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
         if (AppConfig.role == 3 && !isPlaying) ...[
           const SizedBox(height: 16.0),
           ElevatedButton(
-            onPressed: playerList.every((player) => player != null) && playerList.every((player) => player!.balance >= game.price) ? () {
+            onPressed: checkMinPlayers() && checkPlayersBalance() ? () {
               setState(() {
                 isPlaying = true;
               });
@@ -135,6 +135,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  bool checkMinPlayers() {
+    int count = 0;
+    for (var user in playerList) {
+      if (user != null) {
+        count++;
+        if (count >= game.nbPlayersMin) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool checkPlayersBalance() {
+    for (var player in playerList) {
+      if (player != null && player.balance < game.price) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   ElevatedButton cancelGameButton(BuildContext context) {
     return ElevatedButton(
@@ -225,7 +246,13 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold,
                       color: (AppConfig.game != 0 && game.price > playerList[index]!.balance) ? Colors.red : Colors.white,
                     ),
-                  ),
+                  ),IconButton(
+                      onPressed: () {
+                        setState(() {
+                          playerList[index] = null;
+                        });
+                      },
+                      icon: const Icon(Icons.delete_forever_rounded, color: Colors.red,))
                 ],
               )
                   : const Row(

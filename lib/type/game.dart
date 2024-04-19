@@ -4,7 +4,10 @@ class Game {
   final String rules;
   final String createdAt;
   final double price;
-  final int nbPlayers;
+  final int nbPlayersMin;
+  final int nbPlayersMax;
+  final String image;
+
 
   Game({
     required this.id,
@@ -12,7 +15,9 @@ class Game {
     required this.rules,
     required this.createdAt,
     required this.price,
-    required this.nbPlayers
+    required this.nbPlayersMin,
+    required this.nbPlayersMax,
+    required this.image,
   });
 
   factory Game.fromJson(Map<String, dynamic> json) {
@@ -22,7 +27,9 @@ class Game {
       rules: json['gam_rules'],
       createdAt: json['gam_created_at'],
       price: double.parse(json['gam_price']),
-      nbPlayers : int.parse(json['gam_nb_players'])
+      nbPlayersMin : int.parse(json['gam_min_players']),
+      nbPlayersMax : int.parse(json['gam_max_players']),
+      image : json['gam_price'] ?? "",
     );
   }
 }

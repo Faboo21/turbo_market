@@ -39,7 +39,7 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
       ListView.builder(
         itemCount: widget.playersList.length,
         itemBuilder: (context, index) {
-          return Card(
+          return widget.playersList[index] != null ? Card(
             child: ListTile(
               title: Text(widget.playersList[index]!.username),
               onTap: () async {
@@ -47,7 +47,7 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
                 res = await Navigator.pushNamed(context, "/reward", arguments: widget.playersList[index]);
                 if (res != null && res is bool && res == true) {
                   for (int i = 0; i < widget.playersList.length; i++) {
-                    if (i != index) {
+                    if (i != index && widget.playersList[i] != null) {
                       res = await updateUserBalance(widget.playersList[i]!, widget.playersList[i]!.balance - game.price) && res;
                       res = await addPlays(AppConfig.game, 0, widget.playersList[i]!.id) && res;
                     }
@@ -58,7 +58,7 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
                 Navigator.pop(context, res);
               },
             ),
-          );
+          ) : null;
         },
       ),
     );

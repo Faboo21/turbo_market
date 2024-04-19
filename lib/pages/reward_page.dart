@@ -17,6 +17,7 @@ class RewardPage extends StatefulWidget {
 
 class _RewardPageState extends State<RewardPage> {
   List<Level> levelslist = [];
+  bool loading = true;
 
   @override
   void initState() {
@@ -38,6 +39,9 @@ class _RewardPageState extends State<RewardPage> {
     setState(() {
       levelslist = resLevelsList;
     });
+    setState(() {
+      loading = false;
+    });
   }
 
   bool awardSuccess() {
@@ -46,7 +50,7 @@ class _RewardPageState extends State<RewardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Scaffold(
       appBar: AppBar(
         title: const Text('Recompense'),
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -75,6 +79,6 @@ class _RewardPageState extends State<RewardPage> {
           );
         },
       ),
-    );
+    ) : const CircularProgressIndicator();
   }
 }
