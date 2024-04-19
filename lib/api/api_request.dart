@@ -189,3 +189,30 @@ Future<bool> addPlays(int gameId, int levStep, int userId) async {
   }
   return false;
 }
+
+Future<bool> sendQr(String usrEmail) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/qr?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      body: jsonEncode(<String, String>{
+        "usr_email": usrEmail,
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> userExist(String userEmail) async {
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    for (Map<String, dynamic> userData in responseData) {
+      if (userData['usr_email'] == userEmail) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

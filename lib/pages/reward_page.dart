@@ -69,7 +69,7 @@ class _RewardPageState extends State<RewardPage> {
                 if (res2) {
                   if (levelslist[index].libelle == "") {
                     res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + levelslist[index].cashPrize - game.price);
-                  }else {
+                  } else {
                     res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - game.price);
                   }
                 }

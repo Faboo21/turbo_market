@@ -46,8 +46,13 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           _showModal(context);
         },
-        child: const Icon(Icons.info), // Couleur du bouton flottant
-      ) : null,
+        child: const Icon(Icons.info),
+      ) : FloatingActionButton(
+        onPressed: () {
+          _showEmailModal(context, "");
+        },
+        child: const Icon(Icons.email_outlined),
+      ),
       bottomNavigationBar: navBar(context),
     );
   }
@@ -200,7 +205,7 @@ class _HomePageState extends State<HomePage> {
 
   SizedBox playerListWidget() {
     return SizedBox(
-      height: playerList.length <= 8 ? 65 * playerList.length + 20 : 65 * 8 + 20,
+      height: playerList.length <= 4 ? 65 * playerList.length + 20 : 65 * 4 + 20,
       child: ListView.builder(
       itemCount: playerList.length,
       itemBuilder: (context, index) {
@@ -252,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                           playerList[index] = null;
                         });
                       },
-                      icon: const Icon(Icons.delete_forever_rounded, color: Colors.red,))
+                      icon: const Icon(Icons.cancel, color: Colors.white,)),
                 ],
               )
                   : const Row(
@@ -351,6 +356,71 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showEmailModal(BuildContext context, String errorMessage) {
+    TextEditingController emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Envoyer QR Code'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  hintText: 'Adresse e-mail',
+                  errorText: errorMessage.isNotEmpty ? errorMessage : null,
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String email = emailController.text.trim();
+                if (isEmailValid(email)) {
+                  if (await userExist(email)) {
+                    bool res = await sendQr(email);
+                    if (res) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Email envoyé")));
+                      Navigator.of(context).pop();
+                    } else {
+                      errorMessage = 'Probleme d\'envoi de l\'email';
+                      Navigator.pop(context);
+                      _showEmailModal(context, errorMessage);
+                    }
+                  } else {
+                    errorMessage = 'E-mail non attribué';
+                    Navigator.pop(context);
+                    _showEmailModal(context, errorMessage);
+                  }
+                } else {
+                  Navigator.pop(context);
+                  _showEmailModal(context, "Adresse e-mail invalide");
+                }
+              },
+              child: const Text('Envoyer'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  bool isEmailValid(String email) {
+    String emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    RegExp regExp = RegExp(emailPattern);
+    return regExp.hasMatch(email);
+  }
 }
 
 class NomJeu extends StatelessWidget {
