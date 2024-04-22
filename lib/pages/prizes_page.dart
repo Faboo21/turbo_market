@@ -59,16 +59,30 @@ class _PrizesState extends State<Prizes> {
               updateTotalPrice();
             } : null,
             leading:
-              AspectRatio(
-                aspectRatio: 1, // Aspect ratio 1:1 for square image
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    prize.image,
-                    fit: BoxFit.cover,
-                  ),
+            AspectRatio(
+              aspectRatio: 1, // Aspect ratio 1:1 for square image
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Image.network(
+                  prize.image,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          // Vous pouvez personnaliser l'indicateur de chargement selon vos besoins
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
+            ),
             title: Text(
               prize.name,
               style: const TextStyle(
@@ -145,11 +159,13 @@ class _PrizesState extends State<Prizes> {
                 onPressed: totalPrice <= widget.selectedUser.balance ? () async {
                   bool res = true;
                   for (int i = 0; i < prizesList.length; i++){
-                    if (quantityList[i] != 0) {
-                      res = await addTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i]) && res;
+                    if (quantityList[i] != 0 && res) {
+                      res = await addTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double) && res;
                     }
                   }
-                  res = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - totalPrice) && res;
+                  if (res) {
+                    res = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - totalPrice) && res;
+                  }
                   Navigator.pop(context, res);
                 } : null,
                 icon: const Icon(Icons.shopping_cart),

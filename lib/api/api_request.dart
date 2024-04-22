@@ -241,7 +241,7 @@ Future<List<Prize>> getAllPrizes() async {
   return [];
 }
 
-Future<bool> addTransaction(int usrId, int priId, int traAmount) async {
+Future<bool> addTransaction(int usrId, int priId, double traAmount) async {
   http.Response response = await http.post(
       Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
