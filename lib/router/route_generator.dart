@@ -3,10 +3,13 @@ import 'package:turbo_market/Pages/home_page.dart';
 import 'package:turbo_market/pages/add_member_page.dart';
 import 'package:turbo_market/pages/game_choice_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
-import '../Pages/connexion_page.dart';
-import '../pages/winner_page.dart';
-import '../pages/manage_balance_page.dart';
-import '../type/user.dart';
+import 'package:turbo_market/pages/connexion_page.dart';
+import 'package:turbo_market/pages/admin_page.dart';
+import 'package:turbo_market/pages/winner_page.dart';
+import 'package:turbo_market/pages/manage_balance_page.dart';
+import 'package:turbo_market/type/user.dart';
+
+import '../pages/stats_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -20,6 +23,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/choixGames' :
         return MaterialPageRoute(builder: (context) => const GameChoicePage());
+      case '/admin' :
+        return MaterialPageRoute(builder: (context) => const AdminPage());
+      case '/stats' :
+        return MaterialPageRoute(builder: (context) => const StatsPage());
       case '/winner' :
         if (args is List<User?>) {
           return MaterialPageRoute(builder: (context) => WinnerChoicePage(playersList: args,));

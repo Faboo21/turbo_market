@@ -286,8 +286,22 @@ class _HomePageState extends State<HomePage> {
           if (AppConfig.role == 2 || AppConfig.role == 1)
             IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pushNamed(context, '/ajout_user');
+              },
+            ),
+          if (AppConfig.role == 1)
+            IconButton(
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              onPressed: () {
+                Navigator.pushNamed(context, '/admin');
+              },
+            ),
+          if (AppConfig.role == 1)
+            IconButton(
+              icon: const Icon(Icons.query_stats),
+              onPressed: () {
+                Navigator.pushNamed(context, '/stats');
               },
             ),
           IconButton(

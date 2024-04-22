@@ -1,11 +1,11 @@
 {
-    "name": "turbo_market",
-    "short_name": "turbo_market",
+    "name": "Turbo Market",
+    "short_name": "Turbo Market",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
-    "description": "A new Flutter project.",
+    "description": "Application de gestion du Turbo Market, par OBSOLETE.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

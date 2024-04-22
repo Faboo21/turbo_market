@@ -12,7 +12,7 @@ class ConnexionPage extends StatefulWidget {
 
 class _ConnexionPageState extends State<ConnexionPage> {
   int selectedButtonIndex = 0;
-  List<String> accountTypes = ["Admin", "Banquier", "Membre"];
+  List<String> accountTypes = ["Admin", "Banquier", "Bénévole"];
   String password = '';
 
   @override

@@ -216,3 +216,18 @@ Future<bool> userExist(String userEmail) async {
   }
   return false;
 }
+
+Future<bool> updatePassword(String masterPassword, String newPassword, int teaId) async {
+  http.Response response = await http.put(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      body: jsonEncode(<String, String>{
+        "tea_id": teaId.toString(),
+        "master_password": masterPassword,
+        "new_password": newPassword
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
