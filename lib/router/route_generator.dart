@@ -9,6 +9,7 @@ import 'package:turbo_market/pages/winner_page.dart';
 import 'package:turbo_market/pages/manage_balance_page.dart';
 import 'package:turbo_market/type/user.dart';
 
+import '../pages/prizes_page.dart';
 import '../pages/stats_page.dart';
 
 class RouteGenerator {
@@ -27,6 +28,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const AdminPage());
       case '/stats' :
         return MaterialPageRoute(builder: (context) => const StatsPage());
+      case '/prizes' :
+        if (args is User) {
+          return MaterialPageRoute(builder: (context) => Prizes(selectedUser: args,));
+        }
+        return MaterialPageRoute(builder: (context) => const HomePage());
       case '/winner' :
         if (args is List<User?>) {
           return MaterialPageRoute(builder: (context) => WinnerChoicePage(playersList: args,));

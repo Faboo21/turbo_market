@@ -66,7 +66,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
-          labelStyle: const TextStyle(color: Colors.white),
+          labelStyle: const TextStyle(color: Colors.white, fontFamily: "Nexa"),
+          counterStyle: const TextStyle(color: Colors.white, fontFamily: "Nexa"),
           fillColor: Colors.grey[800],
         ),
         textSelectionTheme: const TextSelectionThemeData(
@@ -106,6 +107,7 @@ class MyApp extends StatelessWidget {
         progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: Colors.white, // Couleur des indicateurs de chargement (spinner)
         ),
+
       ),
 
     );

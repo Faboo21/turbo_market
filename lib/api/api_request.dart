@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/level.dart';
 import 'package:turbo_market/type/user.dart';
+import '../type/prize.dart';
 
 Future<String> verifyPassword(int roleId, String password) async {
   http.Response response = await http.post(
@@ -85,7 +85,6 @@ Future<List<Game>> getAllGames() async {
         responseData.map((gameData) => Game.fromJson(gameData)).toList();
     return games;
   }
-
   return [];
 }
 
@@ -225,6 +224,31 @@ Future<bool> updatePassword(String masterPassword, String newPassword, int teaId
         "tea_id": teaId.toString(),
         "master_password": masterPassword,
         "new_password": newPassword
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<List<Prize>> getAllPrizes() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<Prize> prizes = responseData.map((prizeData) => Prize.fromJson(prizeData)).toList();
+    return prizes;
+  }
+  return [];
+}
+
+Future<bool> addTransaction(int usrId, int priId, int traAmount) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      body: jsonEncode(<String, String>{
+        "usr_id": usrId.toString(),
+        "pri_id": priId.toString(),
+        "tra_amount": traAmount.toString(),
       }));
   if (response.statusCode == 200) {
     return true;

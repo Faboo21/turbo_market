@@ -25,7 +25,7 @@ class ChangePasswordDialog extends StatelessWidget {
             controller: masterPasswordController,
             obscureText: true,
             decoration: const InputDecoration(
-              labelText: 'Mot de passe maître',
+              labelText: 'Mot de passe Admin',
             ),
           ),
           const SizedBox(height: 10),
@@ -37,7 +37,7 @@ class ChangePasswordDialog extends StatelessWidget {
                     controller: controllers[i],
                     obscureText: true,
                     decoration: InputDecoration(
-                      labelText: 'Mot de passe ${roles[i]}',
+                      labelText: 'Nouveau MDP : ${roles[i]}',
                     ),
                   ),
                 ),

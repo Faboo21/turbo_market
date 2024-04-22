@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 16.0),
           cancelGameButton(context),
         ],
-        if (AppConfig.role == 2 || AppConfig.role == 1 && playerList[0] != null) ...[
+        if ((AppConfig.role == 2 || AppConfig.role == 1) && playerList[0] != null) ...[
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () async {
@@ -134,6 +134,20 @@ class _HomePageState extends State<HomePage> {
               }
             },
             child: const Text ('Recharger le compte'),
+          ),
+          const SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () async {
+              Object? res = await Navigator.pushNamed(context, "/prizes", arguments: playerList[0]);
+              if (res is bool) {
+                if (res) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Recuperation des lots réussie"),));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de la recuperation des lots"),));
+                }
+              }
+            },
+            child: const Text ('Recuperer un lot'),
           ),
         ],
       ],
