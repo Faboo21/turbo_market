@@ -279,7 +279,7 @@ class _HomePageState extends State<HomePage> {
                       Icon(Icons.qr_code_scanner_rounded),
                       SizedBox(width: 30.0),
                       Text(
-                        'Ajouter un joueur',
+                        'Scanner un code QR',
                         style: TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
                       ),
                     ],
@@ -396,6 +396,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
+                style: const TextStyle(fontFamily: "Nexa"),
                 controller: emailController,
                 decoration: InputDecoration(
                   hintText: 'Adresse e-mail',

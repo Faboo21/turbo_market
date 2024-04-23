@@ -35,6 +35,7 @@ class _UserFormPageState extends State<UserFormPage> {
                   }
                   return null;
                 },
+                style: const TextStyle(fontFamily: "Nexa"),
                 decoration: const InputDecoration(
                   labelText: 'Pseudo',
                   border: UnderlineInputBorder(
@@ -46,6 +47,7 @@ class _UserFormPageState extends State<UserFormPage> {
               ),
               TextFormField(
                 controller: _emailController,
+                style: const TextStyle(fontFamily: "Nexa"),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Merci d\'entrer un email';

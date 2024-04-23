@@ -67,7 +67,6 @@ class MyApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: const TextStyle(color: Colors.white, fontFamily: "Nexa"),
-          counterStyle: const TextStyle(color: Colors.white, fontFamily: "Nexa"),
           fillColor: Colors.grey[800],
         ),
         textSelectionTheme: const TextSelectionThemeData(

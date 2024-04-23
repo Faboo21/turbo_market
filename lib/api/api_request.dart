@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/level.dart';
+import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/user.dart';
 import '../type/prize.dart';
 
@@ -254,4 +255,24 @@ Future<bool> addTransaction(int usrId, int priId, double traAmount) async {
     return true;
   }
   return false;
+}
+
+Future<List<StatsPlay>> get24hStatsPlays() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/stats24h?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<StatsPlay> plays = responseData.map((playsData) => StatsPlay.fromJson(playsData)).toList();
+    return plays;
+  }
+  return [];
+}
+
+Future<List<StatsPlay>> getAllStatsPlays() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/statsAllTime?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<StatsPlay> plays = responseData.map((playsData) => StatsPlay.fromJson(playsData)).toList();
+    return plays;
+  }
+  return [];
 }
