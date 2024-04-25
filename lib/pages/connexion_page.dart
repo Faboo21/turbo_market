@@ -4,7 +4,7 @@ import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
 
 class ConnexionPage extends StatefulWidget {
-  const ConnexionPage({Key? key});
+  const ConnexionPage({super.key});
 
   @override
   State<ConnexionPage> createState() => _ConnexionPageState();
@@ -43,11 +43,13 @@ class _ConnexionPageState extends State<ConnexionPage> {
             child: ListView(
               children: [
                 isLoading ? const SizedBox(
-                  height: 500,
+                  height: 350,
+                  width: 350,
                   child: Center(child: CircularProgressIndicator())
                 ):
                 SizedBox(
-                  height: 500,
+                  height: 350,
+                  width: 350,
                   child: Image.asset(
                     'images/logo-obsolete-blanc.png',
                     fit: BoxFit.fitHeight,
@@ -90,6 +92,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
                       password = value;
                     });
                   },
+                  onSubmitted: logIn,
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Mot de passe',
@@ -98,36 +101,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: password != "" ? () {
-                    verifyPassword(selectedButtonIndex+1, password).then((isAuthenticated) async {
-                      if (mounted) {
-                        if (isAuthenticated != "") {
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          prefs.setString("token",isAuthenticated);
-                          AppConfig.role = selectedButtonIndex+1;
-                          if (selectedButtonIndex + 1 == 3) {
-                            Navigator.pushNamed(context, '/choixGames');
-                          } else {
-                            Navigator.pushNamed(context, '/home');
-                          }
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Erreur'),
-                              content: const Text('Identifiants invalides.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                      }
-                    });
-                  } : null,
+                  onPressed: password != "" ? () {logIn("");} : null,
 
                   child: const Text('Se connecter'),
                 ),
@@ -137,5 +111,38 @@ class _ConnexionPageState extends State<ConnexionPage> {
         ),
       ),
     );
+  }
+
+  void logIn (String s) {
+    verifyPassword(selectedButtonIndex + 1, password).then((
+        isAuthenticated) async {
+      if (mounted) {
+        if (isAuthenticated != "") {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString("token", isAuthenticated);
+          AppConfig.role = selectedButtonIndex + 1;
+          if (selectedButtonIndex + 1 == 3) {
+            Navigator.pushNamed(context, '/choixGames');
+          } else {
+            Navigator.pushNamed(context, '/home');
+          }
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) =>
+                AlertDialog(
+                  title: const Text('Erreur'),
+                  content: const Text('Identifiants invalides.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+          );
+        }
+      }
+    });
   }
 }

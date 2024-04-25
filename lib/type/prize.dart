@@ -1,11 +1,11 @@
 class Prize {
   final int id;
-  final String name;
-  final String description;
-  final String createdAt;
-  final double price;
-  final String image;
-  final int stock;
+  String name;
+  String description;
+  String createdAt;
+  double price;
+  String image;
+  int stock;
 
   Prize({
     required this.id,

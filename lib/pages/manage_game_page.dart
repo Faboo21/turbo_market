@@ -1,0 +1,245 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/type/game.dart';
+import '../dialogs/create_game_modale.dart';
+
+class GameManagementPage extends StatefulWidget {
+  const GameManagementPage({Key? key}) : super(key: key);
+
+  @override
+  State<GameManagementPage> createState() => _GameManagementPageState();
+}
+
+class _GameManagementPageState extends State<GameManagementPage> {
+  List<Game> gameList = [];
+  List<Game> filteredGameList = [];
+
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    loadGames();
+    super.initState();
+  }
+
+  void loadGames() async {
+    List<Game> resList = await getAllGames();
+    setState(() {
+      gameList = resList;
+      filteredGameList = gameList;
+    });
+  }
+
+  void filterGames(String query) {
+    List<Game> filteredGames = gameList.where((game) => game.name.toLowerCase().contains(query.toLowerCase())).toList();
+    setState(() {
+      filteredGameList = filteredGames;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Gestion des jeux'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showCupertinoModalPopup(
+            context: context,
+            builder: (BuildContext context) {
+              return const CreateGamePage();
+            },
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: searchController,
+              onChanged: filterGames,
+              decoration: const InputDecoration(
+                labelText: 'Rechercher par nom du jeu',
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredGameList.length,
+              itemBuilder: (context, index) {
+                Game game = filteredGameList[index];
+                TextEditingController nameController = TextEditingController(text: game.name);
+                TextEditingController rulesController = TextEditingController(text: game.rules);
+                TextEditingController priceController = TextEditingController(text: game.price.toString());
+                TextEditingController nbPlayersMinController = TextEditingController(text: game.nbPlayersMin.toString());
+                TextEditingController nbPlayersMaxController = TextEditingController(text: game.nbPlayersMax.toString());
+
+                final formKey = GlobalKey<FormState>();
+
+                return Card(
+                  margin: const EdgeInsets.all(8.0),
+                  child: ExpansionTile(
+                    title: Text(game.name),
+                    children: [
+                      Form(
+                        key: formKey,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextFormField(
+                                controller: nameController,
+                                onChanged: (value) => game.name = value,
+                                decoration: const InputDecoration(labelText: 'Nom du jeu'),
+                                validator:  (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Merci d\'entrer le nom du jeu';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8.0),
+                              TextFormField(
+                                controller: rulesController,
+                                onChanged: (value) => game.rules = value,
+                                decoration: const InputDecoration(labelText: 'Règles'),
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                              ),
+                              const SizedBox(height: 8.0),
+                              TextFormField(
+                                controller: priceController,
+                                onChanged: (value) => game.price = double.tryParse(value) ?? 0,
+                                decoration: const InputDecoration(labelText: 'Prix'),
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Merci d\'entrer le prix du jeu';
+                                  }
+                                  if (double.tryParse(value) == null) {
+                                    return 'Le prix doit être un nombre';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8.0),
+                              TextFormField(
+                                controller: nbPlayersMinController,
+                                onChanged: (value) => game.nbPlayersMin = int.tryParse(value) ?? 0,
+                                decoration: const InputDecoration(labelText: 'Nombre de joueurs minimum'),
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Merci d\'entrer le nombre de joueurs minimum';
+                                  }
+                                  if (int.tryParse(value) == null) {
+                                    return 'Le nombre de joueurs minimum doit être un entier';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8.0),
+                              TextFormField(
+                                controller: nbPlayersMaxController,
+                                onChanged: (value) => game.nbPlayersMax = int.tryParse(value) ?? 0,
+                                decoration: const InputDecoration(labelText: 'Nombre de joueurs maximum'),
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Merci d\'entrer le nombre de joueurs maximum';
+                                  }
+                                  if (int.tryParse(value) == null) {
+                                    return 'Le nombre de joueurs maximum doit être un entier';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8.0),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.save),
+                                    onPressed: () {
+                                      if (formKey.currentState!.validate()) {
+                                        updateGameManage(game);
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () => showDeleteConfirmationDialog(game),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void updateGameManage(Game game) async {
+    bool res = await updateGame(game);
+    if (res) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Jeu mis à jour avec succès")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du jeu")));
+    }
+  }
+
+  void showDeleteConfirmationDialog(Game game) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation de suppression'),
+          content: Text('Êtes-vous sûr de vouloir supprimer le jeu ${game.name} ?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme le dialogue
+                deleteGameManage(game);
+              },
+              child: const Text('Oui', style: TextStyle(color: Colors.red)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme le dialogue
+              },
+              child: const Text('Non'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteGameManage(Game game) async {
+    bool res = await deleteGame(game);
+    if (res) {
+      setState(() {
+        gameList.remove(game);
+        filteredGameList.remove(game);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Jeu supprimé avec succès")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du jeu")));
+    }
+  }
+}

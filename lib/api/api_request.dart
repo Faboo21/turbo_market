@@ -276,3 +276,147 @@ Future<List<StatsPlay>> getAllStatsPlays() async {
   }
   return [];
 }
+
+Future<List<User>> getAllUsers() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<User> users = responseData.map((userData) => User.fromJson(userData)).toList();
+    return users;
+  }
+  return [];
+}
+
+Future<bool> updateUser(User user) async {
+  http.Response response = await http.put(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "usr_id": user.id.toString(),
+        "usr_username": user.username,
+        "usr_email": user.email,
+        "usr_balance": user.balance.toString(),
+        "usr_qr": user.qr,
+        "tit_id": user.titleId.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> deleteUser(User user) async {
+  http.Response response = await http.delete(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}&usr_id=${user.id}"),
+      );
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> updateGame(Game game) async {
+  http.Response response = await http.put(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "gam_id": game.id.toString(),
+        "gam_name": game.name,
+        "gam_rules": game.rules,
+        "gam_price": game.price.toString(),
+        "gam_min_players": game.nbPlayersMin.toString(),
+        "gam_max_players": game.nbPlayersMax.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> deleteGame(Game game) async {
+  http.Response response = await http.delete(
+    Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}&gam_id=${game.id}"),
+  );
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> insertGame(Game game) async {
+  http.Response response = await http.post(
+    Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "gam_id": game.id.toString(),
+        "gam_name": game.name,
+        "gam_rules": game.rules,
+        "gam_price": game.price.toString(),
+        "gam_min_players": game.nbPlayersMin.toString(),
+        "gam_max_players": game.nbPlayersMax.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> updatePrize(Prize prize) async {
+  http.Response response = await http.put(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "pri_id": prize.id.toString(),
+        "pri_name": prize.name,
+        "pri_description": prize.description,
+        "pri_price": prize.price.toString(),
+        "pri_image": prize.image,
+        "pri_stock": prize.stock.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> deletePrize(Prize prize) async {
+  http.Response response = await http.delete(
+    Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}&pri_id=${prize.id}"),
+  );
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> insertPrize(Prize prize) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "pri_id": prize.id.toString(),
+        "pri_name": prize.name,
+        "pri_description": prize.description,
+        "pri_price": prize.price.toString(),
+        "pri_image": prize.image,
+        "pri_stock": prize.stock.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}

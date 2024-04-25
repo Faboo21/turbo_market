@@ -83,17 +83,17 @@ class _StatsPageState extends State<StatsPage> {
               children: [
               Text(
                 "Total : $total",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: total > 0 ? Colors.lightGreenAccent : Colors.red),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: total > 0 ? Colors.lightGreenAccent : Colors.red),
               ),
               const SizedBox(width: 10),
               Text(
                 "Moyenne : $mean",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: mean > 0 ? Colors.lightGreenAccent : Colors.red),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: mean > 0 ? Colors.lightGreenAccent : Colors.red),
               ),
               const SizedBox(width: 10),
               Text(
                 "Nb Parties : $nbPlays",
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],),
             Row(

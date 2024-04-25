@@ -29,7 +29,29 @@ class _AdminPageState extends State<AdminPage> {
                       },
                     );
                   },
-                  child: const Text("Gestion Mot de passe"))
+                  child: const Text("Gestion des Mots de passe")
+              ),
+              const SizedBox(height: 8.0),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/manage_users");
+                  },
+                  child: const Text("Gestion des Utilisateurs")
+              ),
+              const SizedBox(height: 8.0),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/manage_games");
+                  },
+                  child: const Text("Gestion des Jeux")
+              ),
+              const SizedBox(height: 8.0),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/manage_prizes");
+                  },
+                  child: const Text("Gestion des prix")
+              ),
             ],
           ),
         ));

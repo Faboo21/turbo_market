@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/home_page.dart';
 import 'package:turbo_market/pages/add_member_page.dart';
 import 'package:turbo_market/pages/game_choice_page.dart';
+import 'package:turbo_market/pages/manage_game_page.dart';
+import 'package:turbo_market/pages/manage_prize_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import 'package:turbo_market/pages/connexion_page.dart';
 import 'package:turbo_market/pages/admin_page.dart';
@@ -9,6 +11,7 @@ import 'package:turbo_market/pages/winner_page.dart';
 import 'package:turbo_market/pages/manage_balance_page.dart';
 import 'package:turbo_market/type/user.dart';
 
+import '../pages/manage_user_page.dart';
 import '../pages/prizes_page.dart';
 import '../pages/stats_page.dart';
 
@@ -33,6 +36,12 @@ class RouteGenerator {
           return MaterialPageRoute(builder: (context) => Prizes(selectedUser: args,));
         }
         return MaterialPageRoute(builder: (context) => const HomePage());
+      case '/manage_users' :
+        return MaterialPageRoute(builder: (context) => const UserManagementPage());
+      case '/manage_games' :
+        return MaterialPageRoute(builder: (context) => const GameManagementPage());
+      case '/manage_prizes' :
+        return MaterialPageRoute(builder: (context) => const PrizeManagementPage());
       case '/winner' :
         if (args is List<User?>) {
           return MaterialPageRoute(builder: (context) => WinnerChoicePage(playersList: args,));

@@ -1,10 +1,10 @@
 class User {
-  final int id;
-  final String username;
-  final String email;
-  final double balance;
-  final String qr;
-  final int titleId;
+  int id;
+  String username;
+  String email;
+  double balance;
+  String qr;
+  int titleId;
 
   User({
     required this.id,

@@ -1,12 +1,12 @@
 class Game {
-  final int id;
-  final String name;
-  final String rules;
-  final String createdAt;
-  final double price;
-  final int nbPlayersMin;
-  final int nbPlayersMax;
-  final String image;
+  int id;
+  String name;
+  String rules;
+  String createdAt;
+  double price;
+  int nbPlayersMin;
+  int nbPlayersMax;
+  String image;
 
 
   Game({
