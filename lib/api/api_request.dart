@@ -494,3 +494,20 @@ Future<bool> updateGameImage(int prizeId) async {
   }
   return false;
 }
+
+
+Future<bool> updateExchangeRate(int newExchangeRate) async {
+  http.Response response = await http.put(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/exchange_rate?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "set_value": newExchangeRate.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}

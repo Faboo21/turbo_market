@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:turbo_market/dialogs/update_exchange_rate_dialoq.dart';
 import '../dialogs/password_dialog.dart';
 
 class AdminPage extends StatefulWidget {
@@ -51,6 +52,18 @@ class _AdminPageState extends State<AdminPage> {
                     Navigator.pushNamed(context, "/manage_prizes");
                   },
                   child: const Text("Gestion des prix")
+              ),
+              const SizedBox(height: 8.0),
+              ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const UpdateRateDialog();
+                      },
+                    );
+                  },
+                  child: const Text("Changer le Taux de change")
               ),
             ],
           ),
