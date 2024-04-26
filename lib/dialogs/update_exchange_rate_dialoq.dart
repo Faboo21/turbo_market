@@ -47,7 +47,7 @@ class UpdateRateDialog extends StatelessWidget {
               }
             });
           }
-        }, child: const Text("Mettre à jour le Taux de change")),
+        }, child: const Text("Valider")),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();

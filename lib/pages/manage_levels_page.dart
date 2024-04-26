@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/level.dart';
 import '../dialogs/create_level_modale.dart';
 import '../type/game.dart';
@@ -64,7 +65,7 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ExpansionTile(
-                    title: Text("${level.step.toString()} : ${level.libelle == "" ? level.cashPrize.toString() : level.libelle}"),
+                    title: Text("${level.step.toString()} : ${level.libelle == "" ? "${level.cashPrize * AppConfig.taux} ƒ" : level.libelle}"),
                     children: [
                       Form(
                         key: formKey,
