@@ -511,3 +511,51 @@ Future<bool> updateExchangeRate(int newExchangeRate) async {
   }
   return false;
 }
+
+Future<bool> updateLevel(Level level) async {
+  http.Response response = await http.put(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "gam_id": level.gameId.toString(),
+        "lev_step": level.step.toString(),
+        "lev_cashprize": level.cashPrize.toString(),
+        "lev_libelle": level.libelle
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> deleteLevel(Level level) async {
+  http.Response response = await http.delete(
+    Uri.parse("https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}&gam_id=${level.gameId}&lev_step=${level.step}"),
+  );
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> insertLevel(Level level) async {
+  http.Response response = await http.post(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "gam_id": level.gameId.toString(),
+        "lev_step": level.step.toString(),
+        "lev_cashprize": level.cashPrize.toString(),
+        "lev_libelle": level.libelle
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}

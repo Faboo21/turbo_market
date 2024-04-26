@@ -1,8 +1,8 @@
 class Level {
   final int gameId;
-  final int step;
-  final double cashPrize;
-  final String libelle;
+  int step;
+  double cashPrize;
+  String libelle;
 
   Level({
     required this.gameId,

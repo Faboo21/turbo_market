@@ -232,6 +232,12 @@ class _GameManagementPageState extends State<GameManagementPage> {
                                     icon: const Icon(Icons.delete),
                                     onPressed: () => showDeleteConfirmationDialog(game),
                                   ),
+                                  IconButton(
+                                    icon: const Icon(Icons.settings),
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, "/manage_levels", arguments: game);
+                                    },
+                                  ),
                                 ],
                               ),
                             ],
