@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/level.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/user.dart';
 import '../type/prize.dart';
+import 'dart:typed_data';
 
 Future<String> verifyPassword(int roleId, String password) async {
   http.Response response = await http.post(
@@ -51,7 +53,7 @@ Future<int> getExchangeRate() async {
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     if (responseData.isNotEmpty) {
-      dynamic excValue = responseData[0]["exc_value"];
+      dynamic excValue = responseData[0]["set_value"];
       if (excValue != null) {
         return int.parse(excValue);
       }
@@ -352,7 +354,7 @@ Future<bool> deleteGame(Game game) async {
 
 Future<bool> insertGame(Game game) async {
   http.Response response = await http.post(
-    Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"),
+    Uri.parse("https://obsolete-events.com/turbo-market/api/create_game?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -403,7 +405,7 @@ Future<bool> deletePrize(Prize prize) async {
 
 Future<bool> insertPrize(Prize prize) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/create_prize?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -414,6 +416,78 @@ Future<bool> insertPrize(Prize prize) async {
         "pri_price": prize.price.toString(),
         "pri_image": prize.image,
         "pri_stock": prize.stock.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> uploadPrizeImageToAPI(XFile imageFile, String name) async {
+  try {
+    Uint8List bytes = await imageFile.readAsBytes();
+    http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
+      'image',
+      bytes,
+      filename: name,
+    );
+    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_prize?api_key=${AppConfig.apiKey}'));
+    formData.files.add(multipartFile);
+    http.StreamedResponse response = await formData.send();
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+}
+
+Future<bool> updatePrizeImage(int prizeId) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/update_prize_image?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "pri_id": prizeId.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> uploadGameImageToAPI(XFile imageFile, String name) async {
+  try {
+    Uint8List bytes = await imageFile.readAsBytes();
+    http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
+      'image',
+      bytes,
+      filename: name,
+    );
+    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_game?api_key=${AppConfig.apiKey}'));
+    formData.files.add(multipartFile);
+    http.StreamedResponse response = await formData.send();
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+}
+
+Future<bool> updateGameImage(int prizeId) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/update_game_image?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "gam_id": prizeId.toString(),
       }));
   if (response.statusCode == 200) {
     return true;

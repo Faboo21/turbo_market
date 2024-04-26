@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/dialogs/create_prize_modale.dart';
 import 'package:turbo_market/type/prize.dart';
@@ -16,6 +17,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
   List<Prize> filteredPrizeList = [];
 
   TextEditingController searchController = TextEditingController();
+  bool imageChanged = false;
 
   @override
   void initState() {
@@ -35,6 +37,20 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
     List<Prize> filteredPrizes = prizeList.where((prize) => prize.name.toLowerCase().contains(query.toLowerCase()) || prize.description.toLowerCase().contains(query.toLowerCase())).toList();
     setState(() {
       filteredPrizeList = filteredPrizes;
+    });
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    ImagePicker().pickImage(source: ImageSource.gallery).then((pickedImage) => {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Upload en cours"))),
+      if (pickedImage != null) {
+        uploadPrizeImageToAPI(pickedImage, "temp").then((value) => {
+          setState(() {
+            imageChanged = true;
+          }),
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image téléversée")))
+        })
+      }
     });
   }
 
@@ -146,6 +162,45 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                                 },
                               ),
                               const SizedBox(height: 8.0),
+                              if (!imageChanged && prize.image != "") AspectRatio(
+                                aspectRatio: 1, // Aspect ratio 1:1 for square image
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(
+                                    "${prize.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return child;
+                                      } else {
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress.expectedTotalBytes != null
+                                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              if (imageChanged) Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.network(
+                                    "https://obsolete-events.com/turbo-market/app/images/prizes/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                                    height: 200, // Hauteur maximale de l'image
+                                    fit: BoxFit.cover, // Ajustement de la taille de l'image pour couvrir les dimensions spécifiées
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 15,),
+                              ElevatedButton(
+                                onPressed: _pickImageFromGallery,
+                                child: const Text('Choisir depuis la galerie'),
+                              ),
+                              const SizedBox(height: 8.0),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -178,11 +233,24 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
   }
 
   void updatePrizeManage(Prize prize) async {
-    bool res = await updatePrize(prize);
-    if (res) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Prix mis à jour avec succès")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du prix")));
+    updatePrize(prize).then((res) => {
+      if (res) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Prix mis à jour avec succès")))
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du prix")))
+      }
+    });
+    if (imageChanged) {
+      updatePrizeImage(prize.id).then((res) =>  {
+        if (res) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image mise à jour")))
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de l'image")))
+        }
+      });
+      setState(() {
+        imageChanged = false;
+      });
     }
   }
 
@@ -213,16 +281,18 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
     );
   }
 
-  void deletePrizeManage(Prize prize) async {
-    bool res = await deletePrize(prize);
-    if (res) {
-      setState(() {
-        prizeList.remove(prize);
-        filteredPrizeList.remove(prize);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Prix supprimé avec succès")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du prix")));
-    }
+  void deletePrizeManage(Prize prize) {
+    deletePrize(prize).then((res) => {
+      if (res) {
+        setState(() {
+          prizeList.remove(prize);
+          filteredPrizeList.remove(prize);
+          imageChanged = false;
+        }),
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Prix supprimé avec succès")))
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du prix")))
+      }
+    });
   }
 }

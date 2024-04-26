@@ -29,7 +29,7 @@ class Game {
       price: double.parse(json['gam_price']),
       nbPlayersMin : int.parse(json['gam_min_players']),
       nbPlayersMax : int.parse(json['gam_max_players']),
-      image : json['gam_price'] ?? "",
+      image : json['gam_image'] ?? "",
     );
   }
 }

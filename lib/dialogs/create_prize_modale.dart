@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
 import '../type/prize.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 class CreatePrizePage extends StatefulWidget {
   const CreatePrizePage({super.key});
@@ -16,6 +18,21 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
   final TextEditingController stockController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool loading = true;
+
+  Future<void> _pickImageFromGallery() async {
+    ImagePicker().pickImage(source: ImageSource.gallery).then((pickedImage) => {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Upload en cours"))),
+      if (pickedImage != null) {
+        uploadPrizeImageToAPI(pickedImage, "temp").then((value) => {
+          setState(() {
+            loading = false;
+          }),
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image téléversée")))
+        })
+      }
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +97,23 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
                   return null;
                 },
               ),
+              if (!loading)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.network(
+                      "https://obsolete-events.com/turbo-market/app/images/prizes/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                      height: 200, // Hauteur maximale de l'image
+                      fit: BoxFit.cover, // Ajustement de la taille de l'image pour couvrir les dimensions spécifiées
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 15,),
+              ElevatedButton(
+                onPressed: _pickImageFromGallery,
+                child: const Text('Choisir depuis la galerie'),
+              ),
+              const SizedBox(height: 15,),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: ElevatedButton(

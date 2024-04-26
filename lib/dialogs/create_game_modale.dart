@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/game.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateGamePage extends StatefulWidget {
   const CreateGamePage({super.key});
@@ -17,6 +18,21 @@ class _CreateGamePageState extends State<CreateGamePage> {
   final TextEditingController nbPlayersMaxController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  bool loading = true;
+
+  Future<void> _pickImageFromGallery() async {
+    ImagePicker().pickImage(source: ImageSource.gallery).then((pickedImage) => {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Upload en cours"))),
+      if (pickedImage != null) {
+        uploadGameImageToAPI(pickedImage, "temp").then((value) => {
+          setState(() {
+            loading = false;
+          }),
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image téléversée")))
+        })
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +121,23 @@ class _CreateGamePageState extends State<CreateGamePage> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 16.0),
+                if (!loading)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.network(
+                        "https://obsolete-events.com/turbo-market/app/images/games/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: _pickImageFromGallery,
+                  child: const Text('Ajouter une image'),
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(

@@ -24,7 +24,7 @@ class Prize {
       description: json['pri_description'] as String,
       createdAt: json['pri_created_at'] as String,
       price: double.parse(json['pri_price']),
-      image: json['pri_image'] as String,
+      image: json['pri_image'] ?? "",
       stock: int.parse(json['pri_stock']),
     );
   }
