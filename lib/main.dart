@@ -33,10 +33,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     return MaterialApp(
       title: 'Turbo Market',
       initialRoute: initialRoute,
@@ -63,14 +59,15 @@ class MyApp extends StatelessWidget {
             foregroundColor: MaterialStateProperty.resolveWith<Color>(
                   (Set<MaterialState> states) {
                 if (states.contains(MaterialState.disabled)) {
-                  return Colors.white; // Par exemple, blanc
+                  return Colors.white;
                 }
-                return Colors.white; // Par exemple, blanc
+                return Colors.white;
               },
             ),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(style: BorderStyle.solid, color: Colors.white)),
           labelStyle: const TextStyle(color: Colors.white, fontFamily: "Nexa"),
           fillColor: Colors.grey[800],
         ),
@@ -78,8 +75,7 @@ class MyApp extends StatelessWidget {
           cursorColor: Colors.white,
         ),
         dialogTheme: DialogTheme(
-          backgroundColor: Colors.grey[900], // Couleur de fond de l'AlertDialog
-          // Personnalisez d'autres aspects de votre AlertDialog si nécessaire
+          backgroundColor: Colors.grey[900],
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
@@ -111,9 +107,7 @@ class MyApp extends StatelessWidget {
         progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: Colors.white, // Couleur des indicateurs de chargement (spinner)
         ),
-
       ),
-
     );
   }
 }

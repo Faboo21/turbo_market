@@ -43,13 +43,13 @@ class _ConnexionPageState extends State<ConnexionPage> {
             child: ListView(
               children: [
                 isLoading ? const SizedBox(
-                  height: 350,
-                  width: 350,
+                  height: 300,
+                  width: 300,
                   child: Center(child: CircularProgressIndicator())
                 ):
                 SizedBox(
-                  height: 350,
-                  width: 350,
+                  height: 300,
+                  width: 300,
                   child: Image.asset(
                     'images/logo-obsolete-blanc.png',
                     fit: BoxFit.fitHeight,
