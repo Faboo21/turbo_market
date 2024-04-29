@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/dialogs/update_exchange_rate_dialoq.dart';
 import '../dialogs/password_dialog.dart';
-import '../type/user.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
