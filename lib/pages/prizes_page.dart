@@ -160,7 +160,7 @@ class _PrizesState extends State<Prizes> {
                   bool res = true;
                   for (int i = 0; i < prizesList.length; i++){
                     if (quantityList[i] != 0 && res) {
-                      res = await addTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double) && res;
+                      res = await addTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0) && res;
                     }
                   }
                   if (res) {

@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/level.dart';
+import 'package:turbo_market/type/payment_method.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/user.dart';
 import '../type/prize.dart';
@@ -30,7 +31,7 @@ Future<String> verifyPassword(int roleId, String password) async {
 }
 
 Future<bool> insertUser(
-    String username, String mail, int rising) async {
+    String username, String mail, int rising, int payId) async {
   http.Response response = await http.post(
       Uri.parse("https://obsolete-events.com/turbo-market/api/create_account?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
@@ -38,6 +39,7 @@ Future<bool> insertUser(
         "usr_username": username,
         "usr_email": mail,
         "usr_balance": rising.toString(),
+        "pay_id": payId.toString()
       }));
 
   if (response.statusCode == 200) {
@@ -120,7 +122,6 @@ Future<bool> updateUserBalance(User user, double newBalance) async {
         "usr_email": user.email,
         "usr_balance": newBalance.toString(),
         "usr_qr": user.qr,
-        "tit_id": user.titleId.toString(),
       }));
   if (response.statusCode == 200) {
     return true;
@@ -244,7 +245,18 @@ Future<List<Prize>> getAllPrizes() async {
   return [];
 }
 
-Future<bool> addTransaction(int usrId, int priId, double traAmount) async {
+Future<List<PaymentMethod>> getAllPaymentMethod() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<PaymentMethod> modes = responseData.map((modeData) => PaymentMethod.fromJson(modeData)).toList();
+    return modes;
+  }
+  return [];
+}
+
+
+Future<bool> addTransaction(int usrId, int priId, double traAmount, int payId) async {
   http.Response response = await http.post(
       Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
@@ -252,6 +264,7 @@ Future<bool> addTransaction(int usrId, int priId, double traAmount) async {
         "usr_id": usrId.toString(),
         "pri_id": priId.toString(),
         "tra_amount": traAmount.toString(),
+        "pay_id": payId.toString()
       }));
   if (response.statusCode == 200) {
     return true;
@@ -302,7 +315,6 @@ Future<bool> updateUser(User user) async {
         "usr_email": user.email,
         "usr_balance": user.balance.toString(),
         "usr_qr": user.qr,
-        "tit_id": user.titleId.toString(),
       }));
   if (response.statusCode == 200) {
     return true;

@@ -4,7 +4,6 @@ class User {
   String email;
   double balance;
   String qr;
-  int titleId;
 
   User({
     required this.id,
@@ -12,7 +11,6 @@ class User {
     required this.email,
     required this.balance,
     required this.qr,
-    required this.titleId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -22,7 +20,6 @@ class User {
       email: json['usr_email'],
       balance: double.parse(json['usr_balance']),
       qr: json['usr_qr'],
-      titleId: int.parse(json['tit_id']),
     );
   }
 }

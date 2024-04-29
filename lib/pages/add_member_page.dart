@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api/api_request.dart';
+import '../type/payment_method.dart';
 
 class UserFormPage extends StatefulWidget {
   const UserFormPage({super.key});
@@ -13,6 +14,19 @@ class _UserFormPageState extends State<UserFormPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _montantController = TextEditingController();
+
+  List<PaymentMethod> modesList = [];
+  PaymentMethod? selectedPaymentMethod;
+
+  @override
+  void initState() {
+    getAllPaymentMethod().then((value) => {
+      setState(() {
+        modesList = value;
+      })
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +105,31 @@ class _UserFormPageState extends State<UserFormPage> {
                 ),
               ),
               const SizedBox(height: 20),
+              DropdownButtonFormField<PaymentMethod>(
+                value: selectedPaymentMethod,
+                onChanged: (PaymentMethod? newValue) {
+                  setState(() {
+                    selectedPaymentMethod = newValue;
+                  });
+                },
+                items: modesList.map((PaymentMethod paymentMethod) {
+                  return DropdownMenuItem<PaymentMethod>(
+                    value: paymentMethod,
+                    child: Text(paymentMethod.libelle, style: const TextStyle(fontFamily: "Nexa"),),
+                  );
+                }).toList(),
+                decoration: const InputDecoration(
+                  labelText: 'Mode de paiement',
+                  border: UnderlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Veuillez choisir un mode de paiement';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
@@ -98,7 +137,7 @@ class _UserFormPageState extends State<UserFormPage> {
                     String email = _emailController.text;
                     int montant = int.parse(_montantController.text);
 
-                    if (await insertUser(username, email, montant)){
+                    if (await insertUser(username, email, montant, selectedPaymentMethod!.payId)){
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("Utilisateur ajouté"),
                       ));
