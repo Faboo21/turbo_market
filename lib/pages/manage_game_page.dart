@@ -58,7 +58,7 @@ class _GameManagementPageState extends State<GameManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestion des jeux'),
+        title: const Text('Jeux'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButton: FloatingActionButton(

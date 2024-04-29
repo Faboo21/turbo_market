@@ -40,7 +40,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestion des utilisateurs'),
+        title: const Text('Utilisateurs'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Column(
@@ -109,7 +109,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               TextFormField(
                                 controller: balanceController,
                                 onChanged: (value) => user.balance = double.parse(value),
-                                decoration: const InputDecoration(labelText: 'Solde'),
+                                decoration: const InputDecoration(labelText: 'Solde', suffixText: '€',),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value!.isEmpty) {

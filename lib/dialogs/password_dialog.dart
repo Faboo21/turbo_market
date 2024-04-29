@@ -17,7 +17,7 @@ class ChangePasswordDialog extends StatelessWidget {
     ];
 
     return AlertDialog(
-      title: const Text('Gestion des mots de passe'),
+      title: const Text('Modifier Mots de passe'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

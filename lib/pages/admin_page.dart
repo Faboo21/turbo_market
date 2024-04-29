@@ -12,24 +12,6 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  double total = 0;
-
-  @override
-  void initState() {
-    loadTotal();
-    super.initState();
-  }
-
-  void loadTotal() async {
-    double resTotal = 0;
-    List<User> resList = await getAllUsers();
-    for (var element in resList) {
-      resTotal += element.balance;
-    }
-    setState(() {
-      total = resTotal;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +24,15 @@ class _AdminPageState extends State<AdminPage> {
           padding: const EdgeInsets.all(15.0),
           child: ListView(
             children: [
-              Center(child: Text("Argent en circulation : $total€", style: const TextStyle(fontSize: 20,),)),
               const SizedBox(height: 8.0),
+              ListTile(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/manage_payment_method");
+                  },
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  leading: const Icon(Icons.credit_card),
+                  title: const Text("Modes de paiement")
+              ),
               const Divider(),
               ListTile(
                 onTap: () {
@@ -56,7 +45,7 @@ class _AdminPageState extends State<AdminPage> {
                 },
                 trailing: const Icon(Icons.arrow_forward_ios),
                 leading: const Icon(Icons.lock_person),
-                title: const Text("Gestion des Mots de passe")
+                title: const Text("Mots de passe")
               ),
               const Divider(),
               ListTile(
@@ -65,7 +54,7 @@ class _AdminPageState extends State<AdminPage> {
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
                   leading: const Icon(Icons.supervised_user_circle),
-                  title: const Text("Gestion des Utilisateurs")
+                  title: const Text("Utilisateurs")
               ),
               const Divider(),
               ListTile(
@@ -74,7 +63,7 @@ class _AdminPageState extends State<AdminPage> {
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
                   leading: const Icon(Icons.videogame_asset),
-                  title: const Text("Gestion des Jeux")
+                  title: const Text("Jeux")
               ),
               const Divider(),
               ListTile(
@@ -83,7 +72,7 @@ class _AdminPageState extends State<AdminPage> {
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
                   leading: const Icon(Icons.shopping_cart),
-                  title: const Text("Gestion des prix")
+                  title: const Text("Prix")
               ),
               const Divider(),
               ListTile(
@@ -97,16 +86,7 @@ class _AdminPageState extends State<AdminPage> {
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
                   leading: const Icon(Icons.attach_money),
-                  title: const Text("Changer le Taux de change")
-              ),
-              const Divider(),
-              ListTile(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/manage_payment_method");
-                  },
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  leading: const Icon(Icons.credit_card),
-                  title: const Text("Gestion des modes de paiement")
+                  title: const Text("Taux de change")
               ),
               const Divider(),
             ],

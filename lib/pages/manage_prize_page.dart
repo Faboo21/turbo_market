@@ -58,7 +58,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestion des prix'),
+        title: const Text('Prix'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButton: FloatingActionButton(

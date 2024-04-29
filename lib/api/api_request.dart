@@ -6,6 +6,7 @@ import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/level.dart';
 import 'package:turbo_market/type/payment_method.dart';
 import 'package:turbo_market/type/stats_play.dart';
+import 'package:turbo_market/type/transaction.dart';
 import 'package:turbo_market/type/user.dart';
 import '../type/prize.dart';
 import 'dart:typed_data';
@@ -614,4 +615,14 @@ Future<bool> insertPaymentMethod(PaymentMethod mode) async {
     return true;
   }
   return false;
+}
+
+Future<List<Transaction>> getAllTransactions24h() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions24h?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();
+    return transactions;
+  }
+  return [];
 }

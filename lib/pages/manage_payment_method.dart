@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/type/transaction.dart';
 import '../dialogs/create_payment_modale.dart';
 import '../type/payment_method.dart';
+import '../type/user.dart';
 
 class PaymentMethodManagementPage extends StatefulWidget {
   const PaymentMethodManagementPage({super.key});
@@ -14,22 +16,55 @@ class PaymentMethodManagementPage extends StatefulWidget {
 class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPage> {
   List<PaymentMethod> paymentMethodList = [];
   List<PaymentMethod> filteredPaymentMethodList = [];
+  List<double> total24h = [];
 
   TextEditingController searchController = TextEditingController();
 
+  double total = 0;
+
   @override
   void initState() {
+    loadTotal();
     loadPaymentMethods();
+    loadTransactions();
     super.initState();
   }
 
   void loadPaymentMethods() async {
     List<PaymentMethod> resList = await getAllPaymentMethod();
+    int max = 0;
+    for (var element in resList) {if (element.payId > max) max = element.payId;}
     setState(() {
+      total24h = List<double>.filled(max + 1, 0);
       paymentMethodList = resList;
       filteredPaymentMethodList = paymentMethodList;
     });
   }
+
+  void loadTotal() async {
+    double resTotal = 0;
+    List<User> resList = await getAllUsers();
+    for (var element in resList) {
+      resTotal += element.balance;
+    }
+    setState(() {
+      total = resTotal;
+    });
+  }
+
+  void loadTransactions() async {
+    List<Transaction> resList = await getAllTransactions24h();
+    List<double> temp = List.filled(total24h.length, 0);
+    for (Transaction transaction in resList) {
+      if (transaction.payId > 0 && transaction.priId == 0) {
+        temp[transaction.payId] += transaction.traAmount;
+      }
+    }
+    setState(() {
+      total24h = temp;
+    });
+  }
+
 
   void filterPaymentMethods(String query) {
     List<PaymentMethod> filteredMethods = paymentMethodList.where((method) => method.libelle.toLowerCase().contains(query.toLowerCase())).toList();
@@ -42,7 +77,7 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestion des modes de paiement'),
+        title: const Text('Modes de paiement'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButton: FloatingActionButton(
@@ -58,6 +93,11 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
       ),
       body: Column(
         children: [
+          const Divider(),
+          const SizedBox(height: 15,),
+          Center(child: Text("Argent en circulation : $total€", style: const TextStyle(fontSize: 20,),)),
+          const SizedBox(height: 15,),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -81,7 +121,7 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ExpansionTile(
-                    title: Text(paymentMethod.libelle),
+                    title: Text("${paymentMethod.libelle} : ${total24h[paymentMethod.payId]}€"),
                     children: [
                       Form(
                         key: formKey,

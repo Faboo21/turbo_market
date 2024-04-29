@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'Router/route_generator.dart';
@@ -32,6 +33,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Turbo Market',
       initialRoute: initialRoute,
@@ -41,17 +46,17 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.black,
         fontFamily: 'Heavitas',
         colorScheme: const ColorScheme(
-          primary: Colors.black, // Variante de la couleur principale, peut être utilisée pour des éléments spécifiques
-          secondary: Colors.white, // Variante de la couleur secondaire
-          surface: Colors.white12, // Couleur de la surface, généralement utilisée pour les arrière-plans de cartes, de panneaux, etc.
-          background: Colors.black, // Couleur d'arrière-plan
-          error: Colors.red, // Couleur d'erreur
-          onPrimary: Colors.white, // Couleur du texte sur la couleur principale
-          onSecondary: Colors.black, // Couleur du texte sur la couleur secondaire
-          onSurface: Colors.white, // Couleur du texte sur la surface
-          onBackground: Colors.white, // Couleur du texte sur l'arrière-plan
-          onError: Colors.white, // Couleur du texte sur une erreur
-          brightness: Brightness.dark, // Luminosité du thème, définie sur sombre
+          primary: Colors.black,
+          secondary: Colors.white,
+          surface: Colors.white12,
+          background: Colors.black,
+          error: Colors.red,
+          onPrimary: Colors.white,
+          onSecondary: Colors.black,
+          onSurface: Colors.white,
+          onBackground: Colors.white,
+          onError: Colors.white,
+          brightness: Brightness.dark,
         ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
