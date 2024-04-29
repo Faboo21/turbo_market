@@ -4,6 +4,7 @@ import 'package:turbo_market/pages/add_member_page.dart';
 import 'package:turbo_market/pages/game_choice_page.dart';
 import 'package:turbo_market/pages/manage_game_page.dart';
 import 'package:turbo_market/pages/manage_levels_page.dart';
+import 'package:turbo_market/pages/manage_payment_method.dart';
 import 'package:turbo_market/pages/manage_prize_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import 'package:turbo_market/pages/connexion_page.dart';
@@ -45,6 +46,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const HomePage());
       case '/manage_users' :
         return MaterialPageRoute(builder: (context) => const UserManagementPage());
+      case '/manage_payment_method' :
+        return MaterialPageRoute(builder: (context) => const PaymentMethodManagementPage());
       case '/manage_games' :
         return MaterialPageRoute(builder: (context) => const GameManagementPage());
       case '/manage_prizes' :

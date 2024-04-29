@@ -571,3 +571,47 @@ Future<bool> insertLevel(Level level) async {
   }
   return false;
 }
+
+Future<bool> updatePaymentMethod(PaymentMethod mode) async {
+  http.Response response = await http.put(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "pay_id": mode.payId.toString(),
+        "pay_libelle": mode.libelle,
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> deletePaymentMethod(PaymentMethod mode) async {
+  http.Response response = await http.delete(
+    Uri.parse(
+        "https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}&pay_id=${mode.payId}"),
+  );
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> insertPaymentMethod(PaymentMethod mode) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "pay_id": mode.payId.toString(),
+        "pay_libelle": mode.libelle,
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}

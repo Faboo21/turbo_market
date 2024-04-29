@@ -100,6 +100,15 @@ class _AdminPageState extends State<AdminPage> {
                   title: const Text("Changer le Taux de change")
               ),
               const Divider(),
+              ListTile(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/manage_payment_method");
+                  },
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  leading: const Icon(Icons.credit_card),
+                  title: const Text("Gestion des modes de paiement")
+              ),
+              const Divider(),
             ],
           ),
         ));
