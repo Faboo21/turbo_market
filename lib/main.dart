@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString("token");
   if (token != null) {

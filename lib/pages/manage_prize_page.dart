@@ -162,39 +162,56 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                                 },
                               ),
                               const SizedBox(height: 8.0),
-                              if (!imageChanged && prize.image != "") AspectRatio(
-                                aspectRatio: 1, // Aspect ratio 1:1 for square image
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.network(
-                                    "${prize.image}?random=${DateTime.now().millisecondsSinceEpoch}",
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        return child;
-                                      } else {
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress.expectedTotalBytes != null
-                                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        );
-                                      }
-                                    },
+                              if (!imageChanged && prize.image != "")
+                                Center(
+                                  child: SizedBox(
+                                    height: 200,
+                                    child: AspectRatio(
+                                    aspectRatio: 1, // Aspect ratio 1:1 for square image
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Image.network(
+                                        "${prize.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                        fit: BoxFit.cover,
+                                        loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          } else {
+                                            return const Center(
+                                              child: CircularProgressIndicator(),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                                                  ),
                                   ),
                                 ),
-                              ),
-                              if (imageChanged) Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image.network(
-                                    "https://obsolete-events.com/turbo-market/app/images/prizes/temp?random=${DateTime.now().millisecondsSinceEpoch}",
-                                    height: 200, // Hauteur maximale de l'image
-                                    fit: BoxFit.cover, // Ajustement de la taille de l'image pour couvrir les dimensions spécifiées
+                              if (imageChanged)
+                                Center(
+                                  child: SizedBox(
+                                    height: 200,
+                                    child: AspectRatio(
+                                      aspectRatio: 1,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Image.network(
+                                          "https://obsolete-events.com/turbo-market/app/images/prizes/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                                          loadingBuilder: (context, child, loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            } else {
+                                              return const Center(
+                                                child: CircularProgressIndicator(),
+                                              );
+                                            }
+                                          },
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
                               const SizedBox(height: 15,),
                               ElevatedButton(
                                 onPressed: _pickImageFromGallery,
