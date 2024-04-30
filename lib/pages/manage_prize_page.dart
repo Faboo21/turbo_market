@@ -25,7 +25,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
     super.initState();
   }
 
-  void loadPrizes() async {
+  Future<void> loadPrizes() async {
     List<Prize> resList = await getAllPrizes();
     setState(() {
       prizeList = resList;
@@ -68,7 +68,10 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
             builder: (BuildContext context) {
               return const CreatePrizePage();
             },
-          );
+          ).then((value) async {
+            await loadPrizes();
+            filterPrizes(searchController.text);
+          });
         },
         child: const Icon(Icons.add),
       ),

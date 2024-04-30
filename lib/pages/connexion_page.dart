@@ -31,7 +31,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        leading: IconButton(onPressed: () {Navigator.pushReplacementNamed(context, '/');}, icon: const Icon(Icons.arrow_back),),
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text("Connexion"),
       ),

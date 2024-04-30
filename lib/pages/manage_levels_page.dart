@@ -45,7 +45,9 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
             builder: (BuildContext context) {
               return CreateLevelPage(game: widget.game,);
             },
-          );
+          ).then((value) {
+            loadLevels();
+          });
         },
         child: const Icon(Icons.add),
       ),

@@ -30,7 +30,7 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
     super.initState();
   }
 
-  void loadPaymentMethods() async {
+  Future<void> loadPaymentMethods() async {
     List<PaymentMethod> resList = await getAllPaymentMethod();
     int max = 0;
     for (var element in resList) {if (element.payId > max) max = element.payId;}
@@ -41,7 +41,7 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
     });
   }
 
-  void loadTotal() async {
+  Future<void> loadTotal() async {
     double resTotal = 0;
     List<User> resList = await getAllUsers();
     for (var element in resList) {
@@ -52,7 +52,7 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
     });
   }
 
-  void loadTransactions() async {
+  Future<void> loadTransactions() async {
     List<Transaction> resList = await getAllTransactions24h();
     List<double> temp = List.filled(total24h.length, 0);
     for (Transaction transaction in resList) {
@@ -87,7 +87,12 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
             builder: (BuildContext context) {
               return const CreatePaymentMethodPage();
             },
-          );
+          ).then((value) async {
+            await loadTotal();
+            await loadPaymentMethods();
+            await loadTransactions();
+            filterPaymentMethods(searchController.text);
+          });
         },
         child: const Icon(Icons.add),
       ),

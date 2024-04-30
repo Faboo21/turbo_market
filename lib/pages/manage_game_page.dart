@@ -25,7 +25,7 @@ class _GameManagementPageState extends State<GameManagementPage> {
     super.initState();
   }
 
-  void loadGames() async {
+  Future<void> loadGames() async {
     List<Game> resList = await getAllGames();
     setState(() {
       gameList = resList;
@@ -68,7 +68,11 @@ class _GameManagementPageState extends State<GameManagementPage> {
             builder: (BuildContext context) {
               return const CreateGamePage();
             },
-          );
+          ).then((value) {
+            loadGames().then((value) {
+              filterGames(searchController.text);
+            });
+          });
         },
         child: const Icon(Icons.add),
       ),

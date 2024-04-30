@@ -6,6 +6,7 @@ import 'package:turbo_market/pages/manage_game_page.dart';
 import 'package:turbo_market/pages/manage_levels_page.dart';
 import 'package:turbo_market/pages/manage_payment_method.dart';
 import 'package:turbo_market/pages/manage_prize_page.dart';
+import 'package:turbo_market/pages/ranking_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import 'package:turbo_market/pages/connexion_page.dart';
 import 'package:turbo_market/pages/admin_page.dart';
@@ -23,6 +24,8 @@ class RouteGenerator {
     final args = settings.arguments;
     switch (settings.name) {
       case '/' :
+        return MaterialPageRoute(builder: (context) => const RankingPage());
+      case '/connexion' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
       case '/home' :
         return MaterialPageRoute(builder: (context) => const HomePage());

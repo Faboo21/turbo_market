@@ -86,7 +86,7 @@ class _GameChoicePageState extends State<GameChoicePage> {
                 prefs.remove('token');
                 AppConfig.role = 0;
                 AppConfig.game = 0;
-                Navigator.pushReplacementNamed(context, '/');
+                Navigator.pushReplacementNamed(context, '/connexion');
               },
               child: const Text('Déconnexion'),
             ),
