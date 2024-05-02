@@ -68,8 +68,8 @@ class _GameManagementPageState extends State<GameManagementPage> {
             builder: (BuildContext context) {
               return const CreateGamePage();
             },
-          ).then((value) {
-            loadGames().then((value) {
+          ).then((value) async {
+            await loadGames().then((value) {
               filterGames(searchController.text);
             });
           });
@@ -137,7 +137,7 @@ class _GameManagementPageState extends State<GameManagementPage> {
                               TextFormField(
                                 controller: priceController,
                                 onChanged: (value) => game.price = double.tryParse(value) ?? 0,
-                                decoration: const InputDecoration(labelText: 'Prix'),
+                                decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value!.isEmpty) {

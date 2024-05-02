@@ -1,0 +1,1 @@
+enum Rarity { legendary, mythical, epic, rare, uncommon, common}

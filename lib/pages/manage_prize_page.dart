@@ -136,7 +136,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                               TextFormField(
                                 controller: priceController,
                                 onChanged: (value) => prize.price = double.tryParse(value) ?? 0,
-                                decoration: const InputDecoration(labelText: 'Prix'),
+                                decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value!.isEmpty) {

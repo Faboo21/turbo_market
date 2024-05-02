@@ -23,7 +23,7 @@ Future<void> main() async {
       prefs.remove("token");
     }
   }
-  AppConfig.taux = await getExchangeRate();
+  AppConfig.rate = await getExchangeRate();
   String initialRoute = AppConfig.role == 0 ? "/" : AppConfig.role == 3 ? "/choixGames" : "/home";
   runApp(MyApp(initialRoute: initialRoute));
 }

@@ -75,7 +75,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                 const SizedBox(height: 16.0),
                 TextFormField(
                   controller: priceController,
-                  decoration: const InputDecoration(labelText: 'Prix'),
+                  decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -158,9 +158,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Jeu ajouté avec succès")))
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Probleme lors de l'insertion du jeu")))
-                        }
+                        },
+                        Navigator.pop(context)
                       });
-                      Navigator.pop(context);
                     }
                   },
                   child: const Text('Créer'),

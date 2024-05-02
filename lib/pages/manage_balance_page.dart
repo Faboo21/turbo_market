@@ -45,7 +45,7 @@ class _ManageBalanceState extends State<ManageBalance> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Solde actuel : ${widget.selectedUser.balance * AppConfig.taux} ƒ',
+                'Solde actuel : ${widget.selectedUser.balance * AppConfig.rate} ƒ',
                 style: const TextStyle(fontSize: 18.0),
               ),
               const SizedBox(height: 20.0),

@@ -10,7 +10,7 @@ class UpdateRateDialog extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final formKey = GlobalKey<FormState>();
-    TextEditingController rateController = TextEditingController(text: AppConfig.taux.toString());
+    TextEditingController rateController = TextEditingController(text: AppConfig.rate.toString());
     return AlertDialog(
       title: const Text('Taux de change'),
       content: Form(

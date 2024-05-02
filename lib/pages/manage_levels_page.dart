@@ -24,7 +24,7 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
     super.initState();
   }
 
-  void loadLevels() async {
+  Future<void> loadLevels() async {
     List<Level> resList = await getAllLevels(widget.game.id);
     setState(() {
       levelList = resList;
@@ -45,8 +45,8 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
             builder: (BuildContext context) {
               return CreateLevelPage(game: widget.game,);
             },
-          ).then((value) {
-            loadLevels();
+          ).then((value) async {
+            await loadLevels();
           });
         },
         child: const Icon(Icons.add),
@@ -61,13 +61,14 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
                 TextEditingController stepController = TextEditingController(text: level.step.toString());
                 TextEditingController libelleController = TextEditingController(text: level.libelle);
                 TextEditingController priceController = TextEditingController(text: level.cashPrize.toString());
+                TextEditingController scoreController = TextEditingController(text: level.score.toString());
 
                 final formKey = GlobalKey<FormState>();
 
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ExpansionTile(
-                    title: Text("${level.step.toString()} : ${level.libelle == "" ? "${level.cashPrize * AppConfig.taux} ƒ" : level.libelle}"),
+                    title: Text("${level.step.toString()} : ${level.libelle == "" ? "${level.cashPrize * AppConfig.rate} ƒ" : level.libelle}"),
                     children: [
                       Form(
                         key: formKey,
@@ -100,7 +101,7 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
                               TextFormField(
                                 controller: priceController,
                                 onChanged: (value) => level.cashPrize = double.tryParse(value) ?? level.cashPrize,
-                                decoration: const InputDecoration(labelText: 'Recompense'),
+                                decoration: const InputDecoration(labelText: 'Recompense', suffix: Text("€")),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -108,6 +109,21 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
                                   }
                                   if (double.tryParse(value) == null) {
                                     return 'La recompense doit être un nombre';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8.0),
+                              TextFormField(
+                                controller: scoreController,
+                                onChanged: (value) => level.score = int.tryParse(value) ?? level.score,
+                                decoration: const InputDecoration(labelText: 'Score'),
+                                validator:  (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Merci d\'entrer le score';
+                                  }
+                                  if (int.tryParse(value) == null) {
+                                    return 'Merci d\'entrer un entier';
                                   }
                                   return null;
                                 },

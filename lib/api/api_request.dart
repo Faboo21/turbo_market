@@ -143,7 +143,7 @@ Future<Level> getLevelById(int levStep, int gamId) async {
       }
     }
   }
-  return Level(gameId: 1, step: 1, cashPrize: 0, libelle: '');
+  return Level(gameId: 1, step: 1, cashPrize: 0, libelle: '', score: 0);
 }
 
 Future<Game> getGameById(int gamId) async {
@@ -536,7 +536,8 @@ Future<bool> updateLevel(Level level) async {
         "gam_id": level.gameId.toString(),
         "lev_step": level.step.toString(),
         "lev_cashprize": level.cashPrize.toString(),
-        "lev_libelle": level.libelle
+        "lev_libelle": level.libelle,
+        "lev_score": level.score.toString()
       }));
   if (response.statusCode == 200) {
     return true;
@@ -565,7 +566,8 @@ Future<bool> insertLevel(Level level) async {
         "gam_id": level.gameId.toString(),
         "lev_step": level.step.toString(),
         "lev_cashprize": level.cashPrize.toString(),
-        "lev_libelle": level.libelle
+        "lev_libelle": level.libelle,
+        "lev_score": level.score.toString()
       }));
   if (response.statusCode == 200) {
     return true;

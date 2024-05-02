@@ -15,6 +15,8 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
   TextEditingController stepController = TextEditingController();
   TextEditingController libelleController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  TextEditingController scoreController = TextEditingController();
+
 
   final _formKey = GlobalKey<FormState>();
 
@@ -55,7 +57,7 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
                 const SizedBox(height: 8.0),
                 TextFormField(
                   controller: priceController,
-                  decoration: const InputDecoration(labelText: 'Recompense'),
+                  decoration: const InputDecoration(labelText: 'Recompense', suffix: Text("€")),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -68,6 +70,20 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
                   },
                 ),
                 const SizedBox(height: 16.0),
+                TextFormField(
+                  controller: scoreController,
+                  decoration: const InputDecoration(labelText: 'Score'),
+                  validator:  (value) {
+                    if (value!.isEmpty) {
+                      return 'Merci d\'entrer le score';
+                    }
+                    if (int.tryParse(value) == null) {
+                      return 'Merci d\'entrer un entier';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -75,16 +91,17 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
                           gameId: widget.game.id,
                           step: int.parse(stepController.text),
                           cashPrize: double.parse(priceController.text),
-                          libelle: libelleController.text
+                          libelle: libelleController.text,
+                          score: int.parse(scoreController.text)
                       );
                       insertLevel(newLevel).then((res) => {
                         if (res) {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Niveau ajouté avec succès")))
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Probleme lors de l'insertion du niveau")))
-                        }
+                        },
+                        Navigator.pop(context)
                       });
-                      Navigator.pop(context);
                     }
                   },
                   child: const Text('Créer'),

@@ -95,7 +95,7 @@ class _PrizesState extends State<Prizes> {
               children: [
                 const SizedBox(height: 5),
                 Text(
-                  'Prix : ${prize.price*AppConfig.taux} ƒ',
+                  'Prix : ${prize.price*AppConfig.rate} ƒ',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -147,7 +147,7 @@ class _PrizesState extends State<Prizes> {
           child: Row(
             children: [
               Text(
-                'Total : ${totalPrice*AppConfig.taux} ƒ / ${widget.selectedUser.balance*AppConfig.taux} ƒ',
+                'Total : ${totalPrice*AppConfig.rate} ƒ / ${widget.selectedUser.balance*AppConfig.rate} ƒ',
                 style: TextStyle(
                   fontSize: 18,
                   color: totalPrice <= widget.selectedUser.balance ? Colors.white : Colors.red,

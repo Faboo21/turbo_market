@@ -259,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                   const Icon(Icons.arrow_forward),
                   const SizedBox(width: 16.0),
                   Text(
-                    '${playerList[index]!.balance * AppConfig.taux} ƒ',
+                    '${playerList[index]!.balance * AppConfig.rate} ƒ',
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -474,7 +474,7 @@ class NomJeu extends StatelessWidget {
             ),
           ),
           Text(
-            'Prix : ${(game.price * AppConfig.taux).toString()}',
+            'Prix : ${(game.price * AppConfig.rate).toString()}',
             style: const TextStyle(
               fontSize: 14.0,
               color: Colors.grey,

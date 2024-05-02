@@ -71,7 +71,7 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
               ),
               TextFormField(
                 controller: priceController,
-                decoration: const InputDecoration(labelText: 'Prix'),
+                decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -134,7 +134,7 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Prix créé avec succès')),
                           );
-                          Navigator.pop(context); // Close the modal after successful creation
+                          Navigator.pop(context);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Erreur lors de la création du prix')),
