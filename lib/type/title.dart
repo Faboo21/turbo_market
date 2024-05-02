@@ -8,6 +8,7 @@ class UserTitle {
   String image;
   Rarity rarity;
   String condition;
+  String rules;
 
   UserTitle({
     required this.id,
@@ -15,7 +16,8 @@ class UserTitle {
     required this.color,
     required this.image,
     required this.rarity,
-    required this.condition
+    required this.condition,
+    required this.rules
   });
 
   bool evaluate() {
