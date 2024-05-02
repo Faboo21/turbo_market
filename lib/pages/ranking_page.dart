@@ -20,11 +20,21 @@ class RankingPage extends StatefulWidget {
 
 class _RankingPageState extends State<RankingPage> {
   List<UserRank> playersList = [];
+  List<UserRank> filteredPlayersList = [];
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     _loadPlayersList();
     super.initState();
+  }
+
+  void filterUsers(String query) {
+    List<UserRank> filteredPlayers = playersList.where((user) => user.username.toLowerCase().contains(query.toLowerCase())).toList();
+    setState(() {
+      filteredPlayersList = filteredPlayers;
+    });
   }
 
   void _loadPlayersList() async {
@@ -61,6 +71,9 @@ class _RankingPageState extends State<RankingPage> {
       });
     }
     playersList.sort((a, b) => b.score.compareTo(a.score));
+    setState(() {
+      filteredPlayersList = playersList;
+    });
   }
 
   int getNumberOfGames(List<StatsPlay> statsList, int userId) {
@@ -124,11 +137,22 @@ class _RankingPageState extends State<RankingPage> {
       body:
         Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                onChanged: filterUsers,
+                decoration: const InputDecoration(
+                  labelText: 'Rechercher par username',
+                  prefixIcon: Icon(Icons.search),
+                ),
+              ),
+            ),
             Expanded(
               child: ListView.builder(
-                itemCount: playersList.length,
+                itemCount: filteredPlayersList.length,
                 itemBuilder: (context, index) {
-                  UserRank player = playersList[index];
+                  UserRank player = filteredPlayersList[index];
                   return ExpansionTile(
                     leading: SizedBox(
                       width: 32, // Largeur fixe pour le conteneur du texte
