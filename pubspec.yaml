@@ -42,6 +42,7 @@ dependencies:
   mime: ^1.0.0
   fluttericon: ^2.0.0
   dart_eval: ^0.7.9
+  flutter_map: ^6.1.0
 
 dev_dependencies:
   flutter_test:

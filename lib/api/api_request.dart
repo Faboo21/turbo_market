@@ -8,7 +8,8 @@ import 'package:turbo_market/type/payment_method.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/transaction.dart';
 import 'package:turbo_market/type/user.dart';
-import '../type/prize.dart';
+import 'package:turbo_market/type/prize.dart';
+import 'package:turbo_market/type/title.dart';
 import 'dart:typed_data';
 
 Future<String> verifyPassword(int roleId, String password) async {
@@ -625,6 +626,16 @@ Future<List<Transaction>> getAllTransactions24h() async {
     List<dynamic> responseData = json.decode(response.body);
     List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();
     return transactions;
+  }
+  return [];
+}
+
+Future<List<UserTitle>> getAllTitles() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<UserTitle> titles = responseData.map((titleData) => UserTitle.fromJson(titleData)).toList();
+    return titles;
   }
   return [];
 }
