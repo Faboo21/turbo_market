@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/title.dart';
+import 'package:turbo_market/type/user.dart';
 
 import '../dialogs/create_title_modale.dart';
 
@@ -141,13 +142,14 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                               TextFormField(
                                 controller: rulesController,
                                 onChanged: (value) => title.rules = value,
-                                decoration: const InputDecoration(labelText: 'Description'),
+                                decoration: const InputDecoration(labelText: 'Regles'),
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
                                 textAlignVertical: TextAlignVertical.top,
                               ),
                               const SizedBox(height: 8.0),
                               TextFormField(
+                                style: const TextStyle(fontFamily: "Nexa"),
                                 controller: conditionController,
                                 onChanged: (value) => title.condition = value,
                                 maxLines: null,
@@ -170,7 +172,7 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                                 items: Rarity.values.map((Rarity rarity) {
                                   return DropdownMenuItem<Rarity>(
                                     value: rarity,
-                                    child: Text(rarity.displayString, style: const TextStyle(fontFamily: "Nexa"),),
+                                    child: Text(rarity.displayString, style: TextStyle(color: rarity.color),),
                                   );
                                 }).toList(),
                                 decoration: const InputDecoration(
@@ -228,9 +230,22 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                                 children: [
                                   IconButton(
                                     icon: const Icon(Icons.save),
-                                    onPressed: () => {
-                                      if (formKey.currentState!.validate())
-                                        updateTitleManage(title)
+                                    onPressed: () {
+                                      bool compile = true;
+                                      try {
+                                        title.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
+                                      } catch (e) {
+                                        compile = false;
+                                      }
+                                      if (formKey.currentState!.validate()) {
+                                        if (compile) {
+                                          updateTitleManage(title);
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Le code ne compile pas')),
+                                          );
+                                        }
+                                      }
                                     },
                                   ),
                                   IconButton(

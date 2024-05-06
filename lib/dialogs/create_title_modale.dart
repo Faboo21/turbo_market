@@ -104,7 +104,7 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
                   items: Rarity.values.map((Rarity rarity) {
                     return DropdownMenuItem<Rarity>(
                       value: rarity,
-                      child: Text(rarity.displayString, style: const TextStyle(fontFamily: "Nexa"),),
+                      child: Text(rarity.displayString, style: TextStyle(color: rarity.color),),
                     );
                   }).toList(),
                   decoration: const InputDecoration(
