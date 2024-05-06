@@ -42,17 +42,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: homeBody(context),
-      floatingActionButton: AppConfig.role == 3 ?FloatingActionButton(
+      floatingActionButton: AppConfig.role == 3 ? FloatingActionButton(
         onPressed: () {
           _showModal(context);
         },
         child: const Icon(Icons.info),
-      ) : FloatingActionButton(
-        onPressed: () {
-          _showEmailModal(context, "");
-        },
-        child: const Icon(Icons.email_outlined),
-      ),
+      ) : null,
       bottomNavigationBar: navBar(context),
     );
   }
@@ -149,6 +144,28 @@ class _HomePageState extends State<HomePage> {
             },
             child: const Text ('Recuperer un lot'),
           ),
+        ],
+        if (AppConfig.role == 2 || AppConfig.role == 1) ...[
+          const SizedBox(height: 15,),
+          const Divider(),
+          ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, '/ajout_user');
+              },
+              trailing: const Icon(Icons.arrow_forward_ios),
+              leading: const Icon(Icons.add),
+              title: const Text("Créer Utilisateur")
+          ),
+          const Divider(),
+          ListTile(
+            onTap: () {
+              _showEmailModal(context, "");
+            },
+            trailing: const Icon(Icons.arrow_forward_ios),
+            leading: const Icon(Icons.email_outlined),
+            title: const Text("QR perdu")
+          ),
+          const Divider(),
         ],
       ],
     );
@@ -297,13 +314,6 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          if (AppConfig.role == 2 || AppConfig.role == 1)
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                Navigator.pushNamed(context, '/ajout_user');
-              },
-            ),
           if (AppConfig.role == 1)
             IconButton(
               icon: const Icon(Icons.admin_panel_settings_outlined),

@@ -1,9 +1,10 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
-import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/title.dart';
 
@@ -21,8 +22,12 @@ class RankingPage extends StatefulWidget {
 class _RankingPageState extends State<RankingPage> {
   List<UserRank> playersList = [];
   List<UserRank> filteredPlayersList = [];
+  List<String> gamesList = [];
 
   TextEditingController searchController = TextEditingController();
+  String selectedGame = "All Games";
+  String selectedTimeRange = '24h';
+  String sortedBy = 'Score';
 
   @override
   void initState() {
@@ -37,17 +42,48 @@ class _RankingPageState extends State<RankingPage> {
     });
   }
 
+  void sortUsers() {
+    switch (sortedBy) {
+      case 'Score':
+        setState(() {
+          filteredPlayersList.sort((a, b) => b.score.compareTo(a.score));
+        });
+        break;
+      case 'Balance':
+        setState(() {
+          filteredPlayersList.sort((a, b) => b.balance.compareTo(a.balance));
+        });
+        break;
+      case 'Parties Jouée':
+        setState(() {
+          filteredPlayersList.sort((a, b) => b.nbGames.compareTo(a.nbGames));
+        });
+        break;
+      case 'Moyenne':
+        setState(() {
+          filteredPlayersList.sort((a, b) => b.mean.compareTo(a.mean));
+        });
+        break;
+    }
+  }
+
   void _loadPlayersList() async {
     setState(() {
       playersList = [];
     });
-    List<StatsPlay> plays = await getAllStatsPlays();
+    List<StatsPlay> plays;
+    if (selectedTimeRange == "24h") {
+      plays = await get24hStatsPlays();
+    } else {
+      plays = await getAllStatsPlays();
+    }
     List<User> users = await getAllUsers();
     List<Game> games = await getAllGames();
     List<UserTitle> titles = await getAllTitles();
+    List<String> resGamesId = List.generate(games.length, (index) => "${games[index].id} : ${games[index].name}");
     for (var user in users) {
       int nbGames = getNumberOfGames(plays, user.id);
-      int nbVictories = getScore(plays, user.id);
+      int score = getScore(plays, user.id);
       String favGame = getFavoriteGame(plays, user.id, games);
       List<UserTitle> validTitles = [];
       for (var title in titles) {
@@ -60,16 +96,32 @@ class _RankingPageState extends State<RankingPage> {
             UserRank(id: user.id,
                 username: user.username,
                 balance: user.balance,
-                mean: nbVictories/(nbGames == 0 ? 1 : nbGames),
+                mean: score/(nbGames == 0 ? 1 : nbGames),
                 bestGame: favGame,
                 nbGames: nbGames,
                 titles: validTitles,
-                score: nbVictories));
+                score: score));
       });
     }
-    playersList.sort((a, b) => b.score.compareTo(a.score));
+    switch (sortedBy) {
+      case 'Score':
+        playersList.sort((a, b) => b.score.compareTo(a.score));
+        break;
+      case 'Balance':
+        playersList.sort((a, b) => b.balance.compareTo(a.balance));
+        break;
+      case 'Parties Jouée':
+        playersList.sort((a, b) => b.nbGames.compareTo(a.nbGames));
+        break;
+      case 'Moyenne':
+        playersList.sort((a, b) => b.mean.compareTo(a.mean));
+        break;
+    }
     setState(() {
       filteredPlayersList = playersList;
+    });
+    setState(() {
+      gamesList = ["All Games"] + resGamesId;
     });
   }
 
@@ -77,7 +129,14 @@ class _RankingPageState extends State<RankingPage> {
     int numberOfGames = 0;
     for (var stats in statsList) {
       if (stats.userId == userId) {
-        numberOfGames++;
+        if (selectedGame == "All Games") {
+          numberOfGames++;
+        }
+        else {
+          if (stats.gameid == int.parse(selectedGame.split(" : ")[0])) {
+            numberOfGames++;
+          }
+        }
       }
     }
     return numberOfGames;
@@ -87,7 +146,14 @@ class _RankingPageState extends State<RankingPage> {
     int score = 0;
     for (var stats in statsList) {
       if (stats.userId == userId) {
-        score += stats.score;
+        if (selectedGame == "All Games") {
+          score += stats.score;
+        }
+        else {
+          if (stats.gameid == int.parse(selectedGame.split(" : ")[0])) {
+            score += stats.score;
+          }
+        }
       }
     }
     return score;
@@ -136,15 +202,92 @@ class _RankingPageState extends State<RankingPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: searchController,
-                onChanged: filterUsers,
-                decoration: const InputDecoration(
-                  labelText: 'Rechercher par username',
-                  prefixIcon: Icon(Icons.search),
-                ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: filterUsers,
+                      decoration: const InputDecoration(
+                        labelText: 'Rechercher par pseudo',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+            ExpansionTile(
+              title: const Text("Filtrer"),
+              leading: const Icon(Icons.filter_alt),
+              children: [
+                SizedBox(
+                  height: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        DropdownButton<String>(
+                          padding: const EdgeInsets.all(5),
+                          isExpanded: true,
+                          value: selectedGame,
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedGame = newValue!;
+                            });
+                            _loadPlayersList();
+                          },
+                          items: gamesList.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(width: 10),
+                        DropdownButton<String>(
+                          padding: const EdgeInsets.all(5),
+                          value: selectedTimeRange,
+                          isExpanded: true,
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedTimeRange = newValue!;
+                            });
+                            _loadPlayersList();
+                          },
+                          items: <String>['24h', 'All time'].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(width: 10),
+                        DropdownButton<String>(
+                          padding: const EdgeInsets.all(5),
+                          isExpanded: true,
+                          value: sortedBy,
+                          onChanged: (newValue) {
+                            setState(() {
+                              sortedBy = newValue!;
+                            });
+                            sortUsers();
+                          },
+                          items: <String>['Score', 'Balance', "Parties Jouée", "Moyenne"].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ]
+            ),
+            const SizedBox(height: 15,),
             Expanded(
               child: ListView.builder(
                 itemCount: filteredPlayersList.length,
@@ -185,7 +328,7 @@ class _RankingPageState extends State<RankingPage> {
                       ),
                       ListTile(
                         title: Text('Nombre de parties: ${player.nbGames.toString()}', style: const TextStyle(fontSize: 15),),
-                        trailing: Text('Moyenne: ${player.mean} p/g', style: const TextStyle(fontSize: 15),),
+                        trailing: Text('Moyenne: ${player.mean.toStringAsFixed(2)}', style: const TextStyle(fontSize: 15),),
                       ),
                       if (player.titles.isNotEmpty) ListTile(
                         title: const Text('Titres:'),
