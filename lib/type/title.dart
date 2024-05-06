@@ -24,7 +24,7 @@ class UserTitle {
     return UserTitle(
       id: int.parse(json['tit_id']),
       libelle: json['tit_libelle'],
-      image: json['tit_image'],
+      image: json['tit_image'] ?? "",
       rarity: json['tit_rarity'].toString().stringToRarity(),
       condition: json['tit_condition'],
       rules: json['tit_rules'],

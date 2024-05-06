@@ -2,41 +2,43 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/api/api_request.dart';
-import 'package:turbo_market/dialogs/create_prize_modale.dart';
-import 'package:turbo_market/type/prize.dart';
+import 'package:turbo_market/type/rarity.dart';
+import 'package:turbo_market/type/title.dart';
 
-class PrizeManagementPage extends StatefulWidget {
-  const PrizeManagementPage({super.key});
+import '../dialogs/create_title_modale.dart';
+
+class TitleManagementPage extends StatefulWidget {
+  const TitleManagementPage({super.key});
 
   @override
-  State<PrizeManagementPage> createState() => _PrizeManagementPageState();
+  State<TitleManagementPage> createState() => _TitleManagementPageState();
 }
 
-class _PrizeManagementPageState extends State<PrizeManagementPage> {
-  List<Prize> prizeList = [];
-  List<Prize> filteredPrizeList = [];
+class _TitleManagementPageState extends State<TitleManagementPage> {
+  List<UserTitle> titleList = [];
+  List<UserTitle> filteredTitleList = [];
 
   TextEditingController searchController = TextEditingController();
   bool imageChanged = false;
 
   @override
   void initState() {
-    loadPrizes();
+    loadTitles();
     super.initState();
   }
 
-  Future<void> loadPrizes() async {
-    List<Prize> resList = await getAllPrizes();
+  Future<void> loadTitles() async {
+    List<UserTitle> resList = await getAllTitles();
     setState(() {
-      prizeList = resList;
-      filteredPrizeList = prizeList;
+      titleList = resList;
+      filteredTitleList = titleList;
     });
   }
 
-  void filterPrizes(String query) {
-    List<Prize> filteredPrizes = prizeList.where((prize) => prize.name.toLowerCase().contains(query.toLowerCase()) || prize.description.toLowerCase().contains(query.toLowerCase())).toList();
+  void filterTitles(String query) {
+    List<UserTitle> filteredTitles = titleList.where((title) => title.libelle.toLowerCase().contains(query.toLowerCase())).toList();
     setState(() {
-      filteredPrizeList = filteredPrizes;
+      filteredTitleList = filteredTitles;
     });
   }
 
@@ -44,7 +46,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
     ImagePicker().pickImage(source: ImageSource.gallery).then((pickedImage) => {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Upload en cours"))),
       if (pickedImage != null) {
-        uploadPrizeImageToAPI(pickedImage, "temp").then((value) => {
+        uploadTitleImageToAPI(pickedImage, "temp").then((value) => {
           setState(() {
             imageChanged = true;
           }),
@@ -58,7 +60,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Prix'),
+        title: const Text('Titre'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButton: FloatingActionButton(
@@ -66,11 +68,11 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
           showCupertinoModalPopup(
             context: context,
             builder: (BuildContext context) {
-              return const CreatePrizePage();
+              return const CreateTitlePage();
             },
           ).then((value) async {
-            await loadPrizes();
-            filterPrizes(searchController.text);
+            await loadTitles();
+            filterTitles(searchController.text);
           });
         },
         child: const Icon(Icons.add),
@@ -81,29 +83,41 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
-              onChanged: filterPrizes,
+              onChanged: filterTitles,
               decoration: const InputDecoration(
-                labelText: 'Rechercher par nom / description du prix',
+                labelText: 'Rechercher par nom du titre',
                 prefixIcon: Icon(Icons.search),
               ),
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredPrizeList.length,
+              itemCount: filteredTitleList.length,
               itemBuilder: (context, index) {
-                Prize prize = filteredPrizeList[index];
-                TextEditingController nameController = TextEditingController(text: prize.name);
-                TextEditingController descriptionController = TextEditingController(text: prize.description);
-                TextEditingController priceController = TextEditingController(text: prize.price.toString());
-                TextEditingController stockController = TextEditingController(text: prize.stock.toString());
+                UserTitle title = filteredTitleList[index];
+                TextEditingController libelleController = TextEditingController(text: title.libelle);
+                TextEditingController rulesController = TextEditingController(text: title.rules);
+                TextEditingController conditionController = TextEditingController(text: title.condition);
 
                 final formKey = GlobalKey<FormState>();
 
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ExpansionTile(
-                    title: Text(prize.name),
+                    leading: SizedBox(
+                      width: 50,
+                      child: AspectRatio(
+                        aspectRatio: 1, // Aspect ratio 1:1 for square image
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.network(
+                            "${title.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    title: Text(title.libelle, style: TextStyle(color: title.rarity.color),),
                     children: [
                       Form(
                         key: formKey,
@@ -113,20 +127,20 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextFormField(
-                                controller: nameController,
-                                onChanged: (value) => prize.name = value,
-                                decoration: const InputDecoration(labelText: 'Nom du prix'),
+                                controller: libelleController,
+                                onChanged: (value) => title.libelle = value,
+                                decoration: const InputDecoration(labelText: 'Nom du titre'),
                                 validator:  (value) {
                                   if (value!.isEmpty) {
-                                    return 'Merci d\'entrer le nom du prix';
+                                    return 'Merci d\'entrer le nom du titre';
                                   }
                                   return null;
                                 },
                               ),
                               const SizedBox(height: 8.0),
                               TextFormField(
-                                controller: descriptionController,
-                                onChanged: (value) => prize.description = value,
+                                controller: rulesController,
+                                onChanged: (value) => title.rules = value,
                                 decoration: const InputDecoration(labelText: 'Description'),
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
@@ -134,60 +148,57 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                               ),
                               const SizedBox(height: 8.0),
                               TextFormField(
-                                controller: priceController,
-                                onChanged: (value) => prize.price = double.tryParse(value) ?? 0,
-                                decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
-                                keyboardType: TextInputType.number,
+                                controller: conditionController,
+                                onChanged: (value) => title.condition = value,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                decoration: const InputDecoration(labelText: 'Condition'),
                                 validator: (value) {
                                   if (value!.isEmpty) {
-                                    return 'Merci d\'entrer le prix du prix';
+                                    return 'Merci d\'entrer les conditions du titre';
                                   }
-                                  if (double.tryParse(value) == null) {
-                                    return 'Le prix doit être un nombre';
+                                  return null;
+                                },
+                              ),
+                              DropdownButtonFormField<Rarity>(
+                                value: title.rarity,
+                                onChanged: (Rarity? newValue) {
+                                  setState(() {
+                                    title.rarity = newValue ?? Rarity.common;
+                                  });
+                                },
+                                items: Rarity.values.map((Rarity rarity) {
+                                  return DropdownMenuItem<Rarity>(
+                                    value: rarity,
+                                    child: Text(rarity.displayString, style: const TextStyle(fontFamily: "Nexa"),),
+                                  );
+                                }).toList(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Rareté',
+                                  border: UnderlineInputBorder(),
+                                ),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Veuillez choisir une rareté';
                                   }
                                   return null;
                                 },
                               ),
                               const SizedBox(height: 8.0),
-                              TextFormField(
-                                controller: stockController,
-                                onChanged: (value) => prize.stock = int.tryParse(value) ?? 0,
-                                decoration: const InputDecoration(labelText: 'Stock'),
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Merci d\'entrer le stock du prix';
-                                  }
-                                  if (int.tryParse(value) == null) {
-                                    return 'Le stock doit être un entier';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 8.0),
-                              if (!imageChanged && prize.image != "")
+                              if (!imageChanged && title.image != "")
                                 Center(
                                   child: SizedBox(
                                     height: 200,
                                     child: AspectRatio(
-                                    aspectRatio: 1, // Aspect ratio 1:1 for square image
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(50),
-                                      child: Image.network(
-                                        "${prize.image}?random=${DateTime.now().millisecondsSinceEpoch}",
-                                        fit: BoxFit.cover,
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          } else {
-                                            return const Center(
-                                              child: CircularProgressIndicator(),
-                                            );
-                                          }
-                                        },
+                                      aspectRatio: 1,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Image.network(
+                                          "${title.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                                                  ),
                                   ),
                                 ),
                               if (imageChanged)
@@ -199,16 +210,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(50),
                                         child: Image.network(
-                                          "https://obsolete-events.com/turbo-market/app/images/prizes/temp?random=${DateTime.now().millisecondsSinceEpoch}",
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) {
-                                              return child;
-                                            } else {
-                                              return const Center(
-                                                child: CircularProgressIndicator(),
-                                              );
-                                            }
-                                          },
+                                          "https://obsolete-events.com/turbo-market/app/images/titles/temp?random=${DateTime.now().millisecondsSinceEpoch}",
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -228,12 +230,12 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                                     icon: const Icon(Icons.save),
                                     onPressed: () => {
                                       if (formKey.currentState!.validate())
-                                        updatePrizeManage(prize)
+                                        updateTitleManage(title)
                                     },
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.delete),
-                                    onPressed: () => showDeleteConfirmationDialog(prize),
+                                    onPressed: () => showDeleteConfirmationDialog(title),
                                   ),
                                 ],
                               )
@@ -252,40 +254,40 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
     );
   }
 
-  void updatePrizeManage(Prize prize) async {
-    updatePrize(prize).then((res) => {
+  void updateTitleManage(UserTitle title) async {
+    updateTitle(title).then((res) => {
       if (res) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Prix mis à jour avec succès")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Titre mis à jour avec succès")))
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du prix")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du titre")))
       },
       if (imageChanged) {
-          updatePrizeImage(prize.id).then((res) =>  {
+        updateTitleImage(title.id).then((res) =>  {
         if (res) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image mise à jour")))
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de l'image")))
         }
-      }),
-      setState(() {
-        imageChanged = false;
-      }),
-    }
+        }),
+        setState(() {
+          imageChanged = false;
+        }),
+      }
     });
   }
 
-  void showDeleteConfirmationDialog(Prize prize) {
+  void showDeleteConfirmationDialog(UserTitle title) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmation de suppression'),
-          content: Text('Êtes-vous sûr de vouloir supprimer le prix ${prize.name} ?'),
+          content: Text('Êtes-vous sûr de vouloir supprimer le titre ${title.libelle} ?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Ferme le dialogue
-                deletePrizeManage(prize);
+                deleteTitleManage(title);
               },
               child: const Text('Oui',style: TextStyle(color: Colors.red),),
             ),
@@ -301,17 +303,17 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
     );
   }
 
-  void deletePrizeManage(Prize prize) {
-    deletePrize(prize).then((res) => {
+  void deleteTitleManage(UserTitle title) {
+    deleteTitle(title).then((res) => {
       if (res) {
         setState(() {
-          prizeList.remove(prize);
-          filteredPrizeList.remove(prize);
+          titleList.remove(title);
+          filteredTitleList.remove(title);
           imageChanged = false;
         }),
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Prix supprimé avec succès")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Titre supprimé avec succès")))
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du prix")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du titre")))
       }
     });
   }

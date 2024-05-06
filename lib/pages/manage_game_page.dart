@@ -284,20 +284,20 @@ class _GameManagementPageState extends State<GameManagementPage> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Jeu mis à jour avec succès")))
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du jeu")))
-      }
-    });
-    if (imageChanged) {
-      updateGameImage(game.id).then((res) =>  {
+      },
+      if (imageChanged) {
+          updateGameImage(game.id).then((res) =>  {
         if (res) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image mise à jour")))
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de l'image")))
         }
-      });
+      }),
       setState(() {
         imageChanged = false;
-      });
+      }),
     }
+    });
   }
 
   void showDeleteConfirmationDialog(Game game) {

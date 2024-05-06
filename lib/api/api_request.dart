@@ -5,6 +5,7 @@ import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/game.dart';
 import 'package:turbo_market/type/level.dart';
 import 'package:turbo_market/type/payment_method.dart';
+import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/transaction.dart';
 import 'package:turbo_market/type/user.dart';
@@ -638,4 +639,90 @@ Future<List<UserTitle>> getAllTitles() async {
     return titles;
   }
   return [];
+}
+
+Future<bool> updateTitle(UserTitle title) async {
+  http.Response response = await http.put(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "tit_id": title.id.toString(),
+        "tit_libelle": title.libelle,
+        "tit_condition": title.condition,
+        "tit_rarity": title.rarity.displayString,
+        "tit_image": title.image,
+        "tit_rules": title.rules,
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> deleteTitle(UserTitle title) async {
+  http.Response response = await http.delete(
+    Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}&tit_id=${title.id}"),
+  );
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> insertTitle(UserTitle title) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/create_title?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "tit_id": title.id.toString(),
+        "tit_libelle": title.libelle,
+        "tit_condition": title.condition,
+        "tit_rarity": title.rarity.displayString,
+        "tit_image": title.image,
+        "tit_rules": title.rules,
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> uploadTitleImageToAPI(XFile imageFile, String name) async {
+  try {
+    Uint8List bytes = await imageFile.readAsBytes();
+    http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
+      'image',
+      bytes,
+      filename: name,
+    );
+    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_title?api_key=${AppConfig.apiKey}'));
+    formData.files.add(multipartFile);
+    http.StreamedResponse response = await formData.send();
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+}
+
+Future<bool> updateTitleImage(int titleId) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/update_title_image?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "tit_id": titleId.toString(),
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
 }
