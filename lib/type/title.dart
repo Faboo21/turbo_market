@@ -6,7 +6,6 @@ import 'package:turbo_market/type/user.dart';
 class UserTitle {
   final int id;
   String libelle;
-  String color;
   String image;
   Rarity rarity;
   String condition;
@@ -15,7 +14,6 @@ class UserTitle {
   UserTitle({
     required this.id,
     required this.libelle,
-    required this.color,
     required this.image,
     required this.rarity,
     required this.condition,
@@ -26,7 +24,6 @@ class UserTitle {
     return UserTitle(
       id: int.parse(json['tit_id']),
       libelle: json['tit_libelle'],
-      color: json['tit_color'],
       image: json['tit_image'],
       rarity: json['tit_rarity'].toString().stringToRarity(),
       condition: json['tit_condition'],

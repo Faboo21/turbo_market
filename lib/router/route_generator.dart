@@ -4,12 +4,13 @@ import 'package:turbo_market/pages/add_member_page.dart';
 import 'package:turbo_market/pages/game_choice_page.dart';
 import 'package:turbo_market/pages/manage_game_page.dart';
 import 'package:turbo_market/pages/manage_levels_page.dart';
-import 'package:turbo_market/pages/manage_payment_method.dart';
+import 'package:turbo_market/pages/manage_payment_method_page.dart';
 import 'package:turbo_market/pages/manage_prize_page.dart';
 import 'package:turbo_market/pages/ranking_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import 'package:turbo_market/pages/connexion_page.dart';
 import 'package:turbo_market/pages/admin_page.dart';
+import 'package:turbo_market/pages/titles_page.dart';
 import 'package:turbo_market/pages/winner_page.dart';
 import 'package:turbo_market/pages/manage_balance_page.dart';
 import 'package:turbo_market/type/user.dart';
@@ -33,6 +34,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/choixGames' :
         return MaterialPageRoute(builder: (context) => const GameChoicePage());
+      case '/titles' :
+        return MaterialPageRoute(builder: (context) => const TitlesPage());
       case '/admin' :
         return MaterialPageRoute(builder: (context) => const AdminPage());
       case '/stats' :

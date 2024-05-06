@@ -85,14 +85,12 @@ class _HomePageState extends State<HomePage> {
                       playerList[i] = null;
                     }
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Partie terminée avec succès")));
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour des soldes")));
                 }
             } : () async {
               dynamic result = await Navigator.pushNamed(context, "/reward", arguments: playerList[0]);
               if (result != null && result is bool && result == true) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Recuperation du gain réussi')));
                 setState(() {
                   isPlaying = false;
                   for (int i = 0; i < playerList.length; i++) {

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum Rarity {
   common,
   uncommon,
@@ -22,6 +24,23 @@ extension RarityExtension on Rarity {
         return 4;
       case Rarity.legendary:
         return 5;
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case Rarity.common:
+        return Colors.grey;
+      case Rarity.uncommon:
+        return Colors.lightGreenAccent;
+      case Rarity.rare:
+        return Colors.blue;
+      case Rarity.epic:
+        return Colors.purpleAccent;
+      case Rarity.mythical:
+        return Colors.redAccent;
+      case Rarity.legendary:
+        return Colors.yellowAccent;
     }
   }
 

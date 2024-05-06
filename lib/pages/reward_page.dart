@@ -55,20 +55,23 @@ class _RewardPageState extends State<RewardPage> {
       ListView.builder(
         itemCount: levelslist.length,
         itemBuilder: (context, index) {
+          Level level = levelslist[index];
           return Card(
             child: ListTile(
-              title: levelslist[index].libelle == "" ? Text("${levelslist[index].step.toString()} : ${levelslist[index].cashPrize * AppConfig.rate} ƒ") : Text("${levelslist[index].step.toString()} : ${levelslist[index].libelle}"),
+              trailing: Text("${level.score} points"),
+              title: level.libelle == "" ? Text("${level.step.toString()} : ${level.cashPrize * AppConfig.rate} ƒ") : Text("${level.step.toString()} : ${level.libelle}"),
               onTap: () async {
-                Game game = await getGameById(levelslist[index].gameId);
-                bool res2 = await addPlays(AppConfig.game, levelslist[index].step, widget.selectedUser.id);
+                Game game = await getGameById(level.gameId);
+                bool res2 = await addPlays(AppConfig.game, level.step, widget.selectedUser.id);
                 bool res1 = false;
                 if (res2) {
-                  if (levelslist[index].libelle == "") {
-                    res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + levelslist[index].cashPrize - game.price);
+                  if (level.libelle == "") {
+                    res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + level.cashPrize - game.price);
                   } else {
                     res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - game.price);
                   }
                 }
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gain : ${level.libelle == "" ? "${level.cashPrize * AppConfig.rate} ƒ" : level.libelle} + ${level.score} points")));
                 Navigator.pop(context, res1 && res2);
               },
             ),

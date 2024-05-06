@@ -1,10 +1,9 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
+import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/title.dart';
 
@@ -26,7 +25,7 @@ class _RankingPageState extends State<RankingPage> {
 
   TextEditingController searchController = TextEditingController();
   String selectedGame = "All Games";
-  String selectedTimeRange = '24h';
+  String selectedTimeRange = 'All time';
   String sortedBy = 'Score';
 
   @override
@@ -197,6 +196,13 @@ class _RankingPageState extends State<RankingPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [IconButton(onPressed: () {Navigator.pushNamed(context, "/connexion");}, icon: const Icon(Icons.lock_person))],
       ),
+      floatingActionButton:
+        IconButton(
+          icon: const Icon(Icons.info),
+          onPressed: () {
+            Navigator.pushNamed(context, "/titles");
+          },
+        ),
       body:
         Column(
           children: [
@@ -256,7 +262,7 @@ class _RankingPageState extends State<RankingPage> {
                             });
                             _loadPlayersList();
                           },
-                          items: <String>['24h', 'All time'].map<DropdownMenuItem<String>>((String value) {
+                          items: <String>['All time', '24h'].map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(value),
@@ -338,19 +344,19 @@ class _RankingPageState extends State<RankingPage> {
                           children: [
                             for (var title in player.titles)
                               Container(
-                                constraints: const BoxConstraints(minWidth: 0, minHeight: 0), // Taille minimale
-                                padding: const EdgeInsets.all(8.0), // Ajoutez un padding pour l'espace intérieur
+                                constraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                                padding: const EdgeInsets.all(8.0),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Color(int.parse(title.color))), // Couleur de la bordure
-                                  borderRadius: BorderRadius.circular(10), // Coins arrondis
+                                  border: Border.all(color: title.rarity.color),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
-                                  mainAxisSize: MainAxisSize.min, // Pour réduire la taille du conteneur à son contenu
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     SizedBox(
                                       width: 30,
                                       child: AspectRatio(
-                                        aspectRatio: 1, // Aspect ratio 1:1 for square image
+                                        aspectRatio: 1,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(50),
                                           child: Image.network(
@@ -361,12 +367,12 @@ class _RankingPageState extends State<RankingPage> {
                                       ),
                                     ),
                                     const SizedBox(width: 5,),
-                                    Flexible( // Pour que le texte passe à la ligne s'il est trop long
+                                    Flexible(
                                       child: Text(
                                         title.libelle,
-                                        style: TextStyle(color: Color(int.parse(title.color)), fontSize: 20),
-                                        overflow: TextOverflow.ellipsis, // Tronquer le texte s'il est trop long
-                                        maxLines: 1, // Limite le nombre de lignes à une seule ligne
+                                        style: TextStyle(color: title.rarity.color, fontSize: 20),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                       ),
                                     ),
                                   ],
