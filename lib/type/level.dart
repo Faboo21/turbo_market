@@ -22,4 +22,14 @@ class Level {
       score: int.parse(json['lev_score']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'gam_id': gameId,
+      'lev_step': step,
+      'lev_cashprize': cashPrize,
+      'lev_libelle': libelle,
+      'lev_score': score,
+    };
+  }
 }

@@ -23,4 +23,14 @@ class Transaction {
       payId: int.tryParse(json['pay_id'] ?? "") ?? 0,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'usr_id': usrId,
+      'pri_id': priId,
+      'tra_time': traTime,
+      'tra_amount': traAmount,
+      'pay_id': payId,
+    };
+  }
 }

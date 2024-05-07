@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:turbo_market/api/api_request.dart';
+import 'package:turbo_market/type/game.dart';
+import 'package:turbo_market/type/level.dart';
+import 'package:turbo_market/type/prize.dart';
 import 'package:turbo_market/type/rarity.dart';
+import 'package:turbo_market/type/stats_play.dart';
+import 'package:turbo_market/type/transaction.dart';
 import 'package:turbo_market/type/user.dart';
 
 class Success {
@@ -45,53 +52,25 @@ class Success {
     );
   }
 
-  bool evaluate(User selectedUser) {
-    String userAsString = '''
-    ${selectedUser.id.toString()},
-    "${selectedUser.username}",
-    "${selectedUser.email}",
-    ${selectedUser.balance.toInt().toString()},
-    "${selectedUser.qr}"
-  ''';
-
+  bool evaluate(User selectedUser, List<StatsPlay> playsList, List<User> usersList, List<Game> gamesList, List<Level> levelsList, List<Prize> prizesList, List<Transaction> transactionsList) {
     String code = """
-    class User {
-      int id;
-      String username;
-      String email;
-      int balance;
-      String qr;
     
-      User({
-        required this.id,
-        required this.username,
-        required this.email,
-        required this.balance,
-        required this.qr,
-      });
-    }
-
-    User stringToUser(String userData) {
-      List<String> data = userData.split(',');
-      int id = int.parse(data[0]);
-      String username = data[1].trim().replaceAll('"', '');
-      String email = data[2].trim().replaceAll('"', '');
-      int balance = int.parse(data[3]);
-      String qr = data[4].trim().replaceAll('"', '');
-      
-      return User(id: id, username: username, email: email, balance: balance, qr: qr);
-    }
-
     bool check(String userData) {
       User selectedUser = stringToUser(userData);
       $condition
     }
+    
   """;
 
-    final dynamic result = eval(code, function: 'check', args: [$String(userAsString)]);
+    String jsonSelectedUser = jsonEncode(selectedUser.toJson());
+    String jsonPlaysList = jsonEncode(playsList.map((play) => play.toJson()).toList());
+    String jsonUsersList = jsonEncode(usersList.map((user) => user.toJson()).toList());
+    String jsonGamesList = jsonEncode(gamesList.map((game) => game.toJson()).toList());
+    String jsonLevelsList = jsonEncode(levelsList.map((level) => level.toJson()).toList());
+    String jsonPrizesList = jsonEncode(prizesList.map((prize) => prize.toJson()).toList());
+    String jsonTransactionsList = jsonEncode(transactionsList.map((transaction) => transaction.toJson()).toList());
 
+    final dynamic result = eval(code, function: 'check', args: [$String(jsonSelectedUser), $String(jsonPlaysList), $String(jsonUsersList), $String(jsonGamesList), $String(jsonLevelsList), $String(jsonPrizesList), $String(jsonTransactionsList),]);
     return result as bool;
   }
-
-
 }

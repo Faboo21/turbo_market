@@ -28,4 +28,16 @@ class Prize {
       stock: int.parse(json['pri_stock']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'pri_id': id,
+      'pri_name': name,
+      'pri_description': description,
+      'pri_created_at': createdAt,
+      'pri_price': price,
+      'pri_image': image,
+      'pri_stock': stock,
+    };
+  }
 }

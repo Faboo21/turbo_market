@@ -253,7 +253,7 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> {
                                     onPressed: () {
                                       bool compile = true;
                                       try {
-                                        success.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
+                                        ///success.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
                                       } catch (e) {
                                         compile = false;
                                       }

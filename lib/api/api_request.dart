@@ -96,7 +96,7 @@ Future<List<Game>> getAllGames() async {
   return [];
 }
 
-Future<List<Level>> getAllLevels(int gameId) async {
+Future<List<Level>> getAllLevelsByGame(int gameId) async {
   http.Response response = await http.get(Uri.parse(
       "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
 
@@ -108,6 +108,19 @@ Future<List<Level>> getAllLevels(int gameId) async {
     List<Level> filteredLevels =
         levels.where((level) => level.gameId == gameId).toList();
     return filteredLevels;
+  }
+  return [];
+}
+
+Future<List<Level>> getAllLevels() async {
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
+
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<Level> levels =
+    responseData.map((levelData) => Level.fromJson(levelData)).toList();
+    return levels;
   }
   return [];
 }
@@ -623,6 +636,16 @@ Future<bool> insertPaymentMethod(PaymentMethod mode) async {
 
 Future<List<Transaction>> getAllTransactions24h() async {
   http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions24h?api_key=${AppConfig.apiKey}"));
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();
+    return transactions;
+  }
+  return [];
+}
+
+Future<List<Transaction>> getAllTransactions() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?api_key=${AppConfig.apiKey}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();

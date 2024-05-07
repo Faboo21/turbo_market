@@ -25,4 +25,15 @@ class StatsPlay {
       score: int.parse(json['lev_score'])
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'gam_id': gameid,
+      'lev_step': levStep,
+      'par_time': parTime,
+      'gain': gain,
+      'usr_id': userId,
+      'lev_score': score,
+    };
+  }
 }

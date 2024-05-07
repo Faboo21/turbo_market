@@ -177,7 +177,7 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
                   onPressed: () {
                     bool compile = true;
                     try {
-                      newSuccess.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
+                      ///newSuccess.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
                     } catch (e) {
                       compile = false;
                     }

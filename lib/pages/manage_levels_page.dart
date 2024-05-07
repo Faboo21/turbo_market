@@ -25,7 +25,7 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
   }
 
   Future<void> loadLevels() async {
-    List<Level> resList = await getAllLevels(widget.game.id);
+    List<Level> resList = await getAllLevelsByGame(widget.game.id);
     setState(() {
       levelList = resList;
     });

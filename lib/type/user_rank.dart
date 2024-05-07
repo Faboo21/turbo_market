@@ -6,6 +6,7 @@ class UserRank {
   double balance;
   double mean;
   String bestGame;
+  String email;
   int nbGames;
   List<Success> success;
   int score;
@@ -19,5 +20,6 @@ class UserRank {
     required this.nbGames,
     required this.success,
     required this.score,
+    required this.email,
   });
 }

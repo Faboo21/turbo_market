@@ -26,7 +26,7 @@ class _RewardPageState extends State<RewardPage> {
   }
 
   Future<void> loadLevels() async {
-    var resLevelsList = await getAllLevels(AppConfig.game);
+    var resLevelsList = await getAllLevelsByGame(AppConfig.game);
     if (resLevelsList.length == 1) {
       Game game = await getGameById(resLevelsList[0].gameId);
       bool res2 = await addPlays(AppConfig.game, resLevelsList[0].step, widget.selectedUser.id);

@@ -6,9 +6,12 @@ import 'package:gif/gif.dart';
 import 'package:outline_gradient_button/outline_gradient_button.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
+import 'package:turbo_market/type/level.dart';
+import 'package:turbo_market/type/prize.dart';
 import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/success.dart';
+import 'package:turbo_market/type/transaction.dart';
 
 import '../type/game.dart';
 import '../type/user.dart';
@@ -89,6 +92,9 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
     List<Rarity> raritiesList = await getAllRarities();
     List<Game> games = await getAllGames();
     List<Success> successList = await getAllSuccess();
+    List<Level> levelList = await getAllLevels();
+    List<Prize> prizesList = await getAllPrizes();
+    List<Transaction> transactionsList = await getAllTransactions();
     List<String> resGamesId = List.generate(games.length, (index) => "${games[index].id} : ${games[index].name}");
     for (var user in users) {
       int nbGames = getNumberOfGames(plays, user.id);
@@ -96,7 +102,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
       String favGame = getFavoriteGame(plays, user.id, games);
       List<Success> validSuccess = [];
       for (var success in successList) {
-        if (success.evaluate(user)) {
+        if (success.evaluate(user, plays, users, games, levelList, prizesList, transactionsList)) {
           validSuccess.add(success);
         }
       }
@@ -110,7 +116,9 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                 bestGame: favGame,
                 nbGames: nbGames,
                 success: validSuccess,
-                score: score));
+                score: score,
+                email: user.email
+            ));
       });
     }
     switch (sortedBy) {

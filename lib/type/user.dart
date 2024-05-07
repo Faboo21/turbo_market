@@ -22,4 +22,14 @@ class User {
       qr: json['usr_qr'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'usr_id': id,
+      'usr_username': username,
+      'usr_email': email,
+      'usr_balance': balance,
+      'usr_qr': qr,
+    };
+  }
 }

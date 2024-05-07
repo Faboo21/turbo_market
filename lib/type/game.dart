@@ -32,4 +32,17 @@ class Game {
       image : json['gam_image'] ?? "",
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'gam_id': id.toString(),
+      'gam_name': name,
+      'gam_rules': rules,
+      'gam_created_at': createdAt,
+      'gam_price': price.toString(),
+      'gam_min_players': nbPlayersMin.toString(),
+      'gam_max_players': nbPlayersMax.toString(),
+      'gam_image': image,
+    };
+  }
 }
