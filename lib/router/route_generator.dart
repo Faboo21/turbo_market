@@ -35,8 +35,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/choixGames' :
         return MaterialPageRoute(builder: (context) => const GameChoicePage());
-      case '/titles' :
-        return MaterialPageRoute(builder: (context) => const TitlesPage());
+      case '/success' :
+        return MaterialPageRoute(builder: (context) => const SuccessPage());
       case '/admin' :
         return MaterialPageRoute(builder: (context) => const AdminPage());
       case '/stats' :
@@ -53,7 +53,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const HomePage());
       case '/manage_users' :
         return MaterialPageRoute(builder: (context) => const UserManagementPage());
-      case '/manage_titles' :
+      case '/manage_success' :
         return MaterialPageRoute(builder: (context) => const SuccessManagementPage());
       case '/manage_payment_method' :
         return MaterialPageRoute(builder: (context) => const PaymentMethodManagementPage());

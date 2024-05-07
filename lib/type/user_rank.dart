@@ -7,7 +7,7 @@ class UserRank {
   double mean;
   String bestGame;
   int nbGames;
-  List<Success> titles;
+  List<Success> success;
   int score;
 
   UserRank({
@@ -17,7 +17,7 @@ class UserRank {
     required this.mean,
     required this.bestGame,
     required this.nbGames,
-    required this.titles,
+    required this.success,
     required this.score,
   });
 }

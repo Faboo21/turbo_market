@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
 import '../type/success.dart';
 
-class TitlesPage extends StatefulWidget {
-  const TitlesPage({super.key});
+class SuccessPage extends StatefulWidget {
+  const SuccessPage({super.key});
 
   @override
-  State<TitlesPage> createState() => _TitlesPageState();
+  State<SuccessPage> createState() => _SuccessPageState();
 }
 
-class _TitlesPageState extends State<TitlesPage> {
-  List<Success> _titles = [];
+class _SuccessPageState extends State<SuccessPage> {
+  List<Success> successList = [];
 
   @override
   void initState() {
-    _loadTitles();
+    _loadSuccess();
     super.initState();
   }
 
-  Future<void> _loadTitles() async {
-    List<Success> titles = await getAllSuccess();
-    titles.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
+  Future<void> _loadSuccess() async {
+    List<Success> success = await getAllSuccess();
+    success.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
     setState(() {
-      _titles = titles;
+      successList = success;
     });
   }
 
@@ -32,14 +32,14 @@ class _TitlesPageState extends State<TitlesPage> {
       appBar: AppBar(
         title: const Text('Succès'),
       ),
-      body: _titles.isEmpty
+      body: successList.isEmpty
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : ListView.builder(
-              itemCount: _titles.length,
+              itemCount: successList.length,
               itemBuilder: (context, index) {
-                Success title = _titles[index];
+                Success success = successList[index];
                 return ExpansionTile(
                   leading: SizedBox(
                     width: 50,
@@ -48,17 +48,17 @@ class _TitlesPageState extends State<TitlesPage> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(50),
                         child: Image.network(
-                          title.image,
+                          success.image,
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
                   ),
-                  title: Text(title.libelle, style: TextStyle(color: title.rarity.displayColor),),
+                  title: Text(success.libelle, style: TextStyle(color: success.rarity.displayColor),),
                   children: [
                     ListTile(
-                      title: Text('Rareté: ${title.rarity.libelle}'),
-                      subtitle: Text('Obtention: ${title.rules}'),
+                      title: Text('Rareté: ${success.rarity.libelle}'),
+                      subtitle: Text('Obtention: ${success.rules}'),
                     ),
                   ],
                 );

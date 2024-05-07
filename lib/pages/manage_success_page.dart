@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gradient_animation_text/flutter_gradient_animation_text.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/rarity.dart';
@@ -122,7 +123,22 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> {
                         ),
                       ),
                     ),
-                    title: Text(success.libelle, style: TextStyle(color: success.rarity.displayColor),),
+                    title: success.rarity.id != rarities.last.id ? Text(success.libelle, style: TextStyle(color: success.rarity.displayColor),) :
+                    GradientAnimationText(
+                      text: Text(
+                        success.libelle,
+                      ),
+                      colors: const [
+                        Color(0xff8f00ff),  // violet
+                        Colors.indigo,
+                        Colors.blue,
+                        Colors.green,
+                        Colors.yellow,
+                        Colors.orange,
+                        Colors.red,
+                      ],
+                      duration: const Duration(seconds: 2),
+                    ),
                     children: [
                       Form(
                         key: formKey,

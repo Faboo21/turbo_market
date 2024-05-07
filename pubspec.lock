@@ -230,6 +230,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  flutter_glow:
+    dependency: "direct main"
+    description:
+      name: flutter_glow
+      sha256: "158f041ddbc18f199dcfd9375d40b983a2bf887752598cdf7b41ac6ff36362bf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
+  flutter_gradient_animation_text:
+    dependency: "direct main"
+    description:
+      name: flutter_gradient_animation_text
+      sha256: "0e144ecfae2c77da8444a56fcd17b2c6490e4b22a6fd32668fc581202ba02e91"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -272,6 +288,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  gif:
+    dependency: "direct main"
+    description:
+      name: gif
+      sha256: ade95694f1471da737922806818ffade2814d1d7f8d10af38ebcf36ace012bc0
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
   glob:
     dependency: transitive
     description:
@@ -480,6 +504,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  outline_gradient_button:
+    dependency: "direct main"
+    description:
+      name: outline_gradient_button
+      sha256: "006673015f090c314d7a14b41216ed984b21e8b55d0c8eb502d93e0bbd6b65ba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1+1"
   package_config:
     dependency: transitive
     description:

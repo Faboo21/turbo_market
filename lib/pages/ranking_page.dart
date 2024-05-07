@@ -1,8 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gradient_animation_text/flutter_gradient_animation_text.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:gif/gif.dart';
+import 'package:outline_gradient_button/outline_gradient_button.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
+import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/success.dart';
 
@@ -17,18 +21,24 @@ class RankingPage extends StatefulWidget {
   State<RankingPage> createState() => _RankingPageState();
 }
 
-class _RankingPageState extends State<RankingPage> {
+class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin {
   List<UserRank> playersList = [];
   List<UserRank> filteredPlayersList = [];
   List<String> gamesList = [];
+  List<Rarity> rarities = [];
 
   TextEditingController searchController = TextEditingController();
   String selectedGame = "All Games";
   String selectedTimeRange = 'All time';
   String sortedBy = 'Score';
 
+  late GifController _controller;
+
   @override
   void initState() {
+    setState(() {
+      _controller = GifController(vsync: this);
+    });
     _loadPlayersList();
     super.initState();
   }
@@ -76,19 +86,21 @@ class _RankingPageState extends State<RankingPage> {
       plays = await getAllStatsPlays();
     }
     List<User> users = await getAllUsers();
+    List<Rarity> raritiesList = await getAllRarities();
     List<Game> games = await getAllGames();
-    List<Success> titles = await getAllSuccess();
+    List<Success> successList = await getAllSuccess();
     List<String> resGamesId = List.generate(games.length, (index) => "${games[index].id} : ${games[index].name}");
     for (var user in users) {
       int nbGames = getNumberOfGames(plays, user.id);
       int score = getScore(plays, user.id);
       String favGame = getFavoriteGame(plays, user.id, games);
-      List<Success> validTitles = [];
-      for (var title in titles) {
-        if (title.evaluate(user)) {
-          validTitles.add(title);
+      List<Success> validSuccess = [];
+      for (var success in successList) {
+        if (success.evaluate(user)) {
+          validSuccess.add(success);
         }
       }
+      validSuccess.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
       setState(() {
         playersList.add(
             UserRank(id: user.id,
@@ -97,7 +109,7 @@ class _RankingPageState extends State<RankingPage> {
                 mean: score/(nbGames == 0 ? 1 : nbGames),
                 bestGame: favGame,
                 nbGames: nbGames,
-                titles: validTitles,
+                success: validSuccess,
                 score: score));
       });
     }
@@ -117,6 +129,7 @@ class _RankingPageState extends State<RankingPage> {
     }
     setState(() {
       filteredPlayersList = playersList;
+      rarities = raritiesList;
     });
     setState(() {
       gamesList = ["All Games"] + resGamesId;
@@ -199,7 +212,7 @@ class _RankingPageState extends State<RankingPage> {
         IconButton(
           icon: const Icon(Icons.info),
           onPressed: () {
-            Navigator.pushNamed(context, "/titles");
+            Navigator.pushNamed(context, "/success");
           },
         ),
       body:
@@ -335,18 +348,19 @@ class _RankingPageState extends State<RankingPage> {
                         title: Text('Nombre de parties: ${player.nbGames.toString()}', style: const TextStyle(fontSize: 15),),
                         trailing: Text('Moyenne: ${player.mean.toStringAsFixed(2)}', style: const TextStyle(fontSize: 15),),
                       ),
-                      if (player.titles.isNotEmpty) ListTile(
+                      if (player.success.isNotEmpty) ListTile(
                         title: const Text('Succès:'),
                         subtitle: Wrap(
                           spacing: 8.0, // Espace entre chaque élément dans la ligne
                           runSpacing: 8.0, // Espace entre les lignes
                           children: [
-                            for (var title in player.titles)
+                            for (var success in player.success) ...[
+                              success.rarity.id != rarities.last.id ?
                               Container(
                                 constraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                                 padding: const EdgeInsets.all(8.0),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: title.rarity.displayColor),
+                                  border: Border.all(color: success.rarity.displayColor),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
@@ -359,7 +373,7 @@ class _RankingPageState extends State<RankingPage> {
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(50),
                                           child: Image.network(
-                                            title.image,
+                                            success.image,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -368,15 +382,85 @@ class _RankingPageState extends State<RankingPage> {
                                     const SizedBox(width: 5,),
                                     Flexible(
                                       child: Text(
-                                        title.libelle,
-                                        style: TextStyle(color: title.rarity.displayColor, fontSize: 20),
+                                        success.libelle,
+                                        style: TextStyle(color: success.rarity.displayColor, fontSize: 20),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
+                              ) : OutlineGradientButton(
+                                  gradient: SweepGradient(
+                                    colors: List.generate(360, (h) => HSLColor.fromAHSL(1, h.toDouble(), 1, 0.5).toColor()),
+                                  ),
+                                  strokeWidth: 3,
+                                  padding: const EdgeInsets.all(8.0),
+                                  radius: const Radius.circular(10),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Stack(
+                                          children: [
+                                            SizedBox(
+                                              width: 30,
+                                              child: AspectRatio(
+                                                aspectRatio: 1,
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(50),
+                                                  child: Image.network(
+                                                    success.image,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 30,
+                                              child: SizedBox(
+                                                height: 30,
+                                                width: 30,
+                                                child:
+
+                                                  Gif(
+                                                  image: const AssetImage("images/giphy.gif"),
+                                                  controller: _controller, // if duration and fps is null, original gif fps will be used.
+                                                  //fps: 30,
+                                                  //duration: const Duration(seconds: 3),
+                                                  autostart: Autostart.loop,
+                                                  placeholder: (context) => const Text('Loading...'),
+                                                  onFetchCompleted: () {
+                                                    _controller.reset();
+                                                    _controller.forward();
+                                                  },
+                                                  ),
+                                              ),
+                                            )
+                                          ]
+                                      ),
+                                      const SizedBox(width: 5,),
+                                      Flexible(
+
+                                        child: GradientAnimationText(
+                                          text: Text(
+                                            success.libelle,
+                                          ),
+                                          colors: const [
+                                            Color(0xff8f00ff),  // violet
+                                            Colors.indigo,
+                                            Colors.blue,
+                                            Colors.green,
+                                            Colors.yellow,
+                                            Colors.orange,
+                                            Colors.red,
+                                          ],
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
                           ],
                         ),
                       )

@@ -48,11 +48,11 @@ class _AdminPageState extends State<AdminPage> {
               const Divider(),
               ListTile(
                   onTap: () {
-                    Navigator.pushNamed(context, "/manage_titles");
+                    Navigator.pushNamed(context, "/manage_success");
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
                   leading: const Icon(Icons.title),
-                  title: const Text("Titres")
+                  title: const Text("Succès")
               ),
               const Divider(),
               ListTile(
