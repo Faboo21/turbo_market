@@ -2,35 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/user.dart';
-import '../type/title.dart';
+import '../type/success.dart';
 import 'package:image_picker/image_picker.dart';
 
 
-class CreateTitlePage extends StatefulWidget {
-  const CreateTitlePage({super.key});
+class CreateSuccessPage extends StatefulWidget {
+  const CreateSuccessPage({super.key});
 
   @override
-  State<CreateTitlePage> createState() => _CreateTitlePageState();
+  State<CreateSuccessPage> createState() => _CreateSuccessPageState();
 }
 
-class _CreateTitlePageState extends State<CreateTitlePage> {
+class _CreateSuccessPageState extends State<CreateSuccessPage> {
   TextEditingController libelleController = TextEditingController();
   TextEditingController rulesController = TextEditingController();
   TextEditingController conditionController = TextEditingController();
 
-  UserTitle newTitle = UserTitle(id: 0, libelle: "libelle", image: "", rarity: Rarity.common, condition: "condition", rules: "rules");
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool imageChanged = false;
+  List<Rarity> rarities = [];
+  late Success newSuccess;
+
+  @override
+  void initState() {
+    loadRarities().then((value) => super.initState());
+  }
+
+  Future<void> loadRarities() async {
+    List<Rarity> temp = await getAllRarities();
+    setState(() {
+      rarities = temp;
+      newSuccess = Success(id: 0, libelle: "libelle", image: "", rarity: temp.first, condition: "condition", rules: "rules");
+    });
+  }
 
   Future<void> _pickImageFromGallery() async {
     ImagePicker().pickImage(source: ImageSource.gallery).then((pickedImage) => {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Upload en cours"))),
       if (pickedImage != null) {
-        uploadTitleImageToAPI(pickedImage, "temp").then((value) => {
+        uploadSuccessImageToAPI(pickedImage, "temp").then((value) => {
           setState(() {
             imageChanged = true;
-            newTitle.image = "true";
+            newSuccess.image = "true";
           }),
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image téléversée")))
         })
@@ -42,7 +56,7 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Créer un titre'),
+        title: const Text('Créer un succès'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -55,11 +69,11 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
               children: [
                 TextFormField(
                   controller: libelleController,
-                  onChanged: (value) => newTitle.libelle = value,
-                  decoration: const InputDecoration(labelText: 'Nom du titre'),
+                  onChanged: (value) => newSuccess.libelle = value,
+                  decoration: const InputDecoration(labelText: 'Nom du succès'),
                   validator:  (value) {
                     if (value!.isEmpty) {
-                      return 'Merci d\'entrer le nom du titre';
+                      return 'Merci d\'entrer le nom du succès';
                     }
                     return null;
                   },
@@ -67,7 +81,7 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
                 const SizedBox(height: 8.0),
                 TextFormField(
                   controller: rulesController,
-                  onChanged: (value) => newTitle.rules = value,
+                  onChanged: (value) => newSuccess.rules = value,
                   decoration: const InputDecoration(labelText: 'Regles'),
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
@@ -83,28 +97,28 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
                 TextFormField(
                   style: const TextStyle(fontFamily: "Nexa"),
                   controller: conditionController,
-                  onChanged: (value) => newTitle.condition = value,
+                  onChanged: (value) => newSuccess.condition = value,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   decoration: const InputDecoration(labelText: 'Condition'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Merci d\'entrer les conditions du titre';
+                      return 'Merci d\'entrer les conditions du succès';
                     }
                     return null;
                   },
                 ),
                 DropdownButtonFormField<Rarity>(
-                  value: newTitle.rarity,
+                  value: newSuccess.rarity,
                   onChanged: (Rarity? newValue) {
                     setState(() {
-                      newTitle.rarity = newValue ?? Rarity.common;
+                      newSuccess.rarity = newValue!;
                     });
                   },
-                  items: Rarity.values.map((Rarity rarity) {
+                  items: rarities.map((Rarity rarity) {
                     return DropdownMenuItem<Rarity>(
                       value: rarity,
-                      child: Text(rarity.displayString, style: TextStyle(color: rarity.color),),
+                      child: Text(rarity.libelle, style: TextStyle(color: rarity.displayColor),),
                     );
                   }).toList(),
                   decoration: const InputDecoration(
@@ -119,7 +133,7 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
                   },
                 ),
                 const SizedBox(height: 8.0),
-                if (!imageChanged && newTitle.image != "")
+                if (!imageChanged && newSuccess.image != "")
                   Center(
                     child: SizedBox(
                       height: 200,
@@ -128,7 +142,7 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50),
                           child: Image.network(
-                            "${newTitle.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                            "${newSuccess.image}?random=${DateTime.now().millisecondsSinceEpoch}",
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -163,23 +177,23 @@ class _CreateTitlePageState extends State<CreateTitlePage> {
                   onPressed: () {
                     bool compile = true;
                     try {
-                      newTitle.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
+                      newSuccess.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
                     } catch (e) {
                       compile = false;
                     }
                     if (_formKey.currentState!.validate() && imageChanged == true) {
                       if (compile) {
-                        insertTitle(
-                          newTitle
+                        insertSuccess(
+                          newSuccess
                         ).then((success) {
                           if (success) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Titre créé avec succès')),
+                              const SnackBar(content: Text('Succès créé avec succès')),
                             );
                             Navigator.pop(context);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Erreur lors de la création du titre')),
+                              const SnackBar(content: Text('Erreur lors de la création du succès')),
                             );
                           }
                         });

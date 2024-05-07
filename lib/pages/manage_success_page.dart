@@ -3,43 +3,46 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/rarity.dart';
-import 'package:turbo_market/type/title.dart';
+import 'package:turbo_market/type/success.dart';
 import 'package:turbo_market/type/user.dart';
 
-import '../dialogs/create_title_modale.dart';
+import '../dialogs/create_success_modale.dart';
 
-class TitleManagementPage extends StatefulWidget {
-  const TitleManagementPage({super.key});
+class SuccessManagementPage extends StatefulWidget {
+  const SuccessManagementPage({super.key});
 
   @override
-  State<TitleManagementPage> createState() => _TitleManagementPageState();
+  State<SuccessManagementPage> createState() => _SuccessManagementPageState();
 }
 
-class _TitleManagementPageState extends State<TitleManagementPage> {
-  List<UserTitle> titleList = [];
-  List<UserTitle> filteredTitleList = [];
+class _SuccessManagementPageState extends State<SuccessManagementPage> {
+  List<Success> successList = [];
+  List<Success> filteredSuccessList = [];
 
   TextEditingController searchController = TextEditingController();
   bool imageChanged = false;
+  List<Rarity> rarities = [];
 
   @override
   void initState() {
-    loadTitles();
+    loadSuccess();
     super.initState();
   }
 
-  Future<void> loadTitles() async {
-    List<UserTitle> resList = await getAllTitles();
+  Future<void> loadSuccess() async {
+    List<Rarity> resRarities = await getAllRarities();
+    List<Success> resList = await getAllSuccess();
     setState(() {
-      titleList = resList;
-      filteredTitleList = titleList;
+      rarities = resRarities;
+      successList = resList;
+      filteredSuccessList = successList;
     });
   }
 
-  void filterTitles(String query) {
-    List<UserTitle> filteredTitles = titleList.where((title) => title.libelle.toLowerCase().contains(query.toLowerCase())).toList();
+  void filterSuccess(String query) {
+    List<Success> filteredSuccess = successList.where((success) => success.libelle.toLowerCase().contains(query.toLowerCase())).toList();
     setState(() {
-      filteredTitleList = filteredTitles;
+      filteredSuccessList = filteredSuccess;
     });
   }
 
@@ -47,7 +50,7 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
     ImagePicker().pickImage(source: ImageSource.gallery).then((pickedImage) => {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Upload en cours"))),
       if (pickedImage != null) {
-        uploadTitleImageToAPI(pickedImage, "temp").then((value) => {
+        uploadSuccessImageToAPI(pickedImage, "temp").then((value) => {
           setState(() {
             imageChanged = true;
           }),
@@ -61,7 +64,7 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Titre'),
+        title: const Text('Succès'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButton: FloatingActionButton(
@@ -69,11 +72,11 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
           showCupertinoModalPopup(
             context: context,
             builder: (BuildContext context) {
-              return const CreateTitlePage();
+              return const CreateSuccessPage();
             },
           ).then((value) async {
-            await loadTitles();
-            filterTitles(searchController.text);
+            await loadSuccess();
+            filterSuccess(searchController.text);
           });
         },
         child: const Icon(Icons.add),
@@ -84,23 +87,24 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
-              onChanged: filterTitles,
+              onChanged: filterSuccess,
               decoration: const InputDecoration(
-                labelText: 'Rechercher par nom du titre',
+                labelText: 'Rechercher par nom du Succès',
                 prefixIcon: Icon(Icons.search),
               ),
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredTitleList.length,
+              itemCount: filteredSuccessList.length,
               itemBuilder: (context, index) {
-                UserTitle title = filteredTitleList[index];
-                TextEditingController libelleController = TextEditingController(text: title.libelle);
-                TextEditingController rulesController = TextEditingController(text: title.rules);
-                TextEditingController conditionController = TextEditingController(text: title.condition);
+                Success success = filteredSuccessList[index];
+                TextEditingController libelleController = TextEditingController(text: success.libelle);
+                TextEditingController rulesController = TextEditingController(text: success.rules);
+                TextEditingController conditionController = TextEditingController(text: success.condition);
 
                 final formKey = GlobalKey<FormState>();
+                success.rarity = rarities.firstWhere((element) => element.id == success.rarity.id, orElse: () => rarities.first);
 
                 return Card(
                   margin: const EdgeInsets.all(8.0),
@@ -112,13 +116,13 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50),
                           child: Image.network(
-                            "${title.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                            "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
                     ),
-                    title: Text(title.libelle, style: TextStyle(color: title.rarity.color),),
+                    title: Text(success.libelle, style: TextStyle(color: success.rarity.displayColor),),
                     children: [
                       Form(
                         key: formKey,
@@ -129,11 +133,11 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                             children: [
                               TextFormField(
                                 controller: libelleController,
-                                onChanged: (value) => title.libelle = value,
-                                decoration: const InputDecoration(labelText: 'Nom du titre'),
+                                onChanged: (value) => success.libelle = value,
+                                decoration: const InputDecoration(labelText: 'Nom du Succès'),
                                 validator:  (value) {
                                   if (value!.isEmpty) {
-                                    return 'Merci d\'entrer le nom du titre';
+                                    return 'Merci d\'entrer le nom du Succès';
                                   }
                                   return null;
                                 },
@@ -141,7 +145,7 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                               const SizedBox(height: 8.0),
                               TextFormField(
                                 controller: rulesController,
-                                onChanged: (value) => title.rules = value,
+                                onChanged: (value) => success.rules = value,
                                 decoration: const InputDecoration(labelText: 'Regles'),
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
@@ -151,28 +155,28 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                               TextFormField(
                                 style: const TextStyle(fontFamily: "Nexa"),
                                 controller: conditionController,
-                                onChanged: (value) => title.condition = value,
+                                onChanged: (value) => success.condition = value,
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
                                 decoration: const InputDecoration(labelText: 'Condition'),
                                 validator: (value) {
                                   if (value!.isEmpty) {
-                                    return 'Merci d\'entrer les conditions du titre';
+                                    return 'Merci d\'entrer les conditions du Succès';
                                   }
                                   return null;
                                 },
                               ),
                               DropdownButtonFormField<Rarity>(
-                                value: title.rarity,
+                                value: success.rarity,
                                 onChanged: (Rarity? newValue) {
                                   setState(() {
-                                    title.rarity = newValue ?? Rarity.common;
+                                    success.rarity = newValue ?? success.rarity;
                                   });
                                 },
-                                items: Rarity.values.map((Rarity rarity) {
+                                items: rarities.map((Rarity rarity) {
                                   return DropdownMenuItem<Rarity>(
                                     value: rarity,
-                                    child: Text(rarity.displayString, style: TextStyle(color: rarity.color),),
+                                    child: Text(rarity.libelle, style: TextStyle(color: rarity.displayColor),),
                                   );
                                 }).toList(),
                                 decoration: const InputDecoration(
@@ -187,7 +191,7 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                                 },
                               ),
                               const SizedBox(height: 8.0),
-                              if (!imageChanged && title.image != "")
+                              if (!imageChanged && success.image != "")
                                 Center(
                                   child: SizedBox(
                                     height: 200,
@@ -196,7 +200,7 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(50),
                                         child: Image.network(
-                                          "${title.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                          "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -233,13 +237,13 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                                     onPressed: () {
                                       bool compile = true;
                                       try {
-                                        title.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
+                                        success.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
                                       } catch (e) {
                                         compile = false;
                                       }
                                       if (formKey.currentState!.validate()) {
                                         if (compile) {
-                                          updateTitleManage(title);
+                                          updateSuccessManage(success);
                                         } else {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             const SnackBar(content: Text('Le code ne compile pas')),
@@ -250,7 +254,7 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.delete),
-                                    onPressed: () => showDeleteConfirmationDialog(title),
+                                    onPressed: () => showDeleteConfirmationDialog(success),
                                   ),
                                 ],
                               )
@@ -269,15 +273,15 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
     );
   }
 
-  void updateTitleManage(UserTitle title) async {
-    updateTitle(title).then((res) => {
+  void updateSuccessManage(Success success) async {
+    updateSuccess(success).then((res) => {
       if (res) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Titre mis à jour avec succès")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Succès mis à jour avec succès")))
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du titre")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du Succès")))
       },
       if (imageChanged) {
-        updateTitleImage(title.id).then((res) =>  {
+        updateSuccessImage(success.id).then((res) =>  {
         if (res) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image mise à jour")))
         } else {
@@ -291,18 +295,18 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
     });
   }
 
-  void showDeleteConfirmationDialog(UserTitle title) {
+  void showDeleteConfirmationDialog(Success success) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmation de suppression'),
-          content: Text('Êtes-vous sûr de vouloir supprimer le titre ${title.libelle} ?'),
+          content: Text('Êtes-vous sûr de vouloir supprimer le succès ${success.libelle} ?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Ferme le dialogue
-                deleteTitleManage(title);
+                deleteSuccessManage(success);
               },
               child: const Text('Oui',style: TextStyle(color: Colors.red),),
             ),
@@ -318,17 +322,17 @@ class _TitleManagementPageState extends State<TitleManagementPage> {
     );
   }
 
-  void deleteTitleManage(UserTitle title) {
-    deleteTitle(title).then((res) => {
+  void deleteSuccessManage(Success success) {
+    deleteSuccess(success).then((res) => {
       if (res) {
         setState(() {
-          titleList.remove(title);
-          filteredTitleList.remove(title);
+          successList.remove(success);
+          filteredSuccessList.remove(success);
           imageChanged = false;
         }),
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Titre supprimé avec succès")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Succès supprimé avec succès")))
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du titre")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du succès")))
       }
     });
   }

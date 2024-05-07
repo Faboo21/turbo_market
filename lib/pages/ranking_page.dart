@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
-import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/stats_play.dart';
-import 'package:turbo_market/type/title.dart';
+import 'package:turbo_market/type/success.dart';
 
 import '../type/game.dart';
 import '../type/user.dart';
@@ -78,13 +77,13 @@ class _RankingPageState extends State<RankingPage> {
     }
     List<User> users = await getAllUsers();
     List<Game> games = await getAllGames();
-    List<UserTitle> titles = await getAllTitles();
+    List<Success> titles = await getAllSuccess();
     List<String> resGamesId = List.generate(games.length, (index) => "${games[index].id} : ${games[index].name}");
     for (var user in users) {
       int nbGames = getNumberOfGames(plays, user.id);
       int score = getScore(plays, user.id);
       String favGame = getFavoriteGame(plays, user.id, games);
-      List<UserTitle> validTitles = [];
+      List<Success> validTitles = [];
       for (var title in titles) {
         if (title.evaluate(user)) {
           validTitles.add(title);
@@ -337,7 +336,7 @@ class _RankingPageState extends State<RankingPage> {
                         trailing: Text('Moyenne: ${player.mean.toStringAsFixed(2)}', style: const TextStyle(fontSize: 15),),
                       ),
                       if (player.titles.isNotEmpty) ListTile(
-                        title: const Text('Titres:'),
+                        title: const Text('Succès:'),
                         subtitle: Wrap(
                           spacing: 8.0, // Espace entre chaque élément dans la ligne
                           runSpacing: 8.0, // Espace entre les lignes
@@ -347,7 +346,7 @@ class _RankingPageState extends State<RankingPage> {
                                 constraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                                 padding: const EdgeInsets.all(8.0),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: title.rarity.color),
+                                  border: Border.all(color: title.rarity.displayColor),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
@@ -370,7 +369,7 @@ class _RankingPageState extends State<RankingPage> {
                                     Flexible(
                                       child: Text(
                                         title.libelle,
-                                        style: TextStyle(color: title.rarity.color, fontSize: 20),
+                                        style: TextStyle(color: title.rarity.displayColor, fontSize: 20),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                       ),

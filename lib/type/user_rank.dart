@@ -1,4 +1,4 @@
-import 'package:turbo_market/type/title.dart';
+import 'package:turbo_market/type/success.dart';
 
 class UserRank {
   int id;
@@ -7,7 +7,7 @@ class UserRank {
   double mean;
   String bestGame;
   int nbGames;
-  List<UserTitle> titles;
+  List<Success> titles;
   int score;
 
   UserRank({

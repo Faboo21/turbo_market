@@ -95,7 +95,7 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
                               TextFormField(
                                 controller: libelleController,
                                 onChanged: (value) => level.libelle = value,
-                                decoration: const InputDecoration(labelText: 'Libelle'),
+                                decoration: const InputDecoration(labelText: 'Libelle (null si recompense en floppies)'),
                               ),
                               const SizedBox(height: 8.0),
                               TextFormField(

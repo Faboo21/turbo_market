@@ -10,7 +10,7 @@ import 'package:turbo_market/type/stats_play.dart';
 import 'package:turbo_market/type/transaction.dart';
 import 'package:turbo_market/type/user.dart';
 import 'package:turbo_market/type/prize.dart';
-import 'package:turbo_market/type/title.dart';
+import 'package:turbo_market/type/success.dart';
 import 'dart:typed_data';
 
 Future<String> verifyPassword(int roleId, String password) async {
@@ -631,29 +631,29 @@ Future<List<Transaction>> getAllTransactions24h() async {
   return [];
 }
 
-Future<List<UserTitle>> getAllTitles() async {
+Future<List<Success>> getAllSuccess() async {
   http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
-    List<UserTitle> titles = responseData.map((titleData) => UserTitle.fromJson(titleData)).toList();
-    return titles;
+    List<Success> success = await Future.wait(responseData.map((successData) => Success.fromJson(successData)));
+    return success;
   }
   return [];
 }
 
-Future<bool> updateTitle(UserTitle title) async {
+Future<bool> updateSuccess(Success success) async {
   http.Response response = await http.put(
       Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        "tit_id": title.id.toString(),
-        "tit_libelle": title.libelle,
-        "tit_condition": title.condition,
-        "tit_rarity": title.rarity.displayString,
-        "tit_image": title.image,
-        "tit_rules": title.rules,
+        "tit_id": success.id.toString(),
+        "tit_libelle": success.libelle,
+        "tit_condition": success.condition,
+        "tit_rarity": success.rarity.id.toString(),
+        "tit_image": success.image,
+        "tit_rules": success.rules,
       }));
   if (response.statusCode == 200) {
     return true;
@@ -661,9 +661,9 @@ Future<bool> updateTitle(UserTitle title) async {
   return false;
 }
 
-Future<bool> deleteTitle(UserTitle title) async {
+Future<bool> deleteSuccess(Success success) async {
   http.Response response = await http.delete(
-    Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}&tit_id=${title.id}"),
+    Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}&tit_id=${success.id}"),
   );
   if (response.statusCode == 200) {
     return true;
@@ -671,19 +671,19 @@ Future<bool> deleteTitle(UserTitle title) async {
   return false;
 }
 
-Future<bool> insertTitle(UserTitle title) async {
+Future<bool> insertSuccess(Success success) async {
   http.Response response = await http.post(
       Uri.parse("https://obsolete-events.com/turbo-market/api/create_title?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        "tit_id": title.id.toString(),
-        "tit_libelle": title.libelle,
-        "tit_condition": title.condition,
-        "tit_rarity": title.rarity.displayString,
-        "tit_image": title.image,
-        "tit_rules": title.rules,
+        "tit_id": success.id.toString(),
+        "tit_libelle": success.libelle,
+        "tit_condition": success.condition,
+        "tit_rarity": success.rarity.id.toString(),
+        "tit_image": success.image,
+        "tit_rules": success.rules,
       }));
   if (response.statusCode == 200) {
     return true;
@@ -691,7 +691,7 @@ Future<bool> insertTitle(UserTitle title) async {
   return false;
 }
 
-Future<bool> uploadTitleImageToAPI(XFile imageFile, String name) async {
+Future<bool> uploadSuccessImageToAPI(XFile imageFile, String name) async {
   try {
     Uint8List bytes = await imageFile.readAsBytes();
     http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
@@ -712,17 +712,30 @@ Future<bool> uploadTitleImageToAPI(XFile imageFile, String name) async {
   }
 }
 
-Future<bool> updateTitleImage(int titleId) async {
+Future<bool> updateSuccessImage(int successId) async {
   http.Response response = await http.post(
       Uri.parse("https://obsolete-events.com/turbo-market/api/update_title_image?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        "tit_id": titleId.toString(),
+        "tit_id": successId.toString(),
       }));
   if (response.statusCode == 200) {
     return true;
   }
   return false;
+}
+
+Future<List<Rarity>> getAllRarities() async {
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/rarities?api_key=${AppConfig.apiKey}"));
+
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<Rarity> raritys =
+    responseData.map((rarityData) => Rarity.fromJson(rarityData)).toList();
+    return raritys;
+  }
+  return [];
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
-import 'package:turbo_market/type/rarity.dart';
-import '../type/title.dart';
+import '../type/success.dart';
 
 class TitlesPage extends StatefulWidget {
   const TitlesPage({super.key});
@@ -11,7 +10,7 @@ class TitlesPage extends StatefulWidget {
 }
 
 class _TitlesPageState extends State<TitlesPage> {
-  List<UserTitle> _titles = [];
+  List<Success> _titles = [];
 
   @override
   void initState() {
@@ -20,7 +19,7 @@ class _TitlesPageState extends State<TitlesPage> {
   }
 
   Future<void> _loadTitles() async {
-    List<UserTitle> titles = await getAllTitles();
+    List<Success> titles = await getAllSuccess();
     titles.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
     setState(() {
       _titles = titles;
@@ -31,7 +30,7 @@ class _TitlesPageState extends State<TitlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Titres'),
+        title: const Text('Succès'),
       ),
       body: _titles.isEmpty
           ? const Center(
@@ -40,12 +39,12 @@ class _TitlesPageState extends State<TitlesPage> {
           : ListView.builder(
               itemCount: _titles.length,
               itemBuilder: (context, index) {
-                UserTitle title = _titles[index];
+                Success title = _titles[index];
                 return ExpansionTile(
                   leading: SizedBox(
                     width: 50,
                     child: AspectRatio(
-                      aspectRatio: 1, // Aspect ratio 1:1 for square image
+                      aspectRatio: 1,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(50),
                         child: Image.network(
@@ -55,10 +54,10 @@ class _TitlesPageState extends State<TitlesPage> {
                       ),
                     ),
                   ),
-                  title: Text(title.libelle, style: TextStyle(color: title.rarity.color),),
+                  title: Text(title.libelle, style: TextStyle(color: title.rarity.displayColor),),
                   children: [
                     ListTile(
-                      title: Text('Rareté: ${title.rarity.toString().split('.').last}'),
+                      title: Text('Rareté: ${title.rarity.libelle}'),
                       subtitle: Text('Obtention: ${title.rules}'),
                     ),
                   ],

@@ -1,9 +1,10 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/user.dart';
 
-class UserTitle {
+class Success {
   final int id;
   String libelle;
   String image;
@@ -11,7 +12,7 @@ class UserTitle {
   String condition;
   String rules;
 
-  UserTitle({
+  Success({
     required this.id,
     required this.libelle,
     required this.image,
@@ -20,12 +21,25 @@ class UserTitle {
     required this.rules
   });
 
-  factory UserTitle.fromJson(Map<String, dynamic> json) {
-    return UserTitle(
+  static Future<Success> fromJson(Map<String, dynamic> json) async {
+    List<Rarity> rarities = await getAllRarities();
+    for (Rarity rarity in rarities) {
+      if (rarity.id == int.parse(json['tit_rarity'])) {
+        return Success(
+          id: int.parse(json['tit_id']),
+          libelle: json['tit_libelle'],
+          image: json['tit_image'] ?? "",
+          rarity: rarity,
+          condition: json['tit_condition'],
+          rules: json['tit_rules'],
+        );
+      }
+    }
+    return Success(
       id: int.parse(json['tit_id']),
       libelle: json['tit_libelle'],
       image: json['tit_image'] ?? "",
-      rarity: json['tit_rarity'].toString().stringToRarity(),
+      rarity: Rarity(id: 0, libelle: "unknown", value: 0, color: "0x000000"),
       condition: json['tit_condition'],
       rules: json['tit_rules'],
     );
