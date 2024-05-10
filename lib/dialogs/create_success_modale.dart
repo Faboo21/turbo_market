@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/rarity.dart';
-import 'package:turbo_market/type/user.dart';
 import '../type/success.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -64,8 +63,7 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
               children: [
                 TextFormField(
                   controller: libelleController,

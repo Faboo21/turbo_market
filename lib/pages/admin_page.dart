@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:turbo_market/dialogs/update_exchange_rate_dialoq.dart';
 import '../dialogs/password_dialog.dart';
 
@@ -51,7 +52,7 @@ class _AdminPageState extends State<AdminPage> {
                     Navigator.pushNamed(context, "/manage_success");
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
-                  leading: const Icon(Icons.title),
+                  leading: const Icon(FontAwesome.award),
                   title: const Text("Succès")
               ),
               const Divider(),
