@@ -28,12 +28,12 @@ class StatsPlay {
 
   Map<String, dynamic> toJson() {
     return {
-      'gam_id': gameid,
-      'lev_step': levStep,
-      'par_time': parTime,
-      'gain': gain,
-      'usr_id': userId,
-      'lev_score': score,
+      'gam_id': gameid.toString(),
+      'lev_step': levStep.toString(),
+      'par_time': parTime.toString(),
+      'gain': gain.toString(),
+      'usr_id': userId.toString(),
+      'lev_score': score.toString(),
     };
   }
 }

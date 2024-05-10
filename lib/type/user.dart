@@ -25,11 +25,11 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
-      'usr_id': id,
-      'usr_username': username,
-      'usr_email': email,
-      'usr_balance': balance,
-      'usr_qr': qr,
+      'usr_id': id.toString(),
+      'usr_username': username.toString(),
+      'usr_email': email.toString(),
+      'usr_balance': balance.toString(),
+      'usr_qr': qr.toString(),
     };
   }
 }

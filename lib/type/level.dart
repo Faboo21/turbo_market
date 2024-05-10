@@ -25,11 +25,11 @@ class Level {
 
   Map<String, dynamic> toJson() {
     return {
-      'gam_id': gameId,
-      'lev_step': step,
-      'lev_cashprize': cashPrize,
-      'lev_libelle': libelle,
-      'lev_score': score,
+      'gam_id': gameId.toString(),
+      'lev_step': step.toString(),
+      'lev_cashprize': cashPrize.toString(),
+      'lev_libelle': libelle.toString(),
+      'lev_score': score.toString(),
     };
   }
 }

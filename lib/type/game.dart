@@ -36,13 +36,13 @@ class Game {
   Map<String, dynamic> toJson() {
     return {
       'gam_id': id.toString(),
-      'gam_name': name,
-      'gam_rules': rules,
-      'gam_created_at': createdAt,
+      'gam_name': name.toString(),
+      'gam_rules': rules.toString(),
+      'gam_created_at': createdAt.toString(),
       'gam_price': price.toString(),
       'gam_min_players': nbPlayersMin.toString(),
       'gam_max_players': nbPlayersMax.toString(),
-      'gam_image': image,
+      'gam_image': image.toString(),
     };
   }
 }

@@ -31,13 +31,13 @@ class Prize {
 
   Map<String, dynamic> toJson() {
     return {
-      'pri_id': id,
-      'pri_name': name,
-      'pri_description': description,
-      'pri_created_at': createdAt,
-      'pri_price': price,
-      'pri_image': image,
-      'pri_stock': stock,
+      'pri_id': id.toString(),
+      'pri_name': name.toString(),
+      'pri_description': description.toString(),
+      'pri_created_at': createdAt.toString(),
+      'pri_price': price.toString(),
+      'pri_image': image.toString(),
+      'pri_stock': stock.toString(),
     };
   }
 }

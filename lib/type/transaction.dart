@@ -26,11 +26,11 @@ class Transaction {
 
   Map<String, dynamic> toJson() {
     return {
-      'usr_id': usrId,
-      'pri_id': priId,
-      'tra_time': traTime,
-      'tra_amount': traAmount,
-      'pay_id': payId,
+      'usr_id': usrId.toString(),
+      'pri_id': priId.toString(),
+      'tra_time': traTime.toString(),
+      'tra_amount': traAmount.toString(),
+      'pay_id': payId.toString(),
     };
   }
 }

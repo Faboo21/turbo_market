@@ -423,14 +423,14 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
+                                            /*SizedBox(
                                               width: 30,
                                               child: SizedBox(
                                                 height: 30,
                                                 width: 30,
                                                 child:
 
-                                                  Gif(
+                                                  /*Gif(
                                                   image: const AssetImage("images/giphy.gif"),
                                                   controller: _controller, // if duration and fps is null, original gif fps will be used.
                                                   //fps: 30,
@@ -441,9 +441,9 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                                                     _controller.reset();
                                                     _controller.forward();
                                                   },
-                                                  ),
+                                                  ),*/
                                               ),
-                                            )
+                                            )*/
                                           ]
                                       ),
                                       const SizedBox(width: 5,),
