@@ -92,7 +92,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
                       password = value;
                     });
                   },
-                  onSubmitted: logIn,
+                  onSubmitted: (s) {logIn();},
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Mot de passe',
@@ -101,7 +101,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: password != "" ? () {logIn("");} : null,
+                  onPressed: password != "" ? () {logIn();} : null,
 
                   child: const Text('Se connecter'),
                 ),
@@ -113,18 +113,22 @@ class _ConnexionPageState extends State<ConnexionPage> {
     );
   }
 
-  void logIn (String s) {
+  void logIn () {
     verifyPassword(selectedButtonIndex + 1, password).then((
         isAuthenticated) async {
       if (mounted) {
         if (isAuthenticated != "") {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString("token", isAuthenticated);
-          AppConfig.role = selectedButtonIndex + 1;
-          if (selectedButtonIndex + 1 == 3) {
-            Navigator.pushNamed(context, '/choixGames');
+          if (isAuthenticated != "") {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Probleme CORS : vérifier lien")));
           } else {
-            Navigator.pushNamed(context, '/home');
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString("token", isAuthenticated);
+            AppConfig.role = selectedButtonIndex + 1;
+            if (selectedButtonIndex + 1 == 3) {
+              Navigator.pushNamed(context, '/choixGames');
+            } else {
+              Navigator.pushNamed(context, '/home');
+            }
           }
         } else {
           showDialog(

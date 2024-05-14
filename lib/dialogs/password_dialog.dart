@@ -9,7 +9,7 @@ class ChangePasswordDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController masterPasswordController = TextEditingController();
 
-    List<String> roles = ['Admin', 'Banquier', 'Membre'];
+    List<String> roles = ['Admin', 'Banquier', 'Bénévole'];
     List<TextEditingController> controllers = [
       TextEditingController(),
       TextEditingController(),

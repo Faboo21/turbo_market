@@ -5,14 +5,14 @@ import 'package:turbo_market/type/prize.dart';
 
 import '../type/user.dart';
 
-class Prizes extends StatefulWidget {
-  const Prizes({super.key, required this.selectedUser});
+class PrizesPage extends StatefulWidget {
+  const PrizesPage({super.key, required this.selectedUser});
   final User selectedUser;
   @override
-  State<Prizes> createState() => _PrizesState();
+  State<PrizesPage> createState() => _PrizesPageState();
 }
 
-class _PrizesState extends State<Prizes> {
+class _PrizesPageState extends State<PrizesPage> {
   List<Prize> prizesList = [];
   List<int> quantityList = [];
   double totalPrice = 0;
@@ -161,6 +161,7 @@ class _PrizesState extends State<Prizes> {
                   for (int i = 0; i < prizesList.length; i++){
                     if (quantityList[i] != 0 && res) {
                       res = await addTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0) && res;
+                      await Future.delayed(const Duration(seconds: 1));
                     }
                   }
                   if (res) {

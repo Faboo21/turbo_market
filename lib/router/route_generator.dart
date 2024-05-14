@@ -7,10 +7,10 @@ import 'package:turbo_market/pages/manage_levels_page.dart';
 import 'package:turbo_market/pages/manage_payment_method_page.dart';
 import 'package:turbo_market/pages/manage_prize_page.dart';
 import 'package:turbo_market/pages/manage_success_page.dart';
-import 'package:turbo_market/pages/ranking_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import 'package:turbo_market/pages/connexion_page.dart';
 import 'package:turbo_market/pages/admin_page.dart';
+import 'package:turbo_market/pages/showcase_page.dart';
 import 'package:turbo_market/pages/success_page.dart';
 import 'package:turbo_market/pages/winner_page.dart';
 import 'package:turbo_market/pages/manage_balance_page.dart';
@@ -26,7 +26,7 @@ class RouteGenerator {
     final args = settings.arguments;
     switch (settings.name) {
       case '/' :
-        return MaterialPageRoute(builder: (context) => const RankingPage());
+        return MaterialPageRoute(builder: (context) => const ShowcasePage());
       case '/connexion' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
       case '/home' :
@@ -43,7 +43,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const StatsPage());
       case '/prizes' :
         if (args is User) {
-          return MaterialPageRoute(builder: (context) => Prizes(selectedUser: args,));
+          return MaterialPageRoute(builder: (context) => PrizesPage(selectedUser: args,));
         }
         return MaterialPageRoute(builder: (context) => const HomePage());
       case '/manage_levels' :

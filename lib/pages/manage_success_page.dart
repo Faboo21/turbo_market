@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gradient_animation_text/flutter_gradient_animation_text.dart';
+import 'package:gif/gif.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/type/rarity.dart';
 import 'package:turbo_market/type/success.dart';
-import 'package:turbo_market/type/user.dart';
 
 import '../dialogs/create_success_modale.dart';
 
@@ -16,7 +15,7 @@ class SuccessManagementPage extends StatefulWidget {
   State<SuccessManagementPage> createState() => _SuccessManagementPageState();
 }
 
-class _SuccessManagementPageState extends State<SuccessManagementPage> {
+class _SuccessManagementPageState extends State<SuccessManagementPage> with TickerProviderStateMixin {
   List<Success> successList = [];
   List<Success> filteredSuccessList = [];
 
@@ -24,8 +23,13 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> {
   bool imageChanged = false;
   List<Rarity> rarities = [];
 
+  late GifController _controller;
+
   @override
   void initState() {
+    setState(() {
+      _controller = GifController(vsync: this);
+    });
     loadSuccess();
     super.initState();
   }
@@ -110,35 +114,101 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> {
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ExpansionTile(
-                    leading: SizedBox(
-                      width: 50,
-                      child: AspectRatio(
-                        aspectRatio: 1, // Aspect ratio 1:1 for square image
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(
-                            "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
-                            fit: BoxFit.cover,
+                    leading: success.rarity.id != rarities.last.id ? Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius
+                                .circular(50),
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              color: success.rarity.displayColor,
+                            ),
                           ),
-                        ),
-                      ),
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Center(
+                              child: SizedBox(
+                                width: 20,
+                                child:
+                                Image.network(
+                                  "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                  width: 20,
+                                  height: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]
+                    ) :
+                    Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius
+                                .circular(50),
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.red,
+                                    Colors.orange,
+                                    Colors.yellow,
+                                    Colors.green,
+                                    Colors.blue,
+                                    Colors.indigo,
+                                    Colors.purple,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  stops: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Center(
+                              child: SizedBox(
+                                width: 20,
+                                child:
+                                Image.network(
+                                  "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                  width: 20,
+                                  height: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 30,
+                            child: SizedBox(
+                              height: 30,
+                              width: 30,
+                              child:
+                              Gif(
+                                image: const AssetImage(
+                                    "images/giphy.gif"),
+                                controller: _controller,
+                                // if duration and fps is null, original gif fps will be used.
+                                //fps: 30,
+                                //duration: const Duration(seconds: 3),
+                                autostart: Autostart.loop,
+                                placeholder: (context) =>
+                                const Text('Loading...'),
+                                onFetchCompleted: () {
+                                  _controller.reset();
+                                  _controller.forward();
+                                },
+                              ),
+                            ),
+                          )
+                        ]
                     ),
-                    title: success.rarity.id != rarities.last.id ? Text(success.libelle, style: TextStyle(color: success.rarity.displayColor),) :
-                    GradientAnimationText(
-                      text: Text(
-                        success.libelle,
-                      ),
-                      colors: const [
-                        Color(0xff8f00ff),  // violet
-                        Colors.indigo,
-                        Colors.blue,
-                        Colors.green,
-                        Colors.yellow,
-                        Colors.orange,
-                        Colors.red,
-                      ],
-                      duration: const Duration(seconds: 2),
-                    ),
+                    title: Text(success.libelle, style: TextStyle(color: success.rarity.displayColor),),
                     children: [
                       Form(
                         key: formKey,
@@ -351,5 +421,11 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du succès")))
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

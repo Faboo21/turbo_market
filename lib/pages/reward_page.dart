@@ -34,6 +34,7 @@ class _RewardPageState extends State<RewardPage> {
       if (res2) {
         res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + resLevelsList[0].cashPrize - game.price);
       }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gain : ${resLevelsList[0].libelle == "" ? "${resLevelsList[0].cashPrize * AppConfig.rate} ƒ" : resLevelsList[0].libelle} + ${resLevelsList[0].score} points")));
       Navigator.pop(context, res1 && res2);
     }
     setState(() {

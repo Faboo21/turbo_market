@@ -14,6 +14,7 @@ import 'package:turbo_market/type/success.dart';
 import 'dart:typed_data';
 
 Future<String> verifyPassword(int roleId, String password) async {
+  try {
   http.Response response = await http.post(
       Uri.parse(
           "https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
@@ -31,6 +32,7 @@ Future<String> verifyPassword(int roleId, String password) async {
     return "";
   }
   return "";
+  } on Exception catch (_) {return "cors";}
 }
 
 Future<bool> insertUser(

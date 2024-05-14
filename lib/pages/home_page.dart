@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> {
       itemCount: playerList.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () async {
+          onTap: !isPlaying ? () async {
             var res = await Navigator.push(
               context,
               MaterialPageRoute(
@@ -255,7 +255,7 @@ class _HomePageState extends State<HomePage> {
                 playerList[index] = getQrUser;
               });
             }
-          },
+          } : null,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -280,13 +280,16 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold,
                       color: (AppConfig.game != 0 && game.price > playerList[index]!.balance) ? Colors.red : Colors.white,
                     ),
-                  ),IconButton(
-                      onPressed: () {
-                        setState(() {
-                          playerList[index] = null;
-                        });
-                      },
-                      icon: const Icon(Icons.cancel, color: Colors.white,)),
+                    ),
+                  if (!isPlaying)
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        playerList[index] = null;
+                      });
+                    },
+                    icon: const Icon(Icons.cancel, color: Colors.white,)
+                  ),
                 ],
               )
                   : const Row(
@@ -482,7 +485,7 @@ class NomJeu extends StatelessWidget {
             ),
           ),
           Text(
-            'Prix : ${(game.price * AppConfig.rate).toString()}',
+            'Prix : ${(game.price * AppConfig.rate).toString()} ƒ',
             style: const TextStyle(
               fontSize: 14.0,
               color: Colors.grey,
