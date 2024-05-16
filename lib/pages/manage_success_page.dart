@@ -369,6 +369,9 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
       if (imageChanged) {
         updateSuccessImage(success.id).then((res) =>  {
         if (res) {
+          setState(() {
+            success.image = "https://obsolete-events.com/turbo-market/app/images/titles/title${success.id}?random=${DateTime.now().millisecondsSinceEpoch}";
+          }),
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image mise à jour")))
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de l'image")))

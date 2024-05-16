@@ -70,7 +70,7 @@ class _ShopState extends State<ShopPage> {
             children: [
               const SizedBox(height: 5),
               Text(
-                'Prix : ${prize.price*AppConfig.rate} ƒ',
+                'Prix : ${prize.price*AppConfig.rate}ƒ',
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.grey,

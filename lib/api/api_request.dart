@@ -36,7 +36,7 @@ Future<String> verifyPassword(int roleId, String password) async {
 }
 
 Future<bool> insertUser(
-    String username, String mail, int rising, int payId) async {
+    String username, String mail, double rising, int payId) async {
   http.Response response = await http.post(
       Uri.parse("https://obsolete-events.com/turbo-market/api/create_account?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},

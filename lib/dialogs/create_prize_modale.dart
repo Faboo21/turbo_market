@@ -72,8 +72,9 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
               TextFormField(
                 controller: priceController,
                 decoration: const InputDecoration(labelText: 'Prix', prefixText: "€"),
-                keyboardType: TextInputType.number,
+                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                 validator: (value) {
+                  value = value?.replaceAll(",", ".");
                   if (value!.isEmpty) {
                     return 'Veuillez entrer un prix pour le prix';
                   }
@@ -124,7 +125,7 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
                           id: 0,
                           name: nameController.text,
                           description: descriptionController.text,
-                          price: double.parse(priceController.text),
+                          price: double.parse(priceController.text.replaceAll(",", ".")),
                           stock: int.parse(stockController.text),
                           createdAt: '',
                           image: '',

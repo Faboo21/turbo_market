@@ -97,7 +97,7 @@ class _PrizesPageState extends State<PrizesPage> {
               children: [
                 const SizedBox(height: 5),
                 Text(
-                  'Prix : ${prize.price*AppConfig.rate} ƒ',
+                  'Prix : ${prize.price*AppConfig.rate}ƒ',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -149,7 +149,7 @@ class _PrizesPageState extends State<PrizesPage> {
           child: Row(
             children: [
               Text(
-                'Total : ${totalPrice*AppConfig.rate} ƒ / ${widget.selectedUser.balance*AppConfig.rate} ƒ',
+                'Total : ${totalPrice*AppConfig.rate}ƒ / ${widget.selectedUser.balance*AppConfig.rate}ƒ',
                 style: TextStyle(
                   fontSize: 18,
                   color: totalPrice <= widget.selectedUser.balance ? Colors.white : Colors.red,

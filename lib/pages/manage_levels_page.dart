@@ -100,10 +100,11 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
                               const SizedBox(height: 8.0),
                               TextFormField(
                                 controller: priceController,
-                                onChanged: (value) => level.cashPrize = double.tryParse(value) ?? level.cashPrize,
+                                onChanged: (value) => level.cashPrize = double.tryParse(value.replaceAll(",", ".")) ?? level.cashPrize,
                                 decoration: const InputDecoration(labelText: 'Recompense', prefixText: "€"),
-                                keyboardType: TextInputType.number,
+                                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                 validator: (value) {
+                                  value = value?.replaceAll(",", ".");
                                   if (value!.isEmpty) {
                                     return 'Merci d\'entrer la recompense';
                                   }

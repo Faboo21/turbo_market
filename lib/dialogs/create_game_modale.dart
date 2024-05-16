@@ -76,8 +76,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                 TextFormField(
                   controller: priceController,
                   decoration: const InputDecoration(labelText: 'Prix', prefixText: "€"),
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                   validator: (value) {
+                    value = value?.replaceAll(",", ".");
                     if (value!.isEmpty) {
                       return 'Merci d\'entrer le prix du jeu';
                     }
@@ -148,7 +149,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                         name: nameController.text,
                         rules: rulesController.text,
                         createdAt: "",
-                        price: double.parse(priceController.text),
+                        price: double.parse(priceController.text.replaceAll(",", ".")),
                         nbPlayersMin: int.parse(nbPlayersMinController.text),
                         nbPlayersMax: int.parse(nbPlayersMaxController.text),
                         image: "",

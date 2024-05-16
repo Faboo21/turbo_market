@@ -86,22 +86,23 @@ class _UserFormPageState extends State<UserFormPage> {
               TextFormField(
                 controller: _montantController,
                 validator: (value) {
+                  value = value?.replaceAll(",", ".");
                   if (value!.isEmpty) {
                     return 'Merci d\'entrer une valeur positive';
                   }
-                  if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                  if (double.tryParse(value) == null || double.parse(value) <= 0) {
                     return 'Merci d\'entrer un entier positif';
                   }
                   return null;
                 },
-                keyboardType: TextInputType.number,
+                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Montant',
                   hintText: '10',
                   prefixText: '€',
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.white, // Couleur de la bordure inférieure
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -140,7 +141,7 @@ class _UserFormPageState extends State<UserFormPage> {
                   if (_formKey.currentState!.validate()) {
                     String username = _usernameController.text;
                     String email = _emailController.text;
-                    int montant = int.parse(_montantController.text);
+                    double montant = double.parse(_montantController.text.replaceAll(",", "."));
 
                     if (await insertUser(username, email, montant, selectedPaymentMethod!.payId)){
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

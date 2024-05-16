@@ -58,8 +58,9 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
                 TextFormField(
                   controller: priceController,
                   decoration: const InputDecoration(labelText: 'Recompense', prefixText: "€"),
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                   validator: (value) {
+                    value = value?.replaceAll(",", ".");
                     if (value!.isEmpty) {
                       return 'Merci d\'entrer la recompense';
                     }
@@ -90,7 +91,7 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
                       Level newLevel = Level(
                           gameId: widget.game.id,
                           step: int.parse(stepController.text),
-                          cashPrize: double.parse(priceController.text),
+                          cashPrize: double.parse(priceController.text.replaceAll(",", ".")),
                           libelle: libelleController.text,
                           score: int.parse(scoreController.text)
                       );

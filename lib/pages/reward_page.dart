@@ -34,7 +34,7 @@ class _RewardPageState extends State<RewardPage> {
       if (res2) {
         res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + resLevelsList[0].cashPrize - game.price);
       }
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gain : ${resLevelsList[0].libelle == "" ? "${resLevelsList[0].cashPrize * AppConfig.rate} ƒ" : resLevelsList[0].libelle} + ${resLevelsList[0].score} points")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gain : ${resLevelsList[0].libelle == "" ? "${resLevelsList[0].cashPrize * AppConfig.rate}ƒ" : resLevelsList[0].libelle} + ${resLevelsList[0].score} points")));
       widget.selectedUser.balance = widget.selectedUser.balance + resLevelsList[0].cashPrize - game.price;
       Navigator.pop(context, res1 && res2);
     }
@@ -62,7 +62,7 @@ class _RewardPageState extends State<RewardPage> {
             child: ListTile(
               enabled: !loading,
               trailing: Text("${level.score} points"),
-              title: level.libelle == "" ? Text("${level.step.toString()} : ${level.cashPrize * AppConfig.rate} ƒ") : Text("${level.step.toString()} : ${level.libelle}"),
+              title: level.libelle == "" ? Text("${level.step.toString()} : ${level.cashPrize * AppConfig.rate}ƒ") : Text("${level.step.toString()} : ${level.libelle}"),
               onTap: () async {
                 Game game = await getGameById(level.gameId);
                 bool res2 = await addPlays(AppConfig.game, level.step, widget.selectedUser.id);
@@ -76,7 +76,7 @@ class _RewardPageState extends State<RewardPage> {
                     widget.selectedUser.balance = widget.selectedUser.balance - game.price;
                   }
                 }
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gain : ${level.libelle == "" ? "${level.cashPrize * AppConfig.rate} ƒ" : level.libelle} + ${level.score} points")));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gain : ${level.libelle == "" ? "${level.cashPrize * AppConfig.rate}ƒ" : level.libelle} + ${level.score} points")));
                 Navigator.pop(context, res1 && res2);
               },
             ),

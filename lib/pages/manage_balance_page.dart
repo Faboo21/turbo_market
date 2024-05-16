@@ -47,13 +47,13 @@ class _ManageBalanceState extends State<ManageBalance> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Solde actuel : ${widget.selectedUser.balance * AppConfig.rate} ƒ',
+                'Solde actuel : ${widget.selectedUser.balance * AppConfig.rate}ƒ',
                 style: const TextStyle(fontSize: 18.0),
               ),
               const SizedBox(height: 20.0),
               TextFormField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Montant',
                   hintText: '10',
@@ -61,14 +61,15 @@ class _ManageBalanceState extends State<ManageBalance> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
+                  value = value?.replaceAll(",", ".");
                   if (value!.isEmpty) {
                     return 'Merci d\'entrer une valeur';
                   }
-                  if (int.tryParse(value) == null) {
-                    return 'Merci d\'entrer un entier';
+                  if (double.tryParse(value) == null) {
+                    return 'Merci d\'entrer un nombre';
                   }
-                  if (int.parse(value) <= 0) {
-                    return 'Merci d\'entrer un entier positif';
+                  if (double.parse(value) <= 0) {
+                    return 'Merci d\'entrer un nombre positif';
                   }
                   return null;
                 },
@@ -105,7 +106,7 @@ class _ManageBalanceState extends State<ManageBalance> {
                     btnLoading = true;
                   });
                   if (_formKey.currentState!.validate()) {
-                    double amount = double.tryParse(_amountController.text) ?? 0;
+                    double amount = double.tryParse(_amountController.text.replaceAll(",", ".")) ?? 0;
                     bool res = true;
                     res = await addTransaction(widget.selectedUser.id, 0, amount, selectedPaymentMethod!.payId);
                     widget.selectedUser.balance += amount;

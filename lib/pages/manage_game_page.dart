@@ -136,10 +136,11 @@ class _GameManagementPageState extends State<GameManagementPage> {
                               const SizedBox(height: 8.0),
                               TextFormField(
                                 controller: priceController,
-                                onChanged: (value) => game.price = double.tryParse(value) ?? 0,
+                                onChanged: (value) => game.price = double.tryParse(value.replaceAll(",", ".")) ?? 0,
                                 decoration: const InputDecoration(labelText: 'Prix', prefixText: "€"),
-                                keyboardType: TextInputType.number,
+                                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                 validator: (value) {
+                                  value = value?.replaceAll(",", ".");
                                   if (value!.isEmpty) {
                                     return 'Merci d\'entrer le prix du jeu';
                                   }
@@ -288,6 +289,9 @@ class _GameManagementPageState extends State<GameManagementPage> {
       if (imageChanged) {
           updateGameImage(game.id).then((res) =>  {
         if (res) {
+          setState(() {
+            game.image = "https://obsolete-events.com/turbo-market/app/images/games/game${game.id}?random=${DateTime.now().millisecondsSinceEpoch}";
+          }),
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Image mise à jour")))
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de l'image")))

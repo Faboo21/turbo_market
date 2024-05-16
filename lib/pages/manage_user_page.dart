@@ -112,10 +112,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               const SizedBox(height: 8.0),
                               TextFormField(
                                 controller: balanceController,
-                                onChanged: (value) => user.balance = double.parse(value),
+                                onChanged: (value) => user.balance = double.parse(value.replaceAll(",", ".")),
                                 decoration: const InputDecoration(labelText: 'Solde', prefixText: "€",),
-                                keyboardType: TextInputType.number,
+                                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                 validator: (value) {
+                                  value = value?.replaceAll(",", ".");
                                   if (value!.isEmpty) {
                                     return 'Merci d\'entrer le solde';
                                   }

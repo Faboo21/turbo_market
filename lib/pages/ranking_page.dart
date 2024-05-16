@@ -400,7 +400,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                     ),
                     ListTile(
                       title: Text(
-                        'Solde: ${player.balance * AppConfig.rate} ƒ',
+                        'Solde: ${player.balance * AppConfig.rate}ƒ',
                         style: const TextStyle(fontSize: 15),),
                     ),
                     ListTile(
