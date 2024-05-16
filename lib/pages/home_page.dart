@@ -14,8 +14,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<User?> playerList = List<User?>.filled(1, null);
-  bool isPlaying = false;
   late Game game = Game(id: 0, name: "Chargement", rules: "rules", createdAt: "createdAt", price: 1000000000000, nbPlayersMin: 0, nbPlayersMax: 0, image: '');
+
+  bool btnEndGameLoading = false;
+  bool btnMngBalanceLoading = false;
+  bool btnPrizesLoading = false;
+  bool btnEmailLoading = false;
 
   @override
   void initState() {
@@ -62,86 +66,80 @@ class _HomePageState extends State<HomePage> {
         ],
         const SizedBox(height: 16.0),
         playerListWidget(),
-        if (AppConfig.role == 3 && !isPlaying) ...[
+        if (AppConfig.role == 3) ...[
           const SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: checkMinPlayers() && checkPlayersBalance() ? () {
+          !btnEndGameLoading ? ElevatedButton(
+            onPressed: checkMinPlayers() && checkPlayersBalance() ? playerList.length > 1 ? () async {
               setState(() {
-                isPlaying = true;
+                btnEndGameLoading = true;
               });
-            } : null,
-            child: const Text('Lancer la partie'),
-          ),
-        ],
-        if (AppConfig.role == 3 && isPlaying) ...[
-          const SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: playerList.length > 1 ? () async {
               dynamic res = await Navigator.pushNamed(context, '/winner', arguments: playerList);
-                if (res != null && res is bool && res == true) {
-                  setState(() {
-                    isPlaying = false;
-                    for (int i = 0; i < playerList.length; i++) {
-                      playerList[i] = null;
-                    }
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour des soldes")));
-                }
+              if (res != null && res is bool && res == true) {} else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour des soldes")));
+              }
+              setState(() {
+                btnEndGameLoading = false;
+              });
             } : () async {
+              setState(() {
+                btnEndGameLoading = true;
+              });
               dynamic result = await Navigator.pushNamed(context, "/reward", arguments: playerList[0]);
               if (result != null && result is bool && result == true) {
-                setState(() {
-                  isPlaying = false;
-                  for (int i = 0; i < playerList.length; i++) {
-                    playerList[i] = null;
-                  }
-                });
+
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Probleme lors de la recuperation du gain')));
               }
-            },
-            child: const Text("Terminer la partie"),
-          ),
-        ],
-        if (AppConfig.role == 3 && isPlaying) ...[
-          const SizedBox(height: 16.0),
-          cancelGameButton(context),
+              setState(() {
+                btnEndGameLoading = false;
+              });
+            } : null,
+            child: const Text("Résultat de la partie"),
+          ) : const Center(child: CircularProgressIndicator(),),
         ],
         if ((AppConfig.role == 2 || AppConfig.role == 1) && playerList[0] != null) ...[
           const SizedBox(height: 16.0),
-          ElevatedButton(
+          !btnMngBalanceLoading ? ElevatedButton(
             onPressed: () async {
+              setState(() {
+                btnMngBalanceLoading = true;
+              });
               Object? res = await Navigator.pushNamed(context, "/manage_balance", arguments: playerList[0]);
               if (res is bool) {
                 if (res) {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Compte mis à jour avec succès"),));
-                  setState(() {
-                    for (int i = 0; i < playerList.length; i++) {
-                      playerList[i] = null;
-                    }
-                  });
+                  setState(() {});
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du compte"),));
                 }
               }
+              setState(() {
+                btnMngBalanceLoading = false;
+              });
             },
             child: const Text ('Recharger le compte'),
-          ),
+          ): const Center(child: CircularProgressIndicator(),),
           const SizedBox(height: 16.0),
-          ElevatedButton(
+          !btnPrizesLoading ? ElevatedButton(
             onPressed: () async {
+              setState(() {
+                btnPrizesLoading = true;
+              });
               Object? res = await Navigator.pushNamed(context, "/prizes", arguments: playerList[0]);
               if (res is bool) {
                 if (res) {
+                  setState(() {});
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Recuperation des lots réussie"),));
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de la recuperation des lots"),));
                 }
               }
+              setState(() {
+                btnPrizesLoading = false;
+              });
             },
             child: const Text ('Recuperer un lot'),
-          ),
+          ) : const Center(child: CircularProgressIndicator(),),
         ],
         if (AppConfig.role == 2 || AppConfig.role == 1) ...[
           const SizedBox(height: 15,),
@@ -191,46 +189,6 @@ class _HomePageState extends State<HomePage> {
     return true;
   }
 
-  ElevatedButton cancelGameButton(BuildContext context) {
-    return ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context)
-            {
-              return AlertDialog(
-                title: const Text('Confirmation'),
-                content: const Text(
-                    'Êtes-vous sûr de vouloir annuler la partie ?'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Annuler'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isPlaying = false;
-                        for (int i = 0; i < playerList.length; i++) {
-                          playerList[i] = null;
-                        }
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Partie Annulée")));
-                      Navigator.of(context)
-                          .pop();
-                    },
-                    child: const Text('Confirmer'),
-                  ),
-                ],
-              );
-            });
-          },
-          child: const Text("Annuler la partie"),
-        );
-  }
 
   SizedBox playerListWidget() {
     return SizedBox(
@@ -239,7 +197,7 @@ class _HomePageState extends State<HomePage> {
       itemCount: playerList.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: !isPlaying ? () async {
+          onTap: () async {
             var res = await Navigator.push(
               context,
               MaterialPageRoute(
@@ -247,15 +205,20 @@ class _HomePageState extends State<HomePage> {
               ),
             );
             if (res is String) {
-              var getQrUser = await getUserByQr(res);
+              User? getQrUser = await getUserByQr(res);
               if (getQrUser == null) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Code QR non attribué")));
+              } else {
+                if (checkUser(getQrUser)) {
+                  setState(() {
+                    playerList[index] = getQrUser;
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Joueur déjà en jeu")));
+                }
               }
-              setState(() {
-                playerList[index] = getQrUser;
-              });
             }
-          } : null,
+          },
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -270,9 +233,6 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 16.0),
-                  const Icon(Icons.arrow_forward),
-                  const SizedBox(width: 16.0),
                   Text(
                     '${playerList[index]!.balance * AppConfig.rate} ƒ',
                     style: TextStyle(
@@ -281,7 +241,6 @@ class _HomePageState extends State<HomePage> {
                       color: (AppConfig.game != 0 && game.price > playerList[index]!.balance) ? Colors.red : Colors.white,
                     ),
                     ),
-                  if (!isPlaying)
                   IconButton(
                     onPressed: () {
                       setState(() {
@@ -292,16 +251,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               )
-                  : const Row(
-                    children: [
-                      Icon(Icons.qr_code_scanner_rounded),
-                      SizedBox(width: 30.0),
-                      Text(
-                        'Scanner un code QR',
-                        style: TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
-                      ),
-                    ],
+              : const Row(
+                children: [
+                  Icon(Icons.qr_code_scanner_rounded),
+                  SizedBox(width: 30.0),
+                  Text(
+                    'Scanner un code QR',
+                    style: TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
                   ),
+                ],
+              ),
             ),
           ),
         );
@@ -425,10 +384,16 @@ class _HomePageState extends State<HomePage> {
             ),
             ElevatedButton(
               onPressed: () async {
+                setState(() {
+                  btnEmailLoading = true;
+                });
                 String email = emailController.text.trim();
                 if (isEmailValid(email)) {
                   if (await userExist(email)) {
                     bool res = await sendQr(email);
+                    setState(() {
+                      btnEmailLoading = false;
+                    });
                     if (res) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Email envoyé")));
                       Navigator.of(context).pop();
@@ -443,6 +408,9 @@ class _HomePageState extends State<HomePage> {
                     _showEmailModal(context, errorMessage);
                   }
                 } else {
+                  setState(() {
+                    btnEmailLoading = false;
+                  });
                   Navigator.pop(context);
                   _showEmailModal(context, "Adresse e-mail invalide");
                 }
@@ -460,6 +428,10 @@ class _HomePageState extends State<HomePage> {
     String emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
     RegExp regExp = RegExp(emailPattern);
     return regExp.hasMatch(email);
+  }
+
+  bool checkUser(User scannedUser) {
+    return !playerList.any((user) => user?.id == scannedUser.id);
   }
 }
 

@@ -15,6 +15,9 @@ class WinnerChoicePage extends StatefulWidget {
 class _WinnerChoicePageState extends State<WinnerChoicePage> {
   late Game game;
 
+  bool loading = false;
+  bool btnLoading = false;
+
   @override
   void initState() {
     initGame();
@@ -36,31 +39,42 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body:
-      ListView.builder(
+      !loading ? ListView.builder(
         itemCount: widget.playersList.length,
         itemBuilder: (context, index) {
           return widget.playersList[index] != null ? Card(
             child: ListTile(
+              enabled: !btnLoading,
               title: Text(widget.playersList[index]!.username),
               onTap: () async {
+                setState(() {
+                  btnLoading = true;
+                });
                 dynamic res = true;
                 res = await Navigator.pushNamed(context, "/reward", arguments: widget.playersList[index]);
                 if (res != null && res is bool && res == true) {
                   for (int i = 0; i < widget.playersList.length; i++) {
                     if (i != index && widget.playersList[i] != null) {
                       res = await updateUserBalance(widget.playersList[i]!, widget.playersList[i]!.balance - game.price) && res;
+                      widget.playersList[i]?.balance = widget.playersList[i]!.balance - game.price;
                       res = await addPlays(AppConfig.game, 0, widget.playersList[i]!.id) && res;
                     }
                   }
                 } else {
+                  setState(() {
+                    btnLoading = false;
+                  });
                   Navigator.pop(context, false);
                 }
+                setState(() {
+                  btnLoading = false;
+                });
                 Navigator.pop(context, res);
               },
             ),
           ) : null;
         },
-      ),
+      ) :  const Center(child: CircularProgressIndicator(),),
     );
   }
 }

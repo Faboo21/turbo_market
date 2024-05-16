@@ -274,9 +274,25 @@ Future<List<PaymentMethod>> getAllPaymentMethod() async {
 }
 
 
-Future<bool> addTransaction(int usrId, int priId, double traAmount, int payId) async {
+Future<bool> insertTransaction(int usrId, int priId, double traAmount, int payId) async {
   http.Response response = await http.post(
       Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?api_key=${AppConfig.apiKey}"),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      body: jsonEncode(<String, String>{
+        "usr_id": usrId.toString(),
+        "pri_id": priId.toString(),
+        "tra_amount": traAmount.toString(),
+        "pay_id": payId.toString()
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> addTransaction(int usrId, int priId, double traAmount, int payId) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/add_transaction?api_key=${AppConfig.apiKey}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
         "usr_id": usrId.toString(),

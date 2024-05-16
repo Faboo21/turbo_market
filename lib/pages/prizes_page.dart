@@ -17,6 +17,8 @@ class _PrizesPageState extends State<PrizesPage> {
   List<int> quantityList = [];
   double totalPrice = 0;
 
+  bool btnLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -155,22 +157,31 @@ class _PrizesPageState extends State<PrizesPage> {
                 ),
               ),
               const Spacer(),
-              IconButton(
+              !btnLoading ? IconButton(
                 onPressed: totalPrice <= widget.selectedUser.balance ? () async {
+                  setState(() {
+                    btnLoading = true;
+                  });
                   bool res = true;
                   for (int i = 0; i < prizesList.length; i++){
                     if (quantityList[i] != 0 && res) {
-                      res = await addTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0) && res;
+                      res = await insertTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0) && res;
+                      prizesList[i].stock -= quantityList[i];
+                      res = await updatePrize(prizesList[i]) && res;
                       await Future.delayed(const Duration(seconds: 1));
                     }
                   }
                   if (res) {
                     res = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - totalPrice) && res;
+                    widget.selectedUser.balance -= totalPrice;
                   }
+                  setState(() {
+                    btnLoading = false;
+                  });
                   Navigator.pop(context, res);
                 } : null,
                 icon: const Icon(Icons.shopping_cart),
-              )
+              ) :  const Center(child: CircularProgressIndicator(),)
             ],
           ),
         ),

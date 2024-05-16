@@ -75,7 +75,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                 const SizedBox(height: 16.0),
                 TextFormField(
                   controller: priceController,
-                  decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
+                  decoration: const InputDecoration(labelText: 'Prix', prefixText: "€"),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value!.isEmpty) {

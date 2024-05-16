@@ -38,18 +38,39 @@ class _StatsPageState extends State<StatsPage> {
     }
     List<Game> resGamesList = await getAllGames();
     int cpt = 0;
-    
+
     Map<int, double> hourlyGains = {};
     for (var play in resList) {
-      int hour = DateTime.parse(play.parTime).hour;
-      if (selectedGame == "All Games") {
-        hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
-        cpt++;
-      }
-      else {
-        if (play.gameid == int.parse(selectedGame.split(" : ")[0])) {
+      int day = DateTime.parse(play.parTime).day;
+      if (selectedTimeRange == "24h") {
+        if (day == DateTime.now().day){
+          int hour = DateTime
+              .parse(play.parTime)
+              .hour;
+          if (selectedGame == "All Games") {
+            hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
+            cpt++;
+          }
+          else {
+            if (play.gameid == int.parse(selectedGame.split(" : ")[0])) {
+              hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
+              cpt++;
+            }
+          }
+        }
+      } else {
+        int hour = DateTime
+            .parse(play.parTime)
+            .hour;
+        if (selectedGame == "All Games") {
           hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
           cpt++;
+        }
+        else {
+          if (play.gameid == int.parse(selectedGame.split(" : ")[0])) {
+            hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
+            cpt++;
+          }
         }
       }
     }
@@ -61,9 +82,21 @@ class _StatsPageState extends State<StatsPage> {
       gamesList = ["All Games"] + resGamesId;
       total = hourlySumGains.sum;
       mean = double.parse((hourlySumGains.sum / (cpt == 0 ? 1 : cpt)).toStringAsFixed(2));
-      hourlyStats = hourlySumGains;
+      hourlyStats = selectedTimeRange == "24h" ? cumulativeSum(hourlySumGains) : hourlySumGains;
       nbPlays = cpt;
     });
+  }
+
+  List<double> cumulativeSum(List<double> numbers) {
+    List<double> result = [];
+    double sum = 0;
+
+    for (double number in numbers) {
+      sum += number;
+      result.add(sum);
+    }
+
+    return result;
   }
 
   @override

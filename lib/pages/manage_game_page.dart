@@ -137,7 +137,7 @@ class _GameManagementPageState extends State<GameManagementPage> {
                               TextFormField(
                                 controller: priceController,
                                 onChanged: (value) => game.price = double.tryParse(value) ?? 0,
-                                decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
+                                decoration: const InputDecoration(labelText: 'Prix', prefixText: "€"),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value!.isEmpty) {

@@ -71,7 +71,7 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
               ),
               TextFormField(
                 controller: priceController,
-                decoration: const InputDecoration(labelText: 'Prix', suffix: Text("€")),
+                decoration: const InputDecoration(labelText: 'Prix', prefixText: "€"),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value!.isEmpty) {

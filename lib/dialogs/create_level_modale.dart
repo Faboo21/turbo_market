@@ -57,7 +57,7 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
                 const SizedBox(height: 8.0),
                 TextFormField(
                   controller: priceController,
-                  decoration: const InputDecoration(labelText: 'Recompense', suffix: Text("€")),
+                  decoration: const InputDecoration(labelText: 'Recompense', prefixText: "€"),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value!.isEmpty) {

@@ -47,6 +47,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
+            child: Text("Nombres de joueurs : ${filteredUserList.length}")
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
               onChanged: filterUsers,
@@ -109,7 +113,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               TextFormField(
                                 controller: balanceController,
                                 onChanged: (value) => user.balance = double.parse(value),
-                                decoration: const InputDecoration(labelText: 'Solde', suffixText: '€',),
+                                decoration: const InputDecoration(labelText: 'Solde', prefixText: "€",),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value!.isEmpty) {

@@ -33,6 +33,9 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
   String selectedTimeRange = 'All time';
   String sortedBy = 'Score';
 
+  bool loading = true;
+  bool successActivated = false;
+
   late GifController _controller;
 
   @override
@@ -58,7 +61,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
           filteredPlayersList.sort((a, b) => b.score.compareTo(a.score));
         });
         break;
-      case 'Balance':
+      case 'Solde':
         setState(() {
           filteredPlayersList.sort((a, b) => b.balance.compareTo(a.balance));
         });
@@ -78,6 +81,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
 
   void _loadPlayersList() async {
     setState(() {
+      loading = true;
       playersList = [];
     });
     List<StatsPlay> plays;
@@ -89,8 +93,8 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
     List<User> users = await getAllUsers();
     List<Rarity> raritiesList = await getAllRarities();
     List<Game> games = await getAllGames();
-    List<Success> successList = await getAllSuccess();
     List<String> resGamesId = List.generate(games.length, (index) => "${games[index].id} : ${games[index].name}");
+
     for (var user in users) {
       int nbGames = getNumberOfGames(plays, user.id);
       int score = getScore(plays, user.id);
@@ -109,11 +113,12 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
             ));
       });
     }
+
     switch (sortedBy) {
       case 'Score':
         playersList.sort((a, b) => b.score.compareTo(a.score));
         break;
-      case 'Balance':
+      case 'Solde':
         playersList.sort((a, b) => b.balance.compareTo(a.balance));
         break;
       case 'Parties Jouée':
@@ -123,16 +128,33 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
         playersList.sort((a, b) => b.mean.compareTo(a.mean));
         break;
     }
+
+    if (successActivated) loadSuccess(users, plays, games);
+
     setState(() {
       filteredPlayersList = playersList;
       rarities = raritiesList;
-    });
-    setState(() {
       gamesList = ["All Games"] + resGamesId;
     });
+    setState(() {
+      loading = false;
+    });
+  }
+
+  void loadSuccess(List<User> users, List<StatsPlay> plays, List<Game> games) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text("Chargement des succès"),
+        );
+      },
+    );
     List<Transaction> transactionsList = await getAllTransactions();
     List<Level> levelList = await getAllLevels();
     List<Prize> prizesList = await getAllPrizes();
+    List<Success> successList = await getAllSuccess();
     for (var user in users) {
       List<Success> validSuccess = [];
       for (var success in successList) {
@@ -145,6 +167,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
         filteredPlayersList.where((element) => element.id == user.id).first.success = validSuccess;
       });
     }
+    Navigator.pop(context);
   }
 
   int getNumberOfGames(List<StatsPlay> statsList, int userId) {
@@ -245,7 +268,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
               leading: const Icon(Icons.filter_alt, color: Colors.white,),
               children: [
                 SizedBox(
-                  height: 200,
+                  height: 250,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -301,7 +324,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                           },
                           items: <String>[
                             'Score',
-                            'Balance',
+                            'Solde',
                             "Parties Jouée",
                             "Moyenne"
                           ].map<DropdownMenuItem<String>>((String value) {
@@ -311,6 +334,21 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                             );
                           }).toList(),
                         ),
+                        const SizedBox(width: 10),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Row(
+                            children: [
+                              const Text("Activer les succès : "),
+                              Checkbox(value: successActivated, onChanged: (newVal) {
+                                setState(() {
+                                  successActivated = newVal ?? false;
+                                });
+                                _loadPlayersList();
+                              }),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -318,7 +356,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
               ]
           ),
           const SizedBox(height: 15,),
-          filteredPlayersList.isNotEmpty ? Expanded(
+          !loading ? Expanded(
             child: ListView.builder(
               itemCount: filteredPlayersList.length,
               itemBuilder: (context, index) {
@@ -359,16 +397,20 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                     ListTile(
                       title: Text('Meilleur jeu: ${player.bestGame}',
                         style: const TextStyle(fontSize: 15),),
-                      trailing: Text(
-                        'Balance: ${player.balance * AppConfig.rate} ƒ',
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Solde: ${player.balance * AppConfig.rate} ƒ',
                         style: const TextStyle(fontSize: 15),),
                     ),
                     ListTile(
                       title: Text(
                         'Nombre de parties: ${player.nbGames.toString()}',
                         style: const TextStyle(fontSize: 15),),
-                      trailing: Text(
-                        'Moyenne: ${player.mean.toStringAsFixed(2)}',
+                    ),
+                    ListTile(
+                      title: Text(
+                        'SCORE MOYEN PARTIE: ${player.mean.toStringAsFixed(2)} points',
                         style: const TextStyle(fontSize: 15),),
                     ),
                     if (player.success.isNotEmpty) ListTile(

@@ -59,9 +59,10 @@ class _ShopState extends State<ShopPage> {
           ),
           title: Text(
             prize.name,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
+              color: prize.stock == 0 ? Colors.red : prize.stock <= 5? Colors.orangeAccent : null
             ),
           ),
           subtitle: Column(
@@ -85,6 +86,7 @@ class _ShopState extends State<ShopPage> {
               ),
             ],
           ),
+          trailing: prize.stock == 0 ? const Icon(Icons.not_interested, color: Colors.red,) : prize.stock < 5 ? const Icon(Icons.warning_amber, color: Colors.orangeAccent,) : null,
         );
       },
     );

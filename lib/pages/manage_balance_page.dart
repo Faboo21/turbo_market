@@ -21,6 +21,8 @@ class _ManageBalanceState extends State<ManageBalance> {
   List<PaymentMethod> modesList = [];
   PaymentMethod? selectedPaymentMethod;
 
+  bool btnLoading = false;
+
   @override
   void initState() {
     getAllPaymentMethod().then((value) => {
@@ -55,7 +57,7 @@ class _ManageBalanceState extends State<ManageBalance> {
                 decoration: const InputDecoration(
                   labelText: 'Montant',
                   hintText: '10',
-                  suffixText: '€',
+                  prefixText: '€',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -97,18 +99,24 @@ class _ManageBalanceState extends State<ManageBalance> {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
+              !btnLoading ? ElevatedButton(
                 onPressed: () async {
+                  setState(() {
+                    btnLoading = true;
+                  });
                   if (_formKey.currentState!.validate()) {
                     double amount = double.tryParse(_amountController.text) ?? 0;
                     bool res = true;
                     res = await addTransaction(widget.selectedUser.id, 0, amount, selectedPaymentMethod!.payId);
-                    res = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + amount) && res;
+                    widget.selectedUser.balance += amount;
                     Navigator.pop(context, res);
                   }
+                  setState(() {
+                    btnLoading = false;
+                  });
                 },
                 child: const Text('Modifier le solde'),
-              ),
+              ) : const Center(child: CircularProgressIndicator(),),
             ],
           ),
         ),

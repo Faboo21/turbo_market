@@ -11,31 +11,40 @@ class CustomLineChart extends StatelessWidget {
     const cutOffYValue = 0.0;
     final currentHour = DateTime.now().hour;
 
+    double minY = hourlyStats.reduce((value, element) => value < element ? value : element) - 2;
+    double maxY = hourlyStats.reduce((value, element) => value > element ? value : element) + 2;
+
+    double range = maxY - minY;
+    double step = (range / 10).ceilToDouble();
+
     return SizedBox(
       height: 300, // Hauteur du graphique
       child: LineChart(
         LineChartData(
-          minY: hourlyStats.reduce((value, element) => value < element ? value : element) - 2, // Valeur minimale sur l'axe Y
-          maxY: hourlyStats.reduce((value, element) => value > element ? value : element) + 2, // Valeur maximale sur l'axe Y
+          minY: minY,
+          maxY: maxY,
           titlesData: FlTitlesData(
             leftTitles: SideTitles(
-              showTitles: true, // Afficher les titres sur l'axe Y
-              reservedSize: 30, // Espace réservé pour les titres sur l'axe Y
-              margin: 12, // Marge entre les titres et l'axe Y
+              showTitles: true,
+              reservedSize: 30,
+              margin: 12,
               getTextStyles: (value) => const TextStyle(color: Colors.white),
               getTitles: (value) {
-                // Retourner les valeurs de l'axe Y
-                return value.toInt().toString();
+                if (value % step == 0) {
+                  return value.toStringAsFixed(1);
+                } else {
+                  return '';
+                }
               },
             ),
             bottomTitles: SideTitles(
-              showTitles: true, // Afficher les titres sur l'axe X
-              reservedSize: 30, // Espace réservé pour les titres sur l'axe X
-              margin: 8, // Marge entre les titres et l'axe X
+              showTitles: true,
+              reservedSize: 30,
+              margin: 8,
               getTitles: (value) {
                 return value % 2 == 0 ? '${value.toInt()}h' : "---";
               },
-              rotateAngle: 60, // Rotation des titres de l'axe X
+              rotateAngle: 60,
               getTextStyles: (value) => TextStyle(color: currentHour != value ? Colors.white : Colors.lightBlue),
             ),
           ),

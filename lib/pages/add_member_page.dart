@@ -18,6 +18,8 @@ class _UserFormPageState extends State<UserFormPage> {
   List<PaymentMethod> modesList = [];
   PaymentMethod? selectedPaymentMethod;
 
+  bool btnLoading = false;
+
   @override
   void initState() {
     getAllPaymentMethod().then((value) => {
@@ -96,7 +98,7 @@ class _UserFormPageState extends State<UserFormPage> {
                 decoration: const InputDecoration(
                   labelText: 'Montant',
                   hintText: '10',
-                  suffixText: '€',
+                  prefixText: '€',
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.white, // Couleur de la bordure inférieure
@@ -130,8 +132,11 @@ class _UserFormPageState extends State<UserFormPage> {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
+              !btnLoading ? ElevatedButton(
                 onPressed: () async {
+                  setState(() {
+                    btnLoading = true;
+                  });
                   if (_formKey.currentState!.validate()) {
                     String username = _usernameController.text;
                     String email = _emailController.text;
@@ -148,10 +153,13 @@ class _UserFormPageState extends State<UserFormPage> {
                       ));
                     }
                   }
+                  setState(() {
+                    btnLoading = false;
+                  });
                 },
               style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
               child: const Text("Valider"),
-              ),
+              ) : const Center(child: CircularProgressIndicator(),),
             ],
           ),
         ),

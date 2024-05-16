@@ -15,11 +15,11 @@ class _ConnexionPageState extends State<ConnexionPage> {
   List<String> accountTypes = ["Admin", "Banquier", "Bénévole"];
   String password = '';
   bool isLoading = true;
+  bool btnLoading = false;
 
   @override
   void initState() {
     super.initState();
-    // Ajoutez un délai simulé pour l'indicateur de chargement
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         isLoading = false;
@@ -100,11 +100,10 @@ class _ConnexionPageState extends State<ConnexionPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
+                !btnLoading ? ElevatedButton(
                   onPressed: password != "" ? () {logIn();} : null,
-
                   child: const Text('Se connecter'),
-                ),
+                ) : const Center(child: CircularProgressIndicator()),
               ],
             ),
           ),
@@ -114,11 +113,14 @@ class _ConnexionPageState extends State<ConnexionPage> {
   }
 
   void logIn () {
+    setState(() {
+      btnLoading = true;
+    });
     verifyPassword(selectedButtonIndex + 1, password).then((
         isAuthenticated) async {
       if (mounted) {
         if (isAuthenticated != "") {
-          if (isAuthenticated != "") {
+          if (isAuthenticated == "cors") {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Probleme CORS : vérifier lien")));
           } else {
             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -147,6 +149,9 @@ class _ConnexionPageState extends State<ConnexionPage> {
           );
         }
       }
+      setState(() {
+        btnLoading = false;
+      });
     });
   }
 }

@@ -4,6 +4,8 @@ import 'package:turbo_market/pages/games_page.dart';
 import 'package:turbo_market/pages/ranking_page.dart';
 import 'package:turbo_market/pages/shop_page.dart';
 
+import '../api/api_request.dart';
+
 class ShowcasePage extends StatefulWidget {
   const ShowcasePage({super.key});
 
@@ -33,6 +35,12 @@ class _ShowcasePageState extends State<ShowcasePage> {
               Navigator.pushNamed(context, "/connexion");
             },
             icon: const Icon(Icons.lock_person),
+          ),
+          IconButton(
+            onPressed: () {
+              _showEmailModal(context,"");
+            },
+            icon: const Icon(Icons.qr_code),
           )
         ],
       ),
@@ -64,5 +72,72 @@ class _ShowcasePageState extends State<ShowcasePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _showEmailModal(BuildContext context, String errorMessage) {
+    TextEditingController emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Envoyer QR Code'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                style: const TextStyle(fontFamily: "Nexa"),
+                controller: emailController,
+                decoration: InputDecoration(
+                  hintText: 'Adresse e-mail',
+                  errorText: errorMessage.isNotEmpty ? errorMessage : null,
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String email = emailController.text.trim();
+                if (isEmailValid(email)) {
+                  if (await userExist(email)) {
+                    bool res = await sendQr(email);
+                    if (res) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Email envoyé")));
+                      Navigator.of(context).pop();
+                    } else {
+                      errorMessage = 'Probleme d\'envoi de l\'email';
+                      Navigator.pop(context);
+                      _showEmailModal(context, errorMessage);
+                    }
+                  } else {
+                    errorMessage = 'E-mail non attribué';
+                    Navigator.pop(context);
+                    _showEmailModal(context, errorMessage);
+                  }
+                } else {
+                  Navigator.pop(context);
+                  _showEmailModal(context, "Adresse e-mail invalide");
+                }
+              },
+              child: const Text('Envoyer'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  bool isEmailValid(String email) {
+    String emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    RegExp regExp = RegExp(emailPattern);
+    return regExp.hasMatch(email);
   }
 }
