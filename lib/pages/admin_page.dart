@@ -83,6 +83,16 @@ class _AdminPageState extends State<AdminPage> {
                   title: const Text("Prix")
               ),
               const Divider(),
+
+              ListTile(
+                onTap: () {
+                  Navigator.pushNamed(context, "/historic");
+                },
+                trailing: const Icon(Icons.arrow_forward_ios),
+                leading: const Icon(Icons.history),
+                title: const Text("Historique")
+              ),
+              const Divider(),
               ListTile(
                   onTap: () {
                     showDialog(

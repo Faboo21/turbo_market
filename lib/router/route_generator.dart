@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/home_page.dart';
 import 'package:turbo_market/pages/add_member_page.dart';
 import 'package:turbo_market/pages/game_choice_page.dart';
+import 'package:turbo_market/pages/historic_page.dart';
 import 'package:turbo_market/pages/manage_game_page.dart';
 import 'package:turbo_market/pages/manage_levels_page.dart';
 import 'package:turbo_market/pages/manage_payment_method_page.dart';
@@ -64,6 +65,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const GameManagementPage());
       case '/manage_prizes' :
         return MaterialPageRoute(builder: (context) => const PrizeManagementPage());
+      case '/historic' :
+        return MaterialPageRoute(builder: (context) => const HistoricPage());
       case '/winner' :
         if (args is List<User?>) {
           return MaterialPageRoute(builder: (context) => WinnerChoicePage(playersList: args,));
@@ -72,6 +75,11 @@ class RouteGenerator {
       case '/reward' :
         if (args is User) {
           return MaterialPageRoute(builder: (context) => RewardPage(selectedUser: args,));
+        }
+        return MaterialPageRoute(builder: (context) => const HomePage());
+      case '/reward_multi' :
+        if (args is User) {
+          return MaterialPageRoute(builder: (context) => RewardPage(selectedUser: args, multiPlayers: true,));
         }
         return MaterialPageRoute(builder: (context) => const HomePage());
       case '/manage_balance' :

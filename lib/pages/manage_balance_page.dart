@@ -38,6 +38,7 @@ class _ManageBalanceState extends State<ManageBalance> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestion du solde'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

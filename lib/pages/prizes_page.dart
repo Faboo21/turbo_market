@@ -3,11 +3,18 @@ import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/prize.dart';
 
+import '../type/game.dart';
+import '../type/level.dart';
+import '../type/stats_play.dart';
+import '../type/success.dart';
+import '../type/transaction.dart';
 import '../type/user.dart';
 
 class PrizesPage extends StatefulWidget {
-  const PrizesPage({super.key, required this.selectedUser});
+  const PrizesPage({super.key, required this.selectedUser, this.showSuccess = true});
   final User selectedUser;
+  final bool showSuccess;
+
   @override
   State<PrizesPage> createState() => _PrizesPageState();
 }
@@ -25,12 +32,91 @@ class _PrizesPageState extends State<PrizesPage> {
     loadPrizes();
   }
 
+  List<Success> oldSuccess = [];
+  List<Success> actualSuccess = [];
+
+  Future<void> loadOldSuccess() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text("Chargement des succès"),
+        );
+      },
+    );
+    List<User> users = await getAllUsers();
+    List<StatsPlay> plays = await getAllStatsPlays();
+    List<Game> games = await getAllGames();
+    List<Transaction> transactionsList = await getAllTransactions();
+    List<Level> levelList = await getAllLevels();
+    List<Prize> prizesList = await getAllPrizes();
+    List<Success> successList = await getAllSuccess();
+    List<Success> validSuccess = [];
+    for (var success in successList) {
+      if (success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
+        validSuccess.add(success);
+      }
+    }
+    oldSuccess = validSuccess;
+    Navigator.pop(context);
+  }
+
+  Future<void> loadNewSuccess() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text("Chargement des succès"),
+        );
+      },
+    );
+    List<User> users = await getAllUsers();
+    List<StatsPlay> plays = await getAllStatsPlays();
+    List<Game> games = await getAllGames();
+    List<Transaction> transactionsList = await getAllTransactions();
+    List<Level> levelList = await getAllLevels();
+    List<Prize> prizesList = await getAllPrizes();
+    List<Success> successList = await getAllSuccess();
+    List<Success> validSuccess = [];
+    for (var success in successList) {
+      if (success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
+        validSuccess.add(success);
+      }
+    }
+    actualSuccess = validSuccess;
+
+    for (var success in successList){
+      String newSuccess = "";
+      String loseSuccess = "";
+      if (actualSuccess.any((element) => element.id == success.id) && !oldSuccess.any((element) => element.id == success.id)){
+        newSuccess += "${success.libelle}, ";
+      }
+      if (oldSuccess.any((element) => element.id == success.id) && !actualSuccess.any((element) => element.id == success.id)){
+        loseSuccess += "${success.libelle}, ";
+      }
+      if (newSuccess != ""){
+        newSuccess = newSuccess.substring(0,newSuccess.length-2);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nouveau succès : $newSuccess")));
+      }
+      if (loseSuccess != ""){
+        loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu : $loseSuccess")));
+      }
+    }
+    Navigator.pop(context);
+  }
+
   Future<void> loadPrizes() async {
     List<Prize> resList = await getAllPrizes();
     setState(() {
       quantityList = List<int>.filled(resList.length, 0);
       prizesList = resList;
     });
+    if (widget.showSuccess) {
+      await loadOldSuccess();
+    }
   }
 
   void updateTotalPrice() {
@@ -178,6 +264,9 @@ class _PrizesPageState extends State<PrizesPage> {
                   setState(() {
                     btnLoading = false;
                   });
+                  if (widget.showSuccess) {
+                    await loadNewSuccess();
+                  }
                   Navigator.pop(context, res);
                 } : null,
                 icon: const Icon(Icons.shopping_cart),

@@ -334,4 +334,9 @@ class Success {
     final dynamic result = eval(code, function: 'check', args: [$String(jsonSelectedUser), $String(jsonPlaysList), $String(jsonUsersList), $String(jsonGamesList), $String(jsonLevelsList), $String(jsonPrizesList), $String(jsonTransactionsList),]);
     return result as bool;
   }
+
+  @override
+  String toString() {
+    return libelle;
+  }
 }
