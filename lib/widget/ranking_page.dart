@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -16,8 +18,8 @@ import '../type/user.dart';
 import '../type/user_rank.dart';
 
 class RankingPage extends StatefulWidget {
-  const RankingPage({super.key});
-
+  const RankingPage({super.key, required this.viewOnly});
+  final bool viewOnly;
   @override
   State<RankingPage> createState() => _RankingPageState();
 }
@@ -41,10 +43,19 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
   @override
   void initState() {
     setState(() {
+      selectedTimeRange = !widget.viewOnly ? 'All time' : '24h';
       _controller = GifController(vsync: this);
     });
     _loadPlayersList();
     super.initState();
+    if (widget.viewOnly) {
+      Timer.periodic(const Duration(seconds: 10), (timer) {
+        setState(() {
+          _loadPlayersList();
+        });
+      });
+    }
+
   }
 
   void filterUsers(String query) {
@@ -101,16 +112,16 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
       String favGame = getFavoriteGame(plays, user.id, games);
       setState(() {
         playersList.add(
-            UserRank(id: user.id,
-                username: user.username,
-                balance: user.balance,
-                mean: score/(nbGames == 0 ? 1 : nbGames),
-                bestGame: favGame,
-                nbGames: nbGames,
-                success: [],
-                score: score,
-                email: user.email
-            ));
+          UserRank(id: user.id,
+            username: user.username,
+            balance: user.balance,
+            mean: score/(nbGames == 0 ? 1 : nbGames),
+            bestGame: favGame,
+            nbGames: nbGames,
+            success: [],
+            score: score,
+            email: user.email
+          ));
       });
     }
 
@@ -155,19 +166,25 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
     List<Level> levelList = await getAllLevels();
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
-    for (var user in users) {
-      List<Success> validSuccess = [];
-      for (var success in successList) {
-        if (success.evaluate(user, plays, users, games, levelList, prizesList, transactionsList)) {
-          validSuccess.add(success);
+    try {
+      for (var user in users) {
+        List<Success> validSuccess = [];
+        for (var success in successList) {
+          if (success.evaluate(user, plays, users, games, levelList, prizesList, transactionsList)) {
+            validSuccess.add(success);
+          }
         }
+        validSuccess.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
+        setState(() {
+          filteredPlayersList.where((element) => element.id == user.id).first.success = validSuccess;
+        });
       }
-      validSuccess.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
-      setState(() {
-        filteredPlayersList.where((element) => element.id == user.id).first.success = validSuccess;
-      });
+      Navigator.pop(context);
     }
-    Navigator.pop(context);
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Imposible de charger les succès")));
+      Navigator.pop(context);
+    }
   }
 
   int getNumberOfGames(List<StatsPlay> statsList, int userId) {
@@ -236,17 +253,17 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton:
+      floatingActionButton: !widget.viewOnly ?
       IconButton(
         icon: const Icon(Icons.info),
         onPressed: () {
           Navigator.pushNamed(context, "/success");
         },
-      ),
+      ) : null,
       body:
       Column(
         children: [
-          Padding(
+          if (!widget.viewOnly) ...[Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
@@ -260,103 +277,111 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(onPressed: () {
+                    _loadPlayersList();
+                  },
+                      icon: const Icon(Icons.refresh, size: 40,)
+                  ),
+                )
               ],
             ),
           ),
           ExpansionTile(
-              title: const Text("Filtrer"),
-              leading: const Icon(Icons.filter_alt, color: Colors.white,),
-              children: [
-                SizedBox(
-                  height: 250,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        DropdownButton<String>(
-                          padding: const EdgeInsets.all(5),
-                          isExpanded: true,
-                          value: selectedGame,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedGame = newValue!;
-                            });
-                            _loadPlayersList();
-                          },
-                          items: gamesList.map<DropdownMenuItem<String>>((
-                              String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+            title: const Text("Filtrer"),
+            leading: const Icon(Icons.filter_alt, color: Colors.white,),
+            children: [
+              SizedBox(
+                height: 250,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      DropdownButton<String>(
+                        padding: const EdgeInsets.all(5),
+                        isExpanded: true,
+                        value: selectedGame,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedGame = newValue!;
+                          });
+                          _loadPlayersList();
+                        },
+                        items: gamesList.map<DropdownMenuItem<String>>((
+                            String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(width: 10),
+                      DropdownButton<String>(
+                        padding: const EdgeInsets.all(5),
+                        value: selectedTimeRange,
+                        isExpanded: true,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedTimeRange = newValue!;
+                          });
+                          _loadPlayersList();
+                        },
+                        items: <String>['All time', '24h'].map<
+                            DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(width: 10),
+                      DropdownButton<String>(
+                        padding: const EdgeInsets.all(5),
+                        isExpanded: true,
+                        value: sortedBy,
+                        onChanged: (newValue) {
+                          setState(() {
+                            sortedBy = newValue!;
+                          });
+                          sortUsers();
+                        },
+                        items: <String>[
+                          'Score',
+                          'Solde',
+                          "Parties Jouée",
+                          "Moyenne"
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(width: 10),
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          children: [
+                            const Text("Activer les succès : "),
+                            Checkbox(value: successActivated, onChanged: (newVal) {
+                              setState(() {
+                                successActivated = newVal ?? false;
+                              });
+                              _loadPlayersList();
+                            }),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        DropdownButton<String>(
-                          padding: const EdgeInsets.all(5),
-                          value: selectedTimeRange,
-                          isExpanded: true,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedTimeRange = newValue!;
-                            });
-                            _loadPlayersList();
-                          },
-                          items: <String>['All time', '24h'].map<
-                              DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(width: 10),
-                        DropdownButton<String>(
-                          padding: const EdgeInsets.all(5),
-                          isExpanded: true,
-                          value: sortedBy,
-                          onChanged: (newValue) {
-                            setState(() {
-                              sortedBy = newValue!;
-                            });
-                            sortUsers();
-                          },
-                          items: <String>[
-                            'Score',
-                            'Solde',
-                            "Parties Jouée",
-                            "Moyenne"
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(width: 10),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Row(
-                            children: [
-                              const Text("Activer les succès : "),
-                              Checkbox(value: successActivated, onChanged: (newVal) {
-                                setState(() {
-                                  successActivated = newVal ?? false;
-                                });
-                                _loadPlayersList();
-                              }),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
-              ]
-          ),
-          const SizedBox(height: 15,),
-          !loading ? Expanded(
+              ),
+            ]),
+            const SizedBox(height: 15,),
+          ],
+          !loading || widget.viewOnly ? Expanded(
             child: ListView.builder(
               itemCount: filteredPlayersList.length,
               itemBuilder: (context, index) {

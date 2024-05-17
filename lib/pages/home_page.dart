@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         if (AppConfig.role == 3) ...[
           const SizedBox(height: 16.0),
           !btnEndGameLoading ? ElevatedButton(
-            onPressed: checkMinPlayers() && checkPlayersBalance() ? playerList.length > 1 ? () async {
+            onPressed: checkMinPlayers() && checkPlayersBalance().isEmpty ? playerList.length > 1 ? () async {
               setState(() {
                 btnEndGameLoading = true;
               });
@@ -180,13 +180,33 @@ class _HomePageState extends State<HomePage> {
     return false;
   }
 
-  bool checkPlayersBalance() {
+  List<User> checkPlayersBalance() {
+    // Créer un map pour stocker les occurrences de chaque joueur.
+    final Map<User, int> playerCount = {};
+    final List<User> insufficientBalancePlayers = [];
+
+    // Compter les occurrences de chaque joueur dans la liste.
     for (var player in playerList) {
-      if (player != null && player.balance < game.price) {
-        return false;
+      if (player != null) {
+        if (playerCount.containsKey(player)) {
+          playerCount[player] = playerCount[player]! + 1;
+        } else {
+          playerCount[player] = 1;
+        }
       }
     }
-    return true;
+
+    // Vérifier si chaque joueur a assez de balance pour payer le nombre de parties équivalent à ses occurrences.
+    for (var entry in playerCount.entries) {
+      final player = entry.key;
+      final count = entry.value;
+
+      if (player.balance < game.price * count) {
+        insufficientBalancePlayers.add(player);
+      }
+    }
+
+    return insufficientBalancePlayers;
   }
 
 
@@ -209,13 +229,9 @@ class _HomePageState extends State<HomePage> {
               if (getQrUser == null) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Code QR non attribué")));
               } else {
-                if (checkUser(getQrUser)) {
-                  setState(() {
-                    playerList[index] = getQrUser;
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Joueur déjà en jeu")));
-                }
+                setState(() {
+                  playerList[index] = checkUser(getQrUser) ?? getQrUser;
+                });
               }
             }
           },
@@ -238,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
-                      color: (AppConfig.game != 0 && game.price > playerList[index]!.balance) ? Colors.red : Colors.white,
+                      color: (AppConfig.game != 0 && checkPlayersBalance().contains(playerList[index])) ? Colors.red : Colors.white,
                     ),
                     ),
                   IconButton(
@@ -430,8 +446,8 @@ class _HomePageState extends State<HomePage> {
     return regExp.hasMatch(email);
   }
 
-  bool checkUser(User scannedUser) {
-    return !playerList.any((user) => user?.id == scannedUser.id);
+  User? checkUser(User scannedUser) {
+    return playerList.where((user) => user?.id == scannedUser.id).firstOrNull;
   }
 }
 

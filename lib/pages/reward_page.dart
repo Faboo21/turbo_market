@@ -28,14 +28,19 @@ class _RewardPageState extends State<RewardPage> {
   Future<void> loadLevels() async {
     var resLevelsList = await getAllLevelsByGame(AppConfig.game);
     if (resLevelsList.length == 1) {
-      Game game = await getGameById(resLevelsList[0].gameId);
+      Game game = await getGameById(AppConfig.game);
       bool res2 = await addPlays(AppConfig.game, resLevelsList[0].step, widget.selectedUser.id);
       bool res1 = false;
       if (res2) {
-        res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + resLevelsList[0].cashPrize - game.price);
+        if (resLevelsList[0].libelle == "") {
+          res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance + resLevelsList[0].cashPrize - game.price);
+          widget.selectedUser.balance = widget.selectedUser.balance + resLevelsList[0].cashPrize - game.price;
+        } else {
+          res1 = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - game.price);
+          widget.selectedUser.balance = widget.selectedUser.balance - game.price;
+        }
       }
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gain : ${resLevelsList[0].libelle == "" ? "${resLevelsList[0].cashPrize * AppConfig.rate}ƒ" : resLevelsList[0].libelle} + ${resLevelsList[0].score} points")));
-      widget.selectedUser.balance = widget.selectedUser.balance + resLevelsList[0].cashPrize - game.price;
       Navigator.pop(context, res1 && res2);
     }
     setState(() {

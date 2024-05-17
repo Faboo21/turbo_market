@@ -47,6 +47,7 @@ dependencies:
   outline_gradient_button: ^2.0.1+1
   gif: ^2.3.0
   flutter_gradient_animation_text: ^1.0.2
+  auto_scroll: ^0.2.0
 
 dev_dependencies:
   flutter_test:

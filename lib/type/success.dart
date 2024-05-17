@@ -79,12 +79,14 @@ class Success {
       });
     
       factory Game.fromJson(Map<String, dynamic> json) {
+        String price = (json['gam_price']).toString();
+        price = price.split('.')[0];
         return Game(
           id: int.parse(json['gam_id']),
           name: json['gam_name'],
           rules: json['gam_rules'],
           createdAt: json['gam_created_at'],
-          price: int.parse(json['gam_price']),
+          price: int.parse(price),
           nbPlayersMin : int.parse(json['gam_min_players']),
           nbPlayersMax : int.parse(json['gam_max_players']),
           image : json['gam_image'] ?? "",
@@ -108,11 +110,13 @@ class Success {
       });
     
       factory User.fromJson(Map<String, dynamic> json) {
+        String balance = (json['usr_balance']).toString();
+        balance = balance.split('.')[0];
         return User(
           id: int.parse(json['usr_id']),
           username: json['usr_username'],
           email: json['usr_email'],
-          balance: int.parse(json['usr_balance']),
+          balance: int.parse(balance),
           qr: json['usr_qr'],
         );
       }
@@ -136,11 +140,13 @@ class Success {
       });
     
       factory StatsPlay.fromJson(Map<String, dynamic> json) {
+        String gain = (json['gain']).toString();
+        gain = gain.split('.')[0];
         return StatsPlay(
           gameid: int.parse(json['gam_id']),
           levStep: int.parse(json['lev_step']),
           parTime: json['par_time'],
-          gain: int.parse(json['gain']),
+          gain: int.parse(gain),
           userId: int.parse(json['usr_id']),
           score: int.parse(json['lev_score'])
         );
@@ -163,10 +169,12 @@ class Success {
       });
     
       factory Level.fromJson(Map<String, dynamic> json) {
+        String cashprize = (json['lev_cashprize']).toString();
+        cashprize = cashprize.split('.')[0];
         return Level(
           gameId: int.parse(json['gam_id']),
           step: int.parse(json['lev_step']),
-          cashPrize: int.parse(json['lev_cashprize']),
+          cashPrize: int.parse(cashprize),
           libelle: json['lev_libelle'] ?? "",
           score: int.parse(json['lev_score']),
         );
@@ -194,12 +202,14 @@ class Success {
       });
     
       factory Prize.fromJson(Map<String, dynamic> json) {
+        String price = (json['pri_price']).toString();
+        price = price.split('.')[0];
         return Prize(
           id: int.parse(json['pri_id']),
           name: json['pri_name'] as String,
           description: json['pri_description'] as String,
           createdAt: json['pri_created_at'] as String,
-          price: int.parse(json['pri_price']),
+          price: int.parse(price),
           image: json['pri_image'] ?? "",
           stock: int.parse(json['pri_stock']),
         );
@@ -223,11 +233,13 @@ class Success {
       });
     
       factory Transaction.fromJson(Map<String, dynamic> json) {
+        String amount = (json['tra_amount']).toString();
+        amount = amount.split('.')[0];
         return Transaction(
           usrId: int.parse(json['usr_id']),
           priId: int.tryParse(json['pri_id'] ?? "") ?? 0,
           traTime: json['tra_time'],
-          traAmount: int.parse(json['tra_amount']),
+          traAmount: int.parse(amount),
           payId: int.tryParse(json['pay_id'] ?? "") ?? 0,
         );
       }
@@ -305,10 +317,12 @@ class Success {
       List<Level> levelsList = levelsListFromJson(jsonLevelsList);
       List<Level> prizesList = prizesListFromJson(jsonPrizesList);
       List<Transaction> transactionsList = transactionsListFromJson(jsonTransactionsList);
-      
       $condition
     }
   """;
+
+
+    "aaaaaaa".toString().substring(0,2);
 
     String jsonSelectedUser = jsonEncode(selectedUser.toJson());
     String jsonPlaysList = jsonEncode(playsList.map((play) => play.toJson()).toList());

@@ -10,6 +10,7 @@ import 'package:turbo_market/pages/manage_success_page.dart';
 import 'package:turbo_market/pages/reward_page.dart';
 import 'package:turbo_market/pages/connexion_page.dart';
 import 'package:turbo_market/pages/admin_page.dart';
+import 'package:turbo_market/pages/guest_page.dart';
 import 'package:turbo_market/pages/showcase_page.dart';
 import 'package:turbo_market/pages/success_page.dart';
 import 'package:turbo_market/pages/winner_page.dart';
@@ -26,6 +27,8 @@ class RouteGenerator {
     final args = settings.arguments;
     switch (settings.name) {
       case '/' :
+        return MaterialPageRoute(builder: (context) => const GuestPage());
+      case '/showcase' :
         return MaterialPageRoute(builder: (context) => const ShowcasePage());
       case '/connexion' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());

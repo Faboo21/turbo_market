@@ -12,7 +12,7 @@ class ConnexionPage extends StatefulWidget {
 
 class _ConnexionPageState extends State<ConnexionPage> {
   int selectedButtonIndex = 0;
-  List<String> accountTypes = ["Admin", "Banquier", "Bénévole"];
+  List<String> accountTypes = ["Bénévole", "Banquier", "Admin"];
   String password = '';
   bool isLoading = true;
   bool btnLoading = false;
@@ -116,7 +116,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
     setState(() {
       btnLoading = true;
     });
-    verifyPassword(selectedButtonIndex + 1, password).then((
+    verifyPassword(3 - selectedButtonIndex, password).then((
         isAuthenticated) async {
       if (mounted) {
         if (isAuthenticated != "") {
@@ -125,9 +125,9 @@ class _ConnexionPageState extends State<ConnexionPage> {
           } else {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString("token", isAuthenticated);
-            AppConfig.role = selectedButtonIndex + 1;
-            if (selectedButtonIndex + 1 == 3) {
-              Navigator.pushNamed(context, '/choixGames');
+            AppConfig.role = 3 - selectedButtonIndex;
+            if (3 - selectedButtonIndex == 3) {
+              Navigator.pushReplacementNamed(context, '/choixGames');
             } else {
               Navigator.pushNamed(context, '/home');
             }

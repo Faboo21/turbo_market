@@ -52,9 +52,10 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
                 });
                 dynamic res = true;
                 res = await Navigator.pushNamed(context, "/reward", arguments: widget.playersList[index]);
-                if (res != null && res is bool && res == true) {
+                if (res != null && res is bool && res) {
                   for (int i = 0; i < widget.playersList.length; i++) {
                     if (i != index && widget.playersList[i] != null) {
+                      await Future.delayed(const Duration(seconds: 1));
                       res = await updateUserBalance(widget.playersList[i]!, widget.playersList[i]!.balance - game.price) && res;
                       widget.playersList[i]?.balance = widget.playersList[i]!.balance - game.price;
                       res = await addPlays(AppConfig.game, 0, widget.playersList[i]!.id) && res;
