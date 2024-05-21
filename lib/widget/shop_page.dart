@@ -90,7 +90,7 @@ class _ShopState extends State<ShopPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.network(
-                  prize.image,
+                  "${prize.image}?random=${DateTime.now().millisecondsSinceEpoch}",
                   fit: BoxFit.cover,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) {

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/payment_method.dart';
@@ -24,8 +23,8 @@ class _HistoricPageState extends State<HistoricPage> {
   List<PaymentMethod> paymentMethods = [];
 
   List<String> prizesList = [];
-  String selectedTimeRange = "24H";
-  String selectedPrize = "All Prizes";
+  String selectedTimeRange = "Semaine";
+  String selectedPrize = "All";
 
   TextEditingController searchController = TextEditingController();
 
@@ -37,8 +36,8 @@ class _HistoricPageState extends State<HistoricPage> {
 
   Future<void> loadLists() async {
     List<Transaction> resTransactions = [];
-    if (selectedTimeRange == "24H") {
-      resTransactions = await getAllTransactions24h();
+    if (selectedTimeRange == "Semaine") {
+      resTransactions = await getAllTransactionsWeek();
     }
     else {
       resTransactions = await getAllTransactions();
@@ -50,20 +49,28 @@ class _HistoricPageState extends State<HistoricPage> {
       transactions = resTransactions;
       filteredTransactions = resTransactions;
       prizes = resPrizes;
-      prizesList =  ["All Prizes"] +  List.generate(prizes.length, (index) => prizes[index].name);
+      prizesList =  ["All", "Prix", "Floppies"] +  List.generate(prizes.length, (index) => prizes[index].name);
       users = resUsers;
       paymentMethods = resPaymentMethods;
     });
+    filterTransactions(searchController.text);
   }
 
   void filterTransactions(String query) {
     List<Transaction> resFilteredTransactions = transactions.where((transaction) {
       User user = users.where((element) => element.id == transaction.usrId).first;
       Prize? prize = prizes.where((element) => element.name == selectedPrize).firstOrNull;
-      if (selectedPrize == "All Prizes") {
+      if (selectedPrize == "All") {
         return (transaction.traTime.toLowerCase().contains(query.toLowerCase()) || user.username.toLowerCase().contains(query.toLowerCase()) || user.email.toLowerCase().contains(query.toLowerCase()));
-      } else {
-        return (transaction.traTime.toLowerCase().contains(query.toLowerCase()) || user.username.toLowerCase().contains(query.toLowerCase()) || user.email.toLowerCase().contains(query.toLowerCase())) && transaction.priId == prize?.id ;
+      }
+      else if (selectedPrize == "Prix") {
+        return (transaction.traTime.toLowerCase().contains(query.toLowerCase()) || user.username.toLowerCase().contains(query.toLowerCase()) || user.email.toLowerCase().contains(query.toLowerCase())) && transaction.priId != 0;
+      }
+      else if (selectedPrize == "Floppies") {
+        return (transaction.traTime.toLowerCase().contains(query.toLowerCase()) || user.username.toLowerCase().contains(query.toLowerCase()) || user.email.toLowerCase().contains(query.toLowerCase())) && transaction.priId == 0;
+      }
+      else {
+        return (transaction.traTime.toLowerCase().contains(query.toLowerCase()) || user.username.toLowerCase().contains(query.toLowerCase()) || user.email.toLowerCase().contains(query.toLowerCase())) && transaction.priId == prize?.id;
       }
     }).toList();
     setState(() {
@@ -104,7 +111,7 @@ class _HistoricPageState extends State<HistoricPage> {
                     });
                     loadLists();
                   },
-                  items: <String>['24H', 'All time'].map<DropdownMenuItem<String>>((String value) {
+                  items: <String>['Semaine', 'All time'].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),

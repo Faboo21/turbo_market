@@ -48,6 +48,7 @@ dependencies:
   gif: ^2.3.0
   flutter_gradient_animation_text: ^1.0.2
   auto_scroll: ^0.2.0
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +85,7 @@ flutter:
     - images/logo-obsolete-noir.png
     - images/logo-obsolete-blanc.png
     - images/giphy.gif
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

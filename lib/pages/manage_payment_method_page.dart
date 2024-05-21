@@ -53,7 +53,7 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
   }
 
   Future<void> loadTransactions() async {
-    List<Transaction> resList = await getAllTransactions24h();
+    List<Transaction> resList = await getAllTransactionsWeek();
     List<double> temp = List.filled(total24h.length, 0);
     for (Transaction transaction in resList) {
       if (transaction.payId > 0 && transaction.priId == 0) {

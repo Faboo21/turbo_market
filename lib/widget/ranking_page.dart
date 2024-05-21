@@ -32,7 +32,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
 
   TextEditingController searchController = TextEditingController();
   String selectedGame = "All Games";
-  String selectedTimeRange = 'All time';
+  String selectedTimeRange = '24h';
   String sortedBy = 'Score';
 
   bool loading = true;
@@ -43,7 +43,6 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
   @override
   void initState() {
     setState(() {
-      selectedTimeRange = !widget.viewOnly ? 'All time' : '24h';
       _controller = GifController(vsync: this);
     });
     _loadPlayersList();
@@ -255,7 +254,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
     return Scaffold(
       floatingActionButton: !widget.viewOnly ?
       IconButton(
-        icon: const Icon(Icons.info),
+        icon: const Icon(Icons.info, size: 40,),
         onPressed: () {
           Navigator.pushNamed(context, "/success");
         },
@@ -388,14 +387,13 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                 UserRank player = filteredPlayersList[index];
                 return ExpansionTile(
                   leading: SizedBox(
-                    width: 32, // Largeur fixe pour le conteneur du texte
+                    width: 35,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (index < 3) // Affiche l'icône de médaille pour les trois premiers joueurs
+                        if (index < 3)
                           Padding(
                             padding: const EdgeInsets.only(right: 8.0),
-                            // Espace entre l'icône et le texte
                             child: Icon(
                               FontAwesome5.medal,
                               color: index == 0 ? Colors.yellow : index == 1

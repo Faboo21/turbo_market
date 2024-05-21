@@ -652,8 +652,8 @@ Future<bool> insertPaymentMethod(PaymentMethod mode) async {
   return false;
 }
 
-Future<List<Transaction>> getAllTransactions24h() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions24h?api_key=${AppConfig.apiKey}"));
+Future<List<Transaction>> getAllTransactionsWeek() async {
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions_week?api_key=${AppConfig.apiKey}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();

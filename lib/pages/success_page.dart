@@ -41,6 +41,7 @@ class _SuccessPageState extends State<SuccessPage> with TickerProviderStateMixin
     return Scaffold(
       appBar: AppBar(
         title: const Text('Succès'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: successList.isEmpty
           ? const Center(
