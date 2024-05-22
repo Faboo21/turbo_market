@@ -17,7 +17,7 @@ Future<String> verifyPassword(int roleId, String password) async {
   try {
   http.Response response = await http.post(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/password?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -35,11 +35,12 @@ Future<String> verifyPassword(int roleId, String password) async {
   } on Exception catch (_) {return "cors";}
 }
 
-Future<bool> insertUser(
-    String username, String mail, double rising, int payId) async {
+Future<bool> insertUser(String username, String mail, double rising, int payId) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/create_account?api_key=${AppConfig.apiKey}"),
-      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      Uri.parse("https://obsolete-events.com/turbo-market/api/create_account?token=${AppConfig.token}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
       body: jsonEncode(<String, String>{
         "usr_username": username,
         "usr_email": mail,
@@ -56,7 +57,7 @@ Future<bool> insertUser(
 
 Future<int> getExchangeRate() async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/exchange_rate?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/exchange_rate?token=${AppConfig.token}"),);
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     if (responseData.isNotEmpty) {
@@ -71,7 +72,7 @@ Future<int> getExchangeRate() async {
 
 Future<User?> getUserByQr(String qrId) async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/users?token=${AppConfig.token}"),);
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -87,7 +88,7 @@ Future<User?> getUserByQr(String qrId) async {
 
 Future<List<Game>> getAllGames() async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/games?token=${AppConfig.token}"),);
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -100,7 +101,7 @@ Future<List<Game>> getAllGames() async {
 
 Future<List<Level>> getAllLevelsByGame(int gameId) async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"),);
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -116,7 +117,7 @@ Future<List<Level>> getAllLevelsByGame(int gameId) async {
 
 Future<List<Level>> getAllLevels() async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -130,7 +131,7 @@ Future<List<Level>> getAllLevels() async {
 Future<bool> updateUserBalance(User user, double newBalance) async {
   http.Response response = await http.put(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/users?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -149,7 +150,7 @@ Future<bool> updateUserBalance(User user, double newBalance) async {
 
 Future<Level> getLevelById(int levStep, int gamId) async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
@@ -165,7 +166,7 @@ Future<Level> getLevelById(int levStep, int gamId) async {
 
 Future<Game> getGameById(int gamId) async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/games?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     for (Map<String, dynamic> gameData in responseData) {
@@ -184,7 +185,7 @@ Future<Game> getGameById(int gamId) async {
 }
 
 Future<Map<String, dynamic>> getTokenInfo(String token) async {
-  Uri uri = Uri.parse("https://obsolete-events.com/turbo-market/api/token?api_key=${AppConfig.apiKey}");
+  Uri uri = Uri.parse("https://obsolete-events.com/turbo-market/api/token?token=${AppConfig.token}");
   http.Response response = await http.post(uri,
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
@@ -197,8 +198,8 @@ Future<Map<String, dynamic>> getTokenInfo(String token) async {
 }
 
 Future<bool> addPlays(int gameId, int levStep, int userId) async {
-    http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/plays?api_key=${AppConfig.apiKey}"),
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/plays?token=${AppConfig.token}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
         "gam_id": gameId.toString(),
@@ -213,7 +214,7 @@ Future<bool> addPlays(int gameId, int levStep, int userId) async {
 
 Future<bool> sendQr(String usrEmail) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/qr?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/qr?token=${AppConfig.token}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
         "usr_email": usrEmail,
@@ -226,7 +227,7 @@ Future<bool> sendQr(String usrEmail) async {
 
 Future<bool> userExist(String userEmail) async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/users?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     for (Map<String, dynamic> userData in responseData) {
@@ -240,7 +241,7 @@ Future<bool> userExist(String userEmail) async {
 
 Future<bool> updatePassword(String masterPassword, String newPassword, int teaId) async {
   http.Response response = await http.put(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/password?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/password?token=${AppConfig.token}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
         "tea_id": teaId.toString(),
@@ -254,7 +255,7 @@ Future<bool> updatePassword(String masterPassword, String newPassword, int teaId
 }
 
 Future<List<Prize>> getAllPrizes() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<Prize> prizes = responseData.map((prizeData) => Prize.fromJson(prizeData)).toList();
@@ -264,7 +265,7 @@ Future<List<Prize>> getAllPrizes() async {
 }
 
 Future<List<PaymentMethod>> getAllPaymentMethod() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/payment_method?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<PaymentMethod> modes = responseData.map((modeData) => PaymentMethod.fromJson(modeData)).toList();
@@ -276,7 +277,7 @@ Future<List<PaymentMethod>> getAllPaymentMethod() async {
 
 Future<bool> insertTransaction(int usrId, int priId, double traAmount, int payId) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?token=${AppConfig.token}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
         "usr_id": usrId.toString(),
@@ -292,7 +293,7 @@ Future<bool> insertTransaction(int usrId, int priId, double traAmount, int payId
 
 Future<bool> addTransaction(int usrId, int priId, double traAmount, int payId) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/add_transaction?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/add_transaction?token=${AppConfig.token}"),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(<String, String>{
         "usr_id": usrId.toString(),
@@ -307,7 +308,7 @@ Future<bool> addTransaction(int usrId, int priId, double traAmount, int payId) a
 }
 
 Future<List<StatsPlay>> get24hStatsPlays() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/stats24h?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/stats24h?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<StatsPlay> plays = responseData.map((playsData) => StatsPlay.fromJson(playsData)).toList();
@@ -317,7 +318,7 @@ Future<List<StatsPlay>> get24hStatsPlays() async {
 }
 
 Future<List<StatsPlay>> getAllStatsPlays() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/statsAllTime?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/statsAllTime?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<StatsPlay> plays = responseData.map((playsData) => StatsPlay.fromJson(playsData)).toList();
@@ -327,7 +328,7 @@ Future<List<StatsPlay>> getAllStatsPlays() async {
 }
 
 Future<List<User>> getAllUsers() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/users?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<User> users = responseData.map((userData) => User.fromJson(userData)).toList();
@@ -339,7 +340,7 @@ Future<List<User>> getAllUsers() async {
 Future<bool> updateUser(User user) async {
   http.Response response = await http.put(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/users?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -359,7 +360,7 @@ Future<bool> updateUser(User user) async {
 Future<bool> deleteUser(User user) async {
   http.Response response = await http.delete(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/users?api_key=${AppConfig.apiKey}&usr_id=${user.id}"),
+          "https://obsolete-events.com/turbo-market/api/users?token=${AppConfig.token}&usr_id=${user.id}"),
       );
   if (response.statusCode == 200) {
     return true;
@@ -370,7 +371,7 @@ Future<bool> deleteUser(User user) async {
 Future<bool> updateGame(Game game) async {
   http.Response response = await http.put(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/games?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -390,7 +391,7 @@ Future<bool> updateGame(Game game) async {
 
 Future<bool> deleteGame(Game game) async {
   http.Response response = await http.delete(
-    Uri.parse("https://obsolete-events.com/turbo-market/api/games?api_key=${AppConfig.apiKey}&gam_id=${game.id}"),
+    Uri.parse("https://obsolete-events.com/turbo-market/api/games?token=${AppConfig.token}&gam_id=${game.id}"),
   );
   if (response.statusCode == 200) {
     return true;
@@ -400,7 +401,7 @@ Future<bool> deleteGame(Game game) async {
 
 Future<bool> insertGame(Game game) async {
   http.Response response = await http.post(
-    Uri.parse("https://obsolete-events.com/turbo-market/api/create_game?api_key=${AppConfig.apiKey}"),
+    Uri.parse("https://obsolete-events.com/turbo-market/api/create_game?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -421,7 +422,7 @@ Future<bool> insertGame(Game game) async {
 Future<bool> updatePrize(Prize prize) async {
   http.Response response = await http.put(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/prizes?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -441,7 +442,7 @@ Future<bool> updatePrize(Prize prize) async {
 
 Future<bool> deletePrize(Prize prize) async {
   http.Response response = await http.delete(
-    Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?api_key=${AppConfig.apiKey}&pri_id=${prize.id}"),
+    Uri.parse("https://obsolete-events.com/turbo-market/api/prizes?token=${AppConfig.token}&pri_id=${prize.id}"),
   );
   if (response.statusCode == 200) {
     return true;
@@ -451,7 +452,7 @@ Future<bool> deletePrize(Prize prize) async {
 
 Future<bool> insertPrize(Prize prize) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/create_prize?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/create_prize?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -477,7 +478,7 @@ Future<bool> uploadPrizeImageToAPI(XFile imageFile, String name) async {
       bytes,
       filename: name,
     );
-    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_prize?api_key=${AppConfig.apiKey}'));
+    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_prize?token=${AppConfig.token}'));
     formData.files.add(multipartFile);
     http.StreamedResponse response = await formData.send();
     if (response.statusCode == 200) {
@@ -492,7 +493,7 @@ Future<bool> uploadPrizeImageToAPI(XFile imageFile, String name) async {
 
 Future<bool> updatePrizeImage(int prizeId) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/update_prize_image?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/update_prize_image?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -513,7 +514,7 @@ Future<bool> uploadGameImageToAPI(XFile imageFile, String name) async {
       bytes,
       filename: name,
     );
-    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_game?api_key=${AppConfig.apiKey}'));
+    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_game?token=${AppConfig.token}'));
     formData.files.add(multipartFile);
     http.StreamedResponse response = await formData.send();
     if (response.statusCode == 200) {
@@ -528,7 +529,7 @@ Future<bool> uploadGameImageToAPI(XFile imageFile, String name) async {
 
 Future<bool> updateGameImage(int prizeId) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/update_game_image?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/update_game_image?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -545,7 +546,7 @@ Future<bool> updateGameImage(int prizeId) async {
 Future<bool> updateExchangeRate(int newExchangeRate) async {
   http.Response response = await http.put(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/exchange_rate?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/exchange_rate?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -561,7 +562,7 @@ Future<bool> updateExchangeRate(int newExchangeRate) async {
 Future<bool> updateLevel(Level level) async {
   http.Response response = await http.put(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -580,7 +581,7 @@ Future<bool> updateLevel(Level level) async {
 
 Future<bool> deleteLevel(Level level) async {
   http.Response response = await http.delete(
-    Uri.parse("https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}&gam_id=${level.gameId}&lev_step=${level.step}"),
+    Uri.parse("https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}&gam_id=${level.gameId}&lev_step=${level.step}"),
   );
   if (response.statusCode == 200) {
     return true;
@@ -591,7 +592,7 @@ Future<bool> deleteLevel(Level level) async {
 Future<bool> insertLevel(Level level) async {
   http.Response response = await http.post(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/levels?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -611,7 +612,7 @@ Future<bool> insertLevel(Level level) async {
 Future<bool> updatePaymentMethod(PaymentMethod mode) async {
   http.Response response = await http.put(
       Uri.parse(
-          "https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}"),
+          "https://obsolete-events.com/turbo-market/api/payment_method?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -628,7 +629,7 @@ Future<bool> updatePaymentMethod(PaymentMethod mode) async {
 Future<bool> deletePaymentMethod(PaymentMethod mode) async {
   http.Response response = await http.delete(
     Uri.parse(
-        "https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}&pay_id=${mode.payId}"),
+        "https://obsolete-events.com/turbo-market/api/payment_method?token=${AppConfig.token}&pay_id=${mode.payId}"),
   );
   if (response.statusCode == 200) {
     return true;
@@ -638,7 +639,7 @@ Future<bool> deletePaymentMethod(PaymentMethod mode) async {
 
 Future<bool> insertPaymentMethod(PaymentMethod mode) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/payment_method?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/payment_method?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -653,7 +654,7 @@ Future<bool> insertPaymentMethod(PaymentMethod mode) async {
 }
 
 Future<List<Transaction>> getAllTransactionsWeek() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions_week?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions_week?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();
@@ -663,7 +664,7 @@ Future<List<Transaction>> getAllTransactionsWeek() async {
 }
 
 Future<List<Transaction>> getAllTransactions() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();
@@ -673,7 +674,7 @@ Future<List<Transaction>> getAllTransactions() async {
 }
 
 Future<List<Success>> getAllSuccess() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}"));
+  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/titles?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
     List<Success> success = await Future.wait(responseData.map((successData) => Success.fromJson(successData)));
@@ -684,7 +685,7 @@ Future<List<Success>> getAllSuccess() async {
 
 Future<bool> updateSuccess(Success success) async {
   http.Response response = await http.put(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/titles?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -704,7 +705,7 @@ Future<bool> updateSuccess(Success success) async {
 
 Future<bool> deleteSuccess(Success success) async {
   http.Response response = await http.delete(
-    Uri.parse("https://obsolete-events.com/turbo-market/api/titles?api_key=${AppConfig.apiKey}&tit_id=${success.id}"),
+    Uri.parse("https://obsolete-events.com/turbo-market/api/titles?token=${AppConfig.token}&tit_id=${success.id}"),
   );
   if (response.statusCode == 200) {
     return true;
@@ -714,7 +715,7 @@ Future<bool> deleteSuccess(Success success) async {
 
 Future<bool> insertSuccess(Success success) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/create_title?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/create_title?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -740,7 +741,7 @@ Future<bool> uploadSuccessImageToAPI(XFile imageFile, String name) async {
       bytes,
       filename: name,
     );
-    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_title?api_key=${AppConfig.apiKey}'));
+    var formData = http.MultipartRequest('POST', Uri.parse('https://obsolete-events.com/turbo-market/api/upload_title?token=${AppConfig.token}'));
     formData.files.add(multipartFile);
     http.StreamedResponse response = await formData.send();
     if (response.statusCode == 200) {
@@ -755,7 +756,7 @@ Future<bool> uploadSuccessImageToAPI(XFile imageFile, String name) async {
 
 Future<bool> updateSuccessImage(int successId) async {
   http.Response response = await http.post(
-      Uri.parse("https://obsolete-events.com/turbo-market/api/update_title_image?api_key=${AppConfig.apiKey}"),
+      Uri.parse("https://obsolete-events.com/turbo-market/api/update_title_image?token=${AppConfig.token}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -770,7 +771,7 @@ Future<bool> updateSuccessImage(int successId) async {
 
 Future<List<Rarity>> getAllRarities() async {
   http.Response response = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/rarities?api_key=${AppConfig.apiKey}"));
+      "https://obsolete-events.com/turbo-market/api/rarities?token=${AppConfig.token}"));
 
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);

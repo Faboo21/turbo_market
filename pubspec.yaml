@@ -43,12 +43,10 @@ dependencies:
   fluttericon: ^2.0.0
   dart_eval: ^0.7.9
   flutter_map: ^6.1.0
-  flutter_glow: ^0.3.0
   outline_gradient_button: ^2.0.1+1
   gif: ^2.3.0
   flutter_gradient_animation_text: ^1.0.2
   auto_scroll: ^0.2.0
-  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -85,7 +83,6 @@ flutter:
     - images/logo-obsolete-noir.png
     - images/logo-obsolete-blanc.png
     - images/giphy.gif
-    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

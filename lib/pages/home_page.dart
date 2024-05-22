@@ -333,6 +333,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('token');
+                AppConfig.token = "";
                 AppConfig.role = 0;
                 AppConfig.game = 0;
                 Navigator.pushReplacementNamed(context, '/connexion');

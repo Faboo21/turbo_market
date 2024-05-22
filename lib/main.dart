@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/dark_theme.dart';
@@ -11,22 +10,24 @@ import 'package:intl/intl.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await dotenv.load(fileName: ".env");
-  AppConfig.apiKey = dotenv.env['API_KEY'] ?? "";
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString("token");
   if (token != null) {
+    AppConfig.token = token;
     Map<String, dynamic> res = await getTokenInfo(token);
-    AppConfig.role = int.tryParse(res['tea_id'])!;
-    String savedDate = res['date'];
-    DateFormat apiDateFormat = DateFormat("yyyy-MM-dd hh:mm:ss");
-    DateTime lastLoginDate = apiDateFormat.parse(savedDate);
-    DateTime now = DateTime.now();
-    Duration difference = now.difference(lastLoginDate);
-    if (difference.inHours >= 24) {
-      prefs.remove("token");
+    if (res.isNotEmpty) {
+      AppConfig.role = int.tryParse(res['tea_id']) ?? 0;
+      String savedDate = res['date'];
+      DateFormat apiDateFormat = DateFormat("yyyy-MM-dd hh:mm:ss");
+      DateTime lastLoginDate = apiDateFormat.parse(savedDate);
+      DateTime now = DateTime.now();
+      Duration difference = now.difference(lastLoginDate);
+      if (difference.inHours >= 24) {
+        prefs.remove("token");
+      }
     }
   }
+  AppConfig.token = "no_key";
   AppConfig.rate = await getExchangeRate();
   String initialRoute = AppConfig.role == 0 ? "/" : AppConfig.role == 3 ? "/choixGames" : "/home";
   runApp(MyApp(initialRoute: initialRoute));

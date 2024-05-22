@@ -125,6 +125,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
           } else {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString("token", isAuthenticated);
+            AppConfig.token = isAuthenticated;
             AppConfig.role = 3 - selectedButtonIndex;
             if (3 - selectedButtonIndex == 3) {
               Navigator.pushReplacementNamed(context, '/choixGames');
