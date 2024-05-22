@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
-import 'package:turbo_market/type/prize.dart';
+import 'package:turbo_market/api/prize_request.dart';
+import 'package:turbo_market/type/api_type/prize.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key, required this.scroll});

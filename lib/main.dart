@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/dark_theme.dart';
-import 'Router/route_generator.dart';
+import 'router/route_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:turbo_market/api/exchange_rate_request.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

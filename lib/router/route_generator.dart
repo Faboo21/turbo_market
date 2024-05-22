@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/home_page.dart';
-import 'package:turbo_market/pages/add_member_page.dart';
-import 'package:turbo_market/pages/game_choice_page.dart';
-import 'package:turbo_market/pages/historic_page.dart';
-import 'package:turbo_market/pages/manage_game_page.dart';
-import 'package:turbo_market/pages/manage_levels_page.dart';
-import 'package:turbo_market/pages/manage_payment_method_page.dart';
-import 'package:turbo_market/pages/manage_prize_page.dart';
-import 'package:turbo_market/pages/manage_success_page.dart';
-import 'package:turbo_market/pages/reward_page.dart';
-import 'package:turbo_market/pages/connexion_page.dart';
-import 'package:turbo_market/pages/admin_page.dart';
-import 'package:turbo_market/pages/guest_page.dart';
-import 'package:turbo_market/pages/showcase_page.dart';
-import 'package:turbo_market/pages/success_page.dart';
-import 'package:turbo_market/pages/winner_page.dart';
-import 'package:turbo_market/pages/manage_balance_page.dart';
-import 'package:turbo_market/type/user.dart';
 
-import '../pages/manage_user_page.dart';
-import '../pages/prizes_page.dart';
-import '../pages/stats_page.dart';
-import '../type/game.dart';
+import '../pages/admin_page/admin_page.dart';
+import '../pages/admin_page/historic_page.dart';
+import '../pages/admin_page/management_page/manage_game_page.dart';
+import '../pages/admin_page/management_page/manage_levels_page.dart';
+import '../pages/admin_page/management_page/manage_payment_method_page.dart';
+import '../pages/admin_page/management_page/manage_prize_page.dart';
+import '../pages/admin_page/management_page/manage_success_page.dart';
+import '../pages/admin_page/management_page/manage_user_page.dart';
+import '../pages/admin_page/stats_page.dart';
+import '../pages/bank_page/add_member_page.dart';
+import '../pages/bank_page/manage_balance_page.dart';
+import '../pages/bank_page/prizes_page.dart';
+import '../pages/connexion_page.dart';
+import '../pages/guest_page/guest_page.dart';
+import '../pages/guest_page/showcase_page.dart';
+import '../pages/guest_page/success_page.dart';
+import '../pages/volunteer_page/game_choice_page.dart';
+import '../pages/volunteer_page/reward_page.dart';
+import '../pages/volunteer_page/winner_page.dart';
+import '../type/api_type/game.dart';
+import '../type/api_type/user.dart';
+
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {

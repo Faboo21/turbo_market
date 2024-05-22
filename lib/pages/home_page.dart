@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
-import 'package:turbo_market/type/game.dart';
-import 'package:turbo_market/type/user.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:turbo_market/type/api_type/game.dart';
+import 'package:turbo_market/type/api_type/user.dart';
+
+import '../api/game_request.dart';
+import '../api/user_request.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

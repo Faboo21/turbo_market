@@ -1,21 +1,26 @@
 import 'dart:async';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:gif/gif.dart';
-import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
-import 'package:turbo_market/type/level.dart';
-import 'package:turbo_market/type/prize.dart';
-import 'package:turbo_market/type/rarity.dart';
-import 'package:turbo_market/type/stats_play.dart';
-import 'package:turbo_market/type/success.dart';
-import 'package:turbo_market/type/transaction.dart';
-
-import '../type/game.dart';
-import '../type/user.dart';
-import '../type/user_rank.dart';
+import 'package:turbo_market/api/game_request.dart';
+import 'package:turbo_market/api/level_request.dart';
+import 'package:turbo_market/api/prize_request.dart';
+import 'package:turbo_market/api/rarity_request.dart';
+import 'package:turbo_market/api/stats_play_request.dart';
+import 'package:turbo_market/api/success_request.dart';
+import 'package:turbo_market/api/transaction_request.dart';
+import 'package:turbo_market/api/user_request.dart';
+import 'package:turbo_market/type/api_type/game.dart';
+import 'package:turbo_market/type/api_type/level.dart';
+import 'package:turbo_market/type/api_type/prize.dart';
+import 'package:turbo_market/type/api_type/rarity.dart';
+import 'package:turbo_market/type/api_type/stats_play.dart';
+import 'package:turbo_market/type/api_type/success.dart';
+import 'package:turbo_market/type/api_type/transaction.dart';
+import 'package:turbo_market/type/api_type/user.dart';
+import 'package:turbo_market/type/api_type/user_rank.dart';
 
 class RankingPage extends StatefulWidget {
   const RankingPage({super.key, required this.viewOnly});

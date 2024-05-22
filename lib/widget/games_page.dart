@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
-import 'package:turbo_market/type/level.dart';
-
-import '../type/game.dart';
+import 'package:turbo_market/type/api_type/level.dart';
+import 'package:turbo_market/type/api_type/game.dart';
+import 'package:turbo_market/api/game_request.dart';
+import 'package:turbo_market/api/level_request.dart';
 
 class GamesPage extends StatefulWidget {
   const GamesPage({super.key, required this.viewMode});
