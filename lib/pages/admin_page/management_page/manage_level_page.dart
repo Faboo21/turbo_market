@@ -205,9 +205,9 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
         setState(() {
           levelList.remove(level);
         }),
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Jeu supprimé avec succès")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Niveau supprimé avec succès")))
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du jeu")))
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression du niveau")))
       }
     });
   }

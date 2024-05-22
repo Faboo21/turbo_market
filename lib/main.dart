@@ -25,10 +25,10 @@ Future<void> main() async {
       Duration difference = now.difference(lastLoginDate);
       if (difference.inHours >= 24) {
         prefs.remove("token");
+        AppConfig.token = "no_key";
       }
     }
   }
-  AppConfig.token = "no_key";
   AppConfig.rate = await getExchangeRate();
   String initialRoute = AppConfig.role == 0 ? "/" : AppConfig.role == 3 ? "/choixGames" : "/home";
   runApp(MyApp(initialRoute: initialRoute));

@@ -52,6 +52,7 @@ Future<bool> updateGame(Game game) async {
         "gam_price": game.price.toString(),
         "gam_min_players": game.nbPlayersMin.toString(),
         "gam_max_players": game.nbPlayersMax.toString(),
+        "gam_image": game.image
       }));
   if (response.statusCode == 200) {
     return true;

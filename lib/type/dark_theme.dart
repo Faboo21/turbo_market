@@ -41,6 +41,12 @@ ThemeData darkTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
+      textStyle: MaterialStateProperty.resolveWith<TextStyle>((Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return const TextStyle(color: Colors.white, fontFamily: "Heavitas");
+        }
+        return const TextStyle(color: Colors.black, fontFamily: "Heavitas");
+      }),
       foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
         if (states.contains(MaterialState.disabled)) {
           return Colors.white;

@@ -15,3 +15,51 @@ Future<List<Rarity>> getAllRarities() async {
   }
   return [];
 }
+
+Future<bool> updateRarity(Rarity rarity) async {
+  http.Response response = await http.put(
+      Uri.parse(
+          "https://obsolete-events.com/turbo-market/api/rarities?token=${AppConfig.token}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "rar_id": rarity.id.toString(),
+        "rar_libelle": rarity.libelle,
+        "rar_value": rarity.value.toString(),
+        "rar_color": rarity.color,
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> deleteRarity(Rarity rarity) async {
+  http.Response response = await http.delete(
+    Uri.parse(
+        "https://obsolete-events.com/turbo-market/api/rarities?token=${AppConfig.token}&rar_id=${rarity.id}"),
+  );
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}
+
+Future<bool> insertRarity(Rarity rarity) async {
+  http.Response response = await http.post(
+      Uri.parse("https://obsolete-events.com/turbo-market/api/rarities?token=${AppConfig.token}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "rar_id": rarity.id.toString(),
+        "rar_libelle": rarity.libelle,
+        "rar_value": rarity.value.toString(),
+        "rar_color": rarity.color,
+      }));
+  if (response.statusCode == 200) {
+    return true;
+  }
+  return false;
+}

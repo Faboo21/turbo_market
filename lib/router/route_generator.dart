@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/home_page.dart';
+import 'package:turbo_market/pages/admin_page/management_page/manage_rarity_page.dart';
 
 import '../pages/admin_page/admin_page.dart';
 import '../pages/admin_page/historic_page.dart';
 import '../pages/admin_page/management_page/manage_game_page.dart';
-import '../pages/admin_page/management_page/manage_levels_page.dart';
+import '../pages/admin_page/management_page/manage_level_page.dart';
 import '../pages/admin_page/management_page/manage_payment_method_page.dart';
 import '../pages/admin_page/management_page/manage_prize_page.dart';
 import '../pages/admin_page/management_page/manage_success_page.dart';
@@ -64,6 +65,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const PaymentMethodManagementPage());
       case '/manage_games' :
         return MaterialPageRoute(builder: (context) => const GameManagementPage());
+      case '/manage_rarities' :
+        return MaterialPageRoute(builder: (context) => const RarityManagementPage());
       case '/manage_prizes' :
         return MaterialPageRoute(builder: (context) => const PrizeManagementPage());
       case '/historic' :
