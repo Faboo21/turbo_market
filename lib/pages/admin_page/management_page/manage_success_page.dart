@@ -277,6 +277,42 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                                 },
                               ),
                               const SizedBox(height: 8.0),
+                              Row(
+                                children: [
+                                  const Text("Succès perdable : "),
+                                  Checkbox(
+                                    onChanged: (value) {setState(() {
+                                      success.losable = value ?? true;
+                                    });},
+                                    value: success.losable,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              DropdownButtonFormField<int>(
+                                value: success.type,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    success.type = newValue ?? 0;
+                                  });
+                                },
+                                items: const [
+                                  DropdownMenuItem(value: 0, child: Text("Tout"),),
+                                  DropdownMenuItem(value: 1, child: Text("Partie"),),
+                                  DropdownMenuItem(value: 2, child: Text("Lots"),),
+                                ],
+                                decoration: const InputDecoration(
+                                  labelText: 'Type',
+                                  border: UnderlineInputBorder(),
+                                ),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Veuillez choisir un type';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8.0),
                               if (!imageChanged && success.image != "")
                                 Center(
                                   child: SizedBox(

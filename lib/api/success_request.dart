@@ -28,6 +28,8 @@ Future<bool> updateSuccess(Success success) async {
         "tit_rarity": success.rarity.id.toString(),
         "tit_image": success.image,
         "tit_rules": success.rules,
+        "tit_lose": (success.losable ? 1 : 0).toString(),
+        "tit_type": success.type.toString()
       }));
   if (response.statusCode == 200) {
     return true;
@@ -58,6 +60,8 @@ Future<bool> insertSuccess(Success success) async {
         "tit_rarity": success.rarity.id.toString(),
         "tit_image": success.image,
         "tit_rules": success.rules,
+        "tit_lose": (success.losable ? 1 : 0).toString(),
+        "tit_type": success.type.toString()
       }));
   if (response.statusCode == 200) {
     return true;

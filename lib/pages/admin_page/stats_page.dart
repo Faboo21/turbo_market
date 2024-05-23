@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:turbo_market/api/game_request.dart';
 import 'package:turbo_market/type/api_type/game.dart';
 import 'package:turbo_market/type/api_type/stats_play.dart';
@@ -16,87 +17,82 @@ class StatsPage extends StatefulWidget {
 class _StatsPageState extends State<StatsPage> {
   List<double> hourlyStats = [];
   List<String> gamesList = [];
+  List<String> xLabels = [];
   double total = 0;
   double mean = 0;
   int nbPlays = 0;
 
   String selectedGame = "All Games";
-  String selectedTimeRange = '24h';
+  DateTime? _startDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime? _endDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day+1);
 
   @override
   void initState() {
-    loadPlays();
+    loadGames();
+    _calculateCumulativeSums();
     super.initState();
   }
 
-  void loadPlays() async {
-    List<StatsPlay> resList;
-    if (selectedTimeRange == "24h") {
-      resList = await get24hStatsPlays();
-    } else {
-      resList = await getAllStatsPlays();
-    }
-    List<Game> resGamesList = await getAllGames();
-    int cpt = 0;
-
-    Map<int, double> hourlyGains = {};
-    for (var play in resList) {
-      int day = DateTime.parse(play.parTime).day;
-      if (selectedTimeRange == "24h") {
-        if (day == DateTime.now().day){
-          int hour = DateTime
-              .parse(play.parTime)
-              .hour;
-          if (selectedGame == "All Games") {
-            hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
-            cpt++;
-          }
-          else {
-            if (play.gameid == int.parse(selectedGame.split(" : ")[0])) {
-              hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
-              cpt++;
-            }
-          }
-        }
-      } else {
-        int hour = DateTime
-            .parse(play.parTime)
-            .hour;
-        if (selectedGame == "All Games") {
-          hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
-          cpt++;
-        }
-        else {
-          if (play.gameid == int.parse(selectedGame.split(" : ")[0])) {
-            hourlyGains[hour] = (hourlyGains[hour] ?? 0) + play.gain;
-            cpt++;
-          }
-        }
-      }
-    }
-
-    List<double> hourlySumGains = List.generate(24, (index) => hourlyGains[index] ?? 0);
-    List<String> resGamesId = List.generate(resGamesList.length, (index) => "${resGamesList[index].id} : ${resGamesList[index].name}");
-
+  Future<void> loadGames() async {
+    List<Game> games = await getAllGames();
     setState(() {
-      gamesList = ["All Games"] + resGamesId;
-      total = hourlySumGains.sum;
-      mean = double.parse((hourlySumGains.sum / (cpt == 0 ? 1 : cpt)).toStringAsFixed(2));
-      hourlyStats = selectedTimeRange == "24h" ? cumulativeSum(hourlySumGains) : hourlySumGains;
-      nbPlays = cpt;
+      gamesList = ["All Games"] + games.map((e) {return "${e.id} : ${e.name}";}).toList();
     });
   }
 
-  List<double> cumulativeSum(List<double> numbers) {
-    List<double> result = [];
-    double sum = 0;
+  Future<void> _calculateCumulativeSums() async {
+    List<StatsPlay> resList = await getAllStatsPlays();
 
-    for (double number in numbers) {
-      sum += number;
-      result.add(sum);
+    if (_startDate == null || _endDate == null) {
+      return;
     }
 
-    return result;
+    List<StatsPlay> filteredParties = resList.where((partie) {
+      DateTime partieDate = DateTime.parse(partie.parTime);
+      return (partieDate.isAtSameMomentAs(_startDate!) || partieDate.isAfter(_startDate!)) &&
+          (partieDate.isAtSameMomentAs(_endDate!) || partieDate.isBefore(_endDate!));
+    }).toList();
+
+    filteredParties.sort((a, b) => DateTime.parse(a.parTime).compareTo(DateTime.parse(b.parTime)));
+
+    Duration totalDuration = _endDate!.difference(_startDate!);
+    Duration intervalDuration = totalDuration ~/ 12;
+
+    List<double> cumulativeSums = List.generate(12, (index) => 0.0);
+    List<String> labels = List.generate(12, (index) => '');
+    double currentSum = 0.0;
+    DateFormat dateFormat = DateFormat('HH_ dd-MM');
+
+    List<Game> games = await getAllGames();
+
+    Game? game = games.where((game) {return game.id == (int.tryParse(selectedGame.split(" : ").first) ?? 0);}).firstOrNull;
+
+    for (int i = 0; i < 12; i++) {
+      DateTime intervalStart = _startDate!.add(intervalDuration * i);
+      DateTime intervalEnd = i == 11 ? _endDate! : intervalStart.add(intervalDuration);
+
+      labels[i] = dateFormat.format(intervalEnd).replaceAll("_", "H");
+
+      for (StatsPlay partie in filteredParties) {
+        DateTime partieDate = DateTime.parse(partie.parTime);
+        if ((partieDate.isAtSameMomentAs(intervalStart) || partieDate.isAfter(intervalStart)) &&
+            (partieDate.isAtSameMomentAs(intervalEnd) || partieDate.isBefore(intervalEnd))) {
+          if (game == null || game.id == partie.gameid) {
+            currentSum += partie.gain;
+          }
+        }
+      }
+
+      cumulativeSums[i] = currentSum;
+    }
+
+    setState(() {
+      nbPlays = filteredParties.length;
+      total = cumulativeSums.last;
+      mean = filteredParties.isEmpty ? 0 : cumulativeSums.last / filteredParties.length;
+      hourlyStats = cumulativeSums;
+      xLabels = labels;
+    });
   }
 
   @override
@@ -120,7 +116,7 @@ class _StatsPageState extends State<StatsPage> {
               ),
               const SizedBox(width: 10),
               Text(
-                "Moyenne : $mean",
+                "Moyenne : ${mean.toStringAsFixed(2)}",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: mean > 0 ? Colors.lightGreenAccent : Colors.red),
               ),
               const SizedBox(width: 10),
@@ -129,39 +125,34 @@ class _StatsPageState extends State<StatsPage> {
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],),
+            const SizedBox(height: 10,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                DropdownButton<String>(
-                  value: selectedGame,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedGame = newValue!;
-                    });
-                    loadPlays();
-                  },
-                  items: gamesList.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                Expanded(
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: selectedGame,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedGame = newValue!;
+                      });
+                      _calculateCumulativeSums();
+                    },
+                    items: gamesList.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                 ),
-                const SizedBox(width: 10),
-                DropdownButton<String>(
-                  value: selectedTimeRange,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedTimeRange = newValue!;
-                    });
-                    loadPlays();
+                const SizedBox(width: 12,),
+                IconButton(
+                  onPressed: () {
+                    _showDatePicker(context);
                   },
-                  items: <String>['24h', 'All time'].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  icon: const Icon(Icons.calendar_month),
                 ),
               ],
             ),
@@ -169,12 +160,49 @@ class _StatsPageState extends State<StatsPage> {
             SizedBox(
               height: 500,
               child: hourlyStats.isNotEmpty
-                  ? CustomLineChart(hourlyStats: hourlyStats)
+                  ? CustomLineChart(hourlyStats: hourlyStats, xLabels: xLabels)
                   : const Placeholder(),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showDatePicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Date Range'),
+          content: SizedBox(
+            height: 300,
+            width: 300,
+            child: SfDateRangePicker(
+              selectionMode: DateRangePickerSelectionMode.range,
+              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                setState(() {
+                  if (args.value is PickerDateRange) {
+                    setState(() {
+                      _startDate = args.value.startDate;
+                      _endDate = args.value.endDate;
+                    });
+                    _calculateCumulativeSums();
+                  }
+                });
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -15,6 +15,8 @@ import 'package:turbo_market/api/success_request.dart';
 import 'package:turbo_market/api/transaction_request.dart';
 import 'package:turbo_market/api/user_request.dart';
 
+import '../../api/users_success_request.dart';
+
 class PrizesPage extends StatefulWidget {
   const PrizesPage({super.key, required this.selectedUser, this.showSuccess = true});
   final User selectedUser;
@@ -41,30 +43,7 @@ class _PrizesPageState extends State<PrizesPage> {
   List<Success> actualSuccess = [];
 
   Future<void> loadOldSuccess() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text("Chargement des succès"),
-        );
-      },
-    );
-    List<User> users = await getAllUsers();
-    List<StatsPlay> plays = await getAllStatsPlays();
-    List<Game> games = await getAllGames();
-    List<Transaction> transactionsList = await getAllTransactions();
-    List<Level> levelList = await getAllLevels();
-    List<Prize> prizesList = await getAllPrizes();
-    List<Success> successList = await getAllSuccess();
-    List<Success> validSuccess = [];
-    for (var success in successList) {
-      if (success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
-        validSuccess.add(success);
-      }
-    }
-    oldSuccess = validSuccess;
-    Navigator.pop(context);
+    oldSuccess = await getAllSuccessByUserId(widget.selectedUser.id);
   }
 
   Future<void> loadNewSuccess() async {
@@ -85,30 +64,37 @@ class _PrizesPageState extends State<PrizesPage> {
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
     List<Success> validSuccess = [];
+    List<Success> oldSuccessUser = oldSuccess.where((element) => element.losable == false).toList();
     for (var success in successList) {
-      if (success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
-        validSuccess.add(success);
+      if (success.losable || !oldSuccess.contains(success)) {
+        if (success.type == 2 && success.evaluateTransaction(widget.selectedUser, users, prizesList, transactionsList)) {
+          validSuccess.add(success);
+        }
+        if (success.type == 0 && success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
+          validSuccess.add(success);
+        }
       }
+      actualSuccess = oldSuccessUser + validSuccess;
     }
-    actualSuccess = validSuccess;
-
+    String newSuccess = "";
+    String loseSuccess = "";
     for (var success in successList){
-      String newSuccess = "";
-      String loseSuccess = "";
       if (actualSuccess.any((element) => element.id == success.id) && !oldSuccess.any((element) => element.id == success.id)){
+        insertUsersSuccess(widget.selectedUser.id, success.id);
         newSuccess += "${success.libelle}, ";
       }
       if (oldSuccess.any((element) => element.id == success.id) && !actualSuccess.any((element) => element.id == success.id)){
+        deleteUsersSuccess(widget.selectedUser.id, success.id);
         loseSuccess += "${success.libelle}, ";
       }
-      if (newSuccess != ""){
-        newSuccess = newSuccess.substring(0,newSuccess.length-2);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nouveau succès : $newSuccess")));
-      }
-      if (loseSuccess != ""){
-        loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu : $loseSuccess")));
-      }
+    }
+    if (newSuccess != ""){
+      newSuccess = newSuccess.substring(0,newSuccess.length-2);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nouveau succès : $newSuccess")));
+    }
+    if (loseSuccess != ""){
+      loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu : $loseSuccess")));
     }
     Navigator.pop(context);
   }
@@ -256,7 +242,7 @@ class _PrizesPageState extends State<PrizesPage> {
                   bool res = true;
                   for (int i = 0; i < prizesList.length; i++){
                     if (quantityList[i] != 0 && res) {
-                      res = await insertTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0) && res;
+                      await insertTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0);
                       prizesList[i].stock -= quantityList[i];
                       res = await updatePrize(prizesList[i]) && res;
                       await Future.delayed(const Duration(seconds: 1));

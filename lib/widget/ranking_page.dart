@@ -3,24 +3,20 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:gif/gif.dart';
+import 'package:turbo_market/api/success_request.dart';
+import 'package:turbo_market/api/users_success_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/api/game_request.dart';
-import 'package:turbo_market/api/level_request.dart';
-import 'package:turbo_market/api/prize_request.dart';
 import 'package:turbo_market/api/rarity_request.dart';
 import 'package:turbo_market/api/stats_play_request.dart';
-import 'package:turbo_market/api/success_request.dart';
-import 'package:turbo_market/api/transaction_request.dart';
 import 'package:turbo_market/api/user_request.dart';
 import 'package:turbo_market/type/api_type/game.dart';
-import 'package:turbo_market/type/api_type/level.dart';
-import 'package:turbo_market/type/api_type/prize.dart';
 import 'package:turbo_market/type/api_type/rarity.dart';
 import 'package:turbo_market/type/api_type/stats_play.dart';
 import 'package:turbo_market/type/api_type/success.dart';
-import 'package:turbo_market/type/api_type/transaction.dart';
 import 'package:turbo_market/type/api_type/user.dart';
 import 'package:turbo_market/type/api_type/user_rank.dart';
+import 'package:turbo_market/type/api_type/users_success.dart';
 
 class RankingPage extends StatefulWidget {
   const RankingPage({super.key, required this.viewOnly});
@@ -34,6 +30,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
   List<UserRank> filteredPlayersList = [];
   List<String> gamesList = [];
   List<Rarity> rarities = [];
+  List<Success> success = [];
 
   TextEditingController searchController = TextEditingController();
   String selectedGame = "All Games";
@@ -109,11 +106,14 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
     List<Rarity> raritiesList = await getAllRarities();
     List<Game> games = await getAllGames();
     List<String> resGamesId = List.generate(games.length, (index) => "${games[index].id} : ${games[index].name}");
+    List<Success> successList = await getAllSuccess();
+    List<UsersSuccess> links = await getAllUserSuccess();
 
     for (var user in users) {
       int nbGames = getNumberOfGames(plays, user.id);
       int score = getScore(plays, user.id);
       String favGame = getFavoriteGame(plays, user.id, games);
+      List<Success> success = await loadSuccess(user.id, links, successList);
       setState(() {
         playersList.add(
           UserRank(id: user.id,
@@ -122,7 +122,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
             mean: score/(nbGames == 0 ? 1 : nbGames),
             bestGame: favGame,
             nbGames: nbGames,
-            success: [],
+            success: success,
             score: score,
             email: user.email
           ));
@@ -144,9 +144,8 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
         break;
     }
 
-    if (successActivated) loadSuccess(users, plays, games);
-
     setState(() {
+      success = successList;
       filteredPlayersList = playersList;
       rarities = raritiesList;
       gamesList = ["All Games"] + resGamesId;
@@ -156,39 +155,14 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
     });
   }
 
-  void loadSuccess(List<User> users, List<StatsPlay> plays, List<Game> games) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text("Chargement des succès"),
-        );
-      },
-    );
-    List<Transaction> transactionsList = await getAllTransactions();
-    List<Level> levelList = await getAllLevels();
-    List<Prize> prizesList = await getAllPrizes();
-    List<Success> successList = await getAllSuccess();
-    try {
-      for (var user in users) {
-        List<Success> validSuccess = [];
-        for (var success in successList) {
-          if (success.evaluate(user, plays, users, games, levelList, prizesList, transactionsList)) {
-            validSuccess.add(success);
-          }
-        }
-        validSuccess.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
-        setState(() {
-          filteredPlayersList.where((element) => element.id == user.id).first.success = validSuccess;
-        });
+  Future<List<Success>> loadSuccess(int userId, List<UsersSuccess> links, List<Success> success) async {
+    List<Success> resList = [];
+    for (var link in links) {
+      if (link.usrId == userId) {
+        resList.add(success.where((e) => e.id == link.titId).first);
       }
-      Navigator.pop(context);
     }
-    catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Imposible de charger les succès")));
-      Navigator.pop(context);
-    }
+    return resList.sorted((a,b) => b.rarity.value.compareTo(a.rarity.value));
   }
 
   int getNumberOfGames(List<StatsPlay> statsList, int userId) {
@@ -261,7 +235,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
       IconButton(
         icon: const Icon(Icons.info, size: 40,),
         onPressed: () {
-          Navigator.pushNamed(context, "/success");
+          Navigator.pushNamed(context, "/success", arguments: success);
         },
       ) : null,
       body:
@@ -363,21 +337,6 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                           );
                         }).toList(),
                       ),
-                      const SizedBox(width: 10),
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Row(
-                          children: [
-                            const Text("Activer les succès : "),
-                            Checkbox(value: successActivated, onChanged: (newVal) {
-                              setState(() {
-                                successActivated = newVal ?? false;
-                              });
-                              _loadPlayersList();
-                            }),
-                          ],
-                        ),
-                      )
                     ],
                   ),
                 ),

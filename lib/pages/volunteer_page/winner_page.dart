@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:turbo_market/api/users_success_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/api/game_request.dart';
 import 'package:turbo_market/type/api_type/game.dart';
@@ -51,34 +52,11 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
   }
 
   Future<void> loadOldSuccess() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text("Chargement des succès"),
-        );
-      },
-    );
-    List<User> users = await getAllUsers();
-    List<StatsPlay> plays = await getAllStatsPlays();
-    List<Game> games = await getAllGames();
-    List<Transaction> transactionsList = await getAllTransactions();
-    List<Level> levelList = await getAllLevels();
-    List<Prize> prizesList = await getAllPrizes();
-    List<Success> successList = await getAllSuccess();
     for (var user in widget.playersList) {
-      List<Success> validSuccess = [];
       if (user != null) {
-        for (var success in successList) {
-          if (success.evaluate(user, plays, users, games, levelList, prizesList, transactionsList)) {
-            validSuccess.add(success);
-          }
-        }
+        oldSuccess.add(await getAllSuccessByUserId(user.id));
       }
-      oldSuccess.add(validSuccess);
     }
-    Navigator.pop(context);
   }
 
   Future<void> loadNewSuccess() async {
@@ -98,38 +76,48 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
     List<Level> levelList = await getAllLevels();
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
+    int i = 0;
     for (var user in widget.playersList) {
+      List<Success> oldSuccessUser = oldSuccess[i].where((element) => element.losable == false).toList();
       List<Success> validSuccess = [];
       if (user != null) {
         for (var success in successList) {
-          if (success.evaluate(user, plays, users, games, levelList, prizesList, transactionsList)) {
-            validSuccess.add(success);
+          if (success.losable || !oldSuccess[i].contains(success)) {
+            if (success.type == 1 && success.evaluatePlay(user, plays, users, games, levelList)) {
+              validSuccess.add(success);
+            }
+            if (success.type == 0 && success.evaluate(user, plays, users, games, levelList, prizesList, transactionsList)) {
+              validSuccess.add(success);
+            }
           }
         }
       }
-      actualSuccess.add(validSuccess);
+      actualSuccess.add(oldSuccessUser + validSuccess);
+      i++;
     }
 
     for (int i = 0; i < widget.playersList.length; i++) {
       User? player = widget.playersList[i];
       if (player != null) {
+        String newSuccess = "";
+        String loseSuccess = "";
         for (var success in successList){
-          String newSuccess = "";
-          String loseSuccess = "";
           if (actualSuccess[i].any((element) => element.id == success.id) && !oldSuccess[i].any((element) => element.id == success.id)){
+            insertUsersSuccess(player.id, success.id);
             newSuccess += "${success.libelle}, ";
           }
           if (oldSuccess[i].any((element) => element.id == success.id) && !actualSuccess[i].any((element) => element.id == success.id)){
+            deleteUsersSuccess(player.id, success.id);
             loseSuccess += "${success.libelle}, ";
           }
-          if (newSuccess != ""){
-            newSuccess = newSuccess.substring(0,newSuccess.length-2);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nouveau succès ${player.username} : $newSuccess")));
-          }
-          if (loseSuccess != ""){
-            loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu ${player.username} : $loseSuccess")));
-          }
+        }
+        if (newSuccess != ""){
+          newSuccess = newSuccess.substring(0,newSuccess.length-2);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nouveau succès ${player.username} : $newSuccess")));
+        }
+        if (loseSuccess != ""){
+          loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu ${player.username} : $loseSuccess")));
         }
       }
     }

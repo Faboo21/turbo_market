@@ -3,10 +3,11 @@ import 'package:gif/gif.dart';
 import 'package:turbo_market/type/api_type/rarity.dart';
 import 'package:turbo_market/type/api_type/success.dart';
 import 'package:turbo_market/api/rarity_request.dart';
-import 'package:turbo_market/api/success_request.dart';
 
 class SuccessPage extends StatefulWidget {
-  const SuccessPage({super.key});
+  const SuccessPage({super.key, required this.success});
+
+  final List<Success> success;
 
   @override
   State<SuccessPage> createState() => _SuccessPageState();
@@ -28,13 +29,12 @@ class _SuccessPageState extends State<SuccessPage> with TickerProviderStateMixin
   }
 
   Future<void> _loadSuccess() async {
-    List<Success> success = await getAllSuccess();
     List<Rarity> raritiesList = await getAllRarities();
-    success.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
     setState(() {
-      successList = success;
+      successList = widget.success;
       rarities = raritiesList;
     });
+    successList.sort((a, b) => b.rarity.value.compareTo(a.rarity.value));
   }
 
   @override

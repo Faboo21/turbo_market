@@ -22,6 +22,7 @@ import '../pages/volunteer_page/game_choice_page.dart';
 import '../pages/volunteer_page/reward_page.dart';
 import '../pages/volunteer_page/winner_page.dart';
 import '../type/api_type/game.dart';
+import '../type/api_type/success.dart';
 import '../type/api_type/user.dart';
 
 
@@ -42,7 +43,10 @@ class RouteGenerator {
       case '/choixGames' :
         return MaterialPageRoute(builder: (context) => const GameChoicePage());
       case '/success' :
-        return MaterialPageRoute(builder: (context) => const SuccessPage());
+        if (args is List<Success>) {
+          return MaterialPageRoute(builder: (context) => SuccessPage(success: args,));
+        }
+        return MaterialPageRoute(builder: (context) => const GuestPage());
       case '/admin' :
         return MaterialPageRoute(builder: (context) => const AdminPage());
       case '/stats' :

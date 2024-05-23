@@ -33,7 +33,7 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
     List<Rarity> temp = await getAllRarities();
     setState(() {
       rarities = temp;
-      newSuccess = Success(id: 0, libelle: "libelle", image: "", rarity: temp.first, condition: "condition", rules: "rules");
+      newSuccess = Success(id: 0, libelle: "libelle", image: "", rarity: temp.first, condition: "condition", rules: "rules", losable: true, type: 0);
     });
   }
 
@@ -127,6 +127,42 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
                   validator: (value) {
                     if (value == null) {
                       return 'Veuillez choisir une rareté';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 8.0),
+                Row(
+                  children: [
+                    const Text("Succès perdable : "),
+                    Checkbox(
+                      onChanged: (value) {setState(() {
+                        newSuccess.losable = value ?? true;
+                      });},
+                      value: newSuccess.losable,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8.0),
+                DropdownButtonFormField<int>(
+                  value: newSuccess.type,
+                  onChanged: (newValue) {
+                    setState(() {
+                      newSuccess.type = newValue ?? 0;
+                    });
+                  },
+                  items: const [
+                    DropdownMenuItem(value: 0, child: Text("Tout"),),
+                    DropdownMenuItem(value: 1, child: Text("Partie"),),
+                    DropdownMenuItem(value: 2, child: Text("Lots"),),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'Type',
+                    border: UnderlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Veuillez choisir un type';
                     }
                     return null;
                   },

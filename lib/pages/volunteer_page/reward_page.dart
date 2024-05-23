@@ -15,6 +15,8 @@ import 'package:turbo_market/type/api_type/success.dart';
 import 'package:turbo_market/type/api_type/transaction.dart';
 import 'package:turbo_market/type/api_type/user.dart';
 
+import '../../api/users_success_request.dart';
+
 class RewardPage extends StatefulWidget {
   const RewardPage({super.key, required this.selectedUser, this.multiPlayers = false});
 
@@ -38,30 +40,7 @@ class _RewardPageState extends State<RewardPage> {
   }
 
   Future<void> loadOldSuccess() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text("Chargement des succès"),
-        );
-      },
-    );
-    List<User> users = await getAllUsers();
-    List<StatsPlay> plays = await getAllStatsPlays();
-    List<Game> games = await getAllGames();
-    List<Transaction> transactionsList = await getAllTransactions();
-    List<Level> levelList = await getAllLevels();
-    List<Prize> prizesList = await getAllPrizes();
-    List<Success> successList = await getAllSuccess();
-    List<Success> validSuccess = [];
-    for (var success in successList) {
-      if (success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
-        validSuccess.add(success);
-      }
-    }
-    oldSuccess = validSuccess;
-    Navigator.pop(context);
+    oldSuccess = await getAllSuccessByUserId(widget.selectedUser.id);
   }
 
   Future<void> loadNewSuccess() async {
@@ -82,30 +61,37 @@ class _RewardPageState extends State<RewardPage> {
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
     List<Success> validSuccess = [];
+    List<Success> oldSuccessUser = oldSuccess.where((element) => element.losable == false).toList();
     for (var success in successList) {
-      if (success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
-        validSuccess.add(success);
+      if (success.losable || !oldSuccess.contains(success)) {
+        if (success.type == 1 && success.evaluatePlay(widget.selectedUser, plays, users, games, levelList)) {
+          validSuccess.add(success);
+        }
+        if (success.type == 0 && success.evaluate(widget.selectedUser, plays, users, games, levelList, prizesList, transactionsList)) {
+          validSuccess.add(success);
+        }
       }
+      actualSuccess = oldSuccessUser + validSuccess;
     }
-    actualSuccess = validSuccess;
-
+    String newSuccess = "";
+    String loseSuccess = "";
     for (var success in successList){
-      String newSuccess = "";
-      String loseSuccess = "";
       if (actualSuccess.any((element) => element.id == success.id) && !oldSuccess.any((element) => element.id == success.id)){
+        insertUsersSuccess(widget.selectedUser.id, success.id);
         newSuccess += "${success.libelle}, ";
       }
       if (oldSuccess.any((element) => element.id == success.id) && !actualSuccess.any((element) => element.id == success.id)){
+        deleteUsersSuccess(widget.selectedUser.id, success.id);
         loseSuccess += "${success.libelle}, ";
       }
-      if (newSuccess != ""){
-        newSuccess = newSuccess.substring(0,newSuccess.length-2);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nouveau succès : $newSuccess")));
-      }
-      if (loseSuccess != ""){
-        loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu : $loseSuccess")));
-      }
+    }
+    if (newSuccess != ""){
+      newSuccess = newSuccess.substring(0,newSuccess.length-2);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nouveau succès : $newSuccess")));
+    }
+    if (loseSuccess != ""){
+      loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu : $loseSuccess")));
     }
     Navigator.pop(context);
   }

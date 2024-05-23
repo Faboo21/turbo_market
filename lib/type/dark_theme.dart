@@ -6,21 +6,24 @@ ThemeData darkTheme = ThemeData(
   colorScheme: const ColorScheme(
     primary: Colors.black,
     secondary: Colors.white,
-    surface: Colors.white12,
-    background: Colors.black,
+    surface: Colors.black,
+    surfaceContainer: Colors.white12,
+    surfaceContainerHighest: Colors.white12,
+    surfaceContainerHigh: Colors.white12,
+    surfaceContainerLow: Colors.white12,
     error: Colors.red,
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.white,
-    onBackground: Colors.white,
     onError: Colors.white,
     brightness: Brightness.dark,
+    primaryContainer: Colors.black,
   ),
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) {
-          if (states.contains(MaterialState.disabled)) {
+      foregroundColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> states) {
+          if (states.contains(WidgetState.disabled)) {
             return Colors.white;
           }
           return Colors.white;
@@ -41,26 +44,26 @@ ThemeData darkTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      textStyle: MaterialStateProperty.resolveWith<TextStyle>((Set<MaterialState> states) {
-        if (states.contains(MaterialState.disabled)) {
+      textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
           return const TextStyle(color: Colors.white, fontFamily: "Heavitas");
         }
         return const TextStyle(color: Colors.black, fontFamily: "Heavitas");
       }),
-      foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-        if (states.contains(MaterialState.disabled)) {
+      foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
           return Colors.white;
         }
         return Colors.black;
       }),
-      backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-        if (states.contains(MaterialState.disabled)) {
+      backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
           return Colors.black;
         }
         return Colors.white;
       }),
-      side: MaterialStateProperty.resolveWith<BorderSide>((Set<MaterialState> states) {
-        if (states.contains(MaterialState.disabled)) {
+      side: WidgetStateProperty.resolveWith<BorderSide>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
           return const BorderSide(color: Colors.white, width: 1.0);
         }
         // Pas de bordure pour les autres états du bouton

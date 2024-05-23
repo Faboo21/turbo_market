@@ -3,13 +3,13 @@ import 'package:fl_chart/fl_chart.dart';
 
 class CustomLineChart extends StatelessWidget {
   final List<double> hourlyStats;
+  final List<String> xLabels;
 
-  const CustomLineChart({super.key, required this.hourlyStats});
+  const CustomLineChart({super.key, required this.hourlyStats, required this.xLabels});
 
   @override
   Widget build(BuildContext context) {
     const cutOffYValue = 0.0;
-    final currentHour = DateTime.now().hour;
 
     double minY = hourlyStats.reduce((value, element) => value < element ? value : element) - 2;
     double maxY = hourlyStats.reduce((value, element) => value > element ? value : element) + 2;
@@ -18,7 +18,7 @@ class CustomLineChart extends StatelessWidget {
     double step = (range / 10).ceilToDouble();
 
     return SizedBox(
-      height: 300, // Hauteur du graphique
+      height: 300,
       child: LineChart(
         LineChartData(
           minY: minY,
@@ -42,10 +42,10 @@ class CustomLineChart extends StatelessWidget {
               reservedSize: 30,
               margin: 8,
               getTitles: (value) {
-                return value % 2 == 0 ? '${value.toInt()}h' : "---";
+                return value.toInt() != 0 && value.toInt() != 11? xLabels[value.toInt()] : "";
               },
               rotateAngle: 60,
-              getTextStyles: (value) => TextStyle(color: currentHour != value ? Colors.white : Colors.lightBlue),
+              getTextStyles: (value) => const TextStyle(color: Colors.white),
             ),
           ),
           lineBarsData: [
