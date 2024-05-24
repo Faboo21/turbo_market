@@ -39,6 +39,22 @@ Future<User?> getUserByQr(String qrId) async {
   return null;
 }
 
+Future<User?> getUserByEmail(String email) async {
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/users?token=${AppConfig.token}"),);
+
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+
+    for (Map<String, dynamic> userData in responseData) {
+      if (userData['usr_email'] == email) {
+        return User.fromJson(userData);
+      }
+    }
+  }
+  return null;
+}
+
 Future<bool> updateUserBalance(User user, double newBalance) async {
   http.Response response = await http.put(
       Uri.parse(

@@ -148,7 +148,7 @@ class _UserFormPageState extends State<UserFormPage> {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("Utilisateur ajouté"),
                       ));
-                      Navigator.pop(context);
+                      Navigator.pop(context, email);
                     }else {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("Probleme d'insertion : un des paramettres n'est pas unique"),
@@ -159,7 +159,6 @@ class _UserFormPageState extends State<UserFormPage> {
                     btnLoading = false;
                   });
                 },
-              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.inversePrimary)),
               child: const Text("Valider"),
               ) : const Center(child: CircularProgressIndicator(),),
             ],

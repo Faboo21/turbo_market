@@ -73,7 +73,7 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
     List<StatsPlay> plays = await getAllStatsPlays();
     List<Game> games = await getAllGames();
     List<Transaction> transactionsList = await getAllTransactions();
-    List<Level> levelList = await getAllLevels();
+    List<Level> levelList = await getAllLevelsActive();
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
     int i = 0;
@@ -145,13 +145,13 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
                 });
                 dynamic res = true;
                 res = await Navigator.pushNamed(context, "/reward_multi", arguments: widget.playersList[index]);
+                int cluster = await getLastCluster();
                 if (res != null && res is bool && res) {
                   for (int i = 0; i < widget.playersList.length; i++) {
                     if (i != index && widget.playersList[i] != null) {
-                      await Future.delayed(const Duration(seconds: 1));
                       res = await updateUserBalance(widget.playersList[i]!, widget.playersList[i]!.balance - game.price) && res;
                       widget.playersList[i]?.balance = widget.playersList[i]!.balance - game.price;
-                      res = await addPlays(AppConfig.game, 0, widget.playersList[i]!.id) && res;
+                      res = await addPlays(AppConfig.game, 0, widget.playersList[i]!.id, cluster) && res;
                     }
                   }
                 } else {

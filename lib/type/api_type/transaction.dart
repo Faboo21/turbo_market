@@ -1,4 +1,5 @@
 class Transaction {
+  int traId;
   int usrId;
   int priId;
   String traTime;
@@ -7,6 +8,7 @@ class Transaction {
 
 
   Transaction({
+    required this.traId,
     required this.usrId,
     required this.priId,
     required this.traTime,
@@ -16,6 +18,7 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
+      traId: int.parse(json['tra_id']),
       usrId: int.parse(json['usr_id']),
       priId: int.tryParse(json['pri_id'] ?? "") ?? 0,
       traTime: json['tra_time'],

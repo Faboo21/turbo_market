@@ -18,7 +18,7 @@ import '../pages/connexion_page.dart';
 import '../pages/guest_page/guest_page.dart';
 import '../pages/guest_page/showcase_page.dart';
 import '../pages/guest_page/success_page.dart';
-import '../pages/volunteer_page/game_choice_page.dart';
+import '../pages/game_choice_page.dart';
 import '../pages/volunteer_page/reward_page.dart';
 import '../pages/volunteer_page/winner_page.dart';
 import '../type/api_type/game.dart';

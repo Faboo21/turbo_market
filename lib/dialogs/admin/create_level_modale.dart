@@ -89,11 +89,12 @@ class _CreateLevelPageState extends State<CreateLevelPage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       Level newLevel = Level(
-                          gameId: widget.game.id,
-                          step: int.parse(stepController.text),
-                          cashPrize: double.parse(priceController.text.replaceAll(",", ".")),
-                          libelle: libelleController.text,
-                          score: int.parse(scoreController.text)
+                        gameId: widget.game.id,
+                        step: int.parse(stepController.text),
+                        cashPrize: double.parse(priceController.text.replaceAll(",", ".")),
+                        libelle: libelleController.text,
+                        score: int.parse(scoreController.text),
+                        active: true
                       );
                       insertLevel(newLevel).then((res) => {
                         if (res) {

@@ -131,6 +131,18 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
                               ),
                               const SizedBox(height: 8.0),
                               Row(
+                                children: [
+                                  const Text("Niveau Actif : "),
+                                  Checkbox(
+                                    onChanged: (value) {setState(() {
+                                      level.active = value ?? true;
+                                    });},
+                                    value: level.active,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   IconButton(

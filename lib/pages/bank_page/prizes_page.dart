@@ -33,6 +33,8 @@ class _PrizesPageState extends State<PrizesPage> {
 
   bool btnLoading = false;
 
+  int random = DateTime.now().millisecondsSinceEpoch;
+
   @override
   void initState() {
     super.initState();
@@ -60,7 +62,7 @@ class _PrizesPageState extends State<PrizesPage> {
     List<StatsPlay> plays = await getAllStatsPlays();
     List<Game> games = await getAllGames();
     List<Transaction> transactionsList = await getAllTransactions();
-    List<Level> levelList = await getAllLevels();
+    List<Level> levelList = await getAllLevelsActive();
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
     List<Success> validSuccess = [];
@@ -143,7 +145,7 @@ class _PrizesPageState extends State<PrizesPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.network(
-                  "${prize.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                  "${prize.image}?random=$random",
                   fit: BoxFit.cover,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) {
@@ -245,7 +247,6 @@ class _PrizesPageState extends State<PrizesPage> {
                       await insertTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0);
                       prizesList[i].stock -= quantityList[i];
                       res = await updatePrize(prizesList[i]) && res;
-                      await Future.delayed(const Duration(seconds: 1));
                     }
                   }
                   if (res) {

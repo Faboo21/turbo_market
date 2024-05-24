@@ -3,6 +3,22 @@ import 'package:http/http.dart' as http;
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/api_type/level.dart';
 
+Future<List<Level>> getAllLevelsActiveByGame(int gameId) async {
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"),);
+
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<Level> levels =
+    responseData.map((levelData) => Level.fromJson(levelData)).toList();
+
+    List<Level> filteredLevels =
+    levels.where((level) => level.gameId == gameId && level.active).toList();
+    return filteredLevels;
+  }
+  return [];
+}
+
 Future<List<Level>> getAllLevelsByGame(int gameId) async {
   http.Response response = await http.get(Uri.parse(
       "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"),);
@@ -14,6 +30,20 @@ Future<List<Level>> getAllLevelsByGame(int gameId) async {
 
     List<Level> filteredLevels =
     levels.where((level) => level.gameId == gameId).toList();
+    return filteredLevels;
+  }
+  return [];
+}
+
+Future<List<Level>> getAllLevelsActive() async {
+  http.Response response = await http.get(Uri.parse(
+      "https://obsolete-events.com/turbo-market/api/levels?token=${AppConfig.token}"));
+
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<Level> levels = responseData.map((levelData) => Level.fromJson(levelData)).toList();
+    List<Level> filteredLevels =
+    levels.where((level) => level.active).toList();
     return filteredLevels;
   }
   return [];
@@ -45,7 +75,7 @@ Future<Level> getLevelById(int levStep, int gamId) async {
       }
     }
   }
-  return Level(gameId: 1, step: 1, cashPrize: 0, libelle: '', score: 0);
+  return Level(gameId: 1, step: 1, cashPrize: 0, libelle: '', score: 0, active: false);
 }
 
 Future<bool> updateLevel(Level level) async {
@@ -60,7 +90,8 @@ Future<bool> updateLevel(Level level) async {
         "lev_step": level.step.toString(),
         "lev_cashprize": level.cashPrize.toString(),
         "lev_libelle": level.libelle,
-        "lev_score": level.score.toString()
+        "lev_score": level.score.toString(),
+        "lev_active": level.active ? "1" : "0"
       }));
   if (response.statusCode == 200) {
     return true;
@@ -90,7 +121,8 @@ Future<bool> insertLevel(Level level) async {
         "lev_step": level.step.toString(),
         "lev_cashprize": level.cashPrize.toString(),
         "lev_libelle": level.libelle,
-        "lev_score": level.score.toString()
+        "lev_score": level.score.toString(),
+        "lev_active": level.active ? "1" : "0"
       }));
   if (response.statusCode == 200) {
     return true;

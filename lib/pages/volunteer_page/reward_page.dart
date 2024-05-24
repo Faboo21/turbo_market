@@ -57,7 +57,7 @@ class _RewardPageState extends State<RewardPage> {
     List<StatsPlay> plays = await getAllStatsPlays();
     List<Game> games = await getAllGames();
     List<Transaction> transactionsList = await getAllTransactions();
-    List<Level> levelList = await getAllLevels();
+    List<Level> levelList = await getAllLevelsActive();
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
     List<Success> validSuccess = [];
@@ -97,10 +97,11 @@ class _RewardPageState extends State<RewardPage> {
   }
 
   Future<void> loadLevels() async {
-    var resLevelsList = await getAllLevelsByGame(AppConfig.game);
+    var resLevelsList = await getAllLevelsActiveByGame(AppConfig.game);
     if (resLevelsList.length == 1) {
       Game game = await getGameById(AppConfig.game);
-      bool res2 = await addPlays(AppConfig.game, resLevelsList[0].step, widget.selectedUser.id);
+      int cluster = await getLastCluster();
+      bool res2 = await addPlays(AppConfig.game, resLevelsList[0].step, widget.selectedUser.id, cluster+1);
       bool res1 = false;
       if (res2) {
         if (resLevelsList[0].libelle == "") {
@@ -150,8 +151,9 @@ class _RewardPageState extends State<RewardPage> {
                   "${level.step.toString()} : ${level.libelle}"),
               onTap: () async {
                 Game game = await getGameById(level.gameId);
+                int cluster = await getLastCluster();
                 bool res2 = await addPlays(
-                    AppConfig.game, level.step, widget.selectedUser.id);
+                    AppConfig.game, level.step, widget.selectedUser.id, cluster + 1);
                 bool res1 = false;
                 if (res2) {
                   if (level.libelle == "") {

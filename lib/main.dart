@@ -30,6 +30,8 @@ Future<void> main() async {
     }
   }
   AppConfig.rate = await getExchangeRate();
+  AppConfig.banquier = AppConfig.role == 2;
+  AppConfig.admin = AppConfig.role == 1;
   String initialRoute = AppConfig.role == 0 ? "/" : AppConfig.role == 3 ? "/choixGames" : "/home";
   runApp(MyApp(initialRoute: initialRoute));
 }

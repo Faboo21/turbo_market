@@ -44,9 +44,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: AppConfig.role == 3,
+        automaticallyImplyLeading: false,
         title: const Text("Turbo Market"),
         backgroundColor: Theme.of(context).colorScheme.primary,
+        actions: [IconButton(onPressed: () {
+          Navigator.pushReplacementNamed(context, "/choixGames");
+        }, icon: const Icon(Icons.list))],
       ),
       body: homeBody(context),
       floatingActionButton: AppConfig.role == 3 ? FloatingActionButton(
@@ -149,7 +152,12 @@ class _HomePageState extends State<HomePage> {
           const Divider(),
           ListTile(
               onTap: () {
-                Navigator.pushNamed(context, '/ajout_user');
+                Navigator.pushNamed(context, '/ajout_user').then((res) async {
+                  if (res != null && res is String) {
+                    playerList[0] = await getUserByEmail(res);
+                    setState(() {});
+                  }
+                });
               },
               trailing: const Icon(Icons.arrow_forward_ios),
               leading: const Icon(Icons.add),
@@ -293,14 +301,14 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          if (AppConfig.role == 1)
+          if (AppConfig.admin)
             IconButton(
               icon: const Icon(Icons.admin_panel_settings_outlined),
               onPressed: () {
                 Navigator.pushNamed(context, '/admin');
               },
             ),
-          if (AppConfig.role == 1)
+          if (AppConfig.admin)
             IconButton(
               icon: const Icon(Icons.query_stats),
               onPressed: () {

@@ -36,19 +36,54 @@ class _GameChoicePageState extends State<GameChoicePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: gameList.isEmpty ? const Center(child: CircularProgressIndicator()) :
-      ListView.builder(
-        itemCount: gameList.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(gameList[index].name),
-              onTap: () async {
-                AppConfig.game = gameList[index].id;
+      Column(
+        children: [
+          if (AppConfig.admin)...[
+            const Divider(),
+            ListTile(
+                onTap: () {
+                  AppConfig.game = 0;
+                  AppConfig.role = 1;
+                  Navigator.pushNamed(context, "/home");
+                },
+                trailing: const Icon(Icons.arrow_forward_ios),
+                leading: const Icon(Icons.home),
+                title: const Text("Admin")
+            ),
+            const Divider(),
+          ],
+          if (AppConfig.banquier)...[
+            const Divider(),
+            ListTile(
+              onTap: () {
+                AppConfig.game = 0;
+                AppConfig.role = 2;
                 Navigator.pushNamed(context, "/home");
               },
+              trailing: const Icon(Icons.arrow_forward_ios),
+              leading: const Icon(Icons.home),
+              title: const Text("Banquier")
             ),
-          );
-        },
+            const Divider(),
+          ],
+          Expanded(
+            child: ListView.builder(
+              itemCount: gameList.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: ListTile(
+                    title: Text(gameList[index].name),
+                    onTap: () async {
+                      AppConfig.role = 3;
+                      AppConfig.game = gameList[index].id;
+                      Navigator.pushNamed(context, "/home");
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -81,9 +116,10 @@ class _GameChoicePageState extends State<GameChoicePage> {
               child: const Text('Annuler'),
             ),
             TextButton(
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.remove('token');
+              onPressed: () {
+                SharedPreferences.getInstance().then((prefs) {
+                  prefs.remove('token');
+                });
                 AppConfig.role = 0;
                 AppConfig.game = 0;
                 AppConfig.token = "";

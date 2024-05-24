@@ -4,13 +4,15 @@ class Level {
   double cashPrize;
   String libelle;
   int score;
+  bool active;
 
   Level({
     required this.gameId,
     required this.step,
     required this.cashPrize,
     required this.libelle,
-    required this.score
+    required this.score,
+    required this.active
   });
 
   factory Level.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Level {
       cashPrize: double.parse(json['lev_cashprize']),
       libelle: json['lev_libelle'] ?? "",
       score: int.parse(json['lev_score']),
+      active: int.parse(json['lev_active']) == 1 ? true : false
     );
   }
 

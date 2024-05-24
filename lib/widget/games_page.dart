@@ -74,7 +74,7 @@ class _GamesPageState extends State<GamesPage> {
     List<Game> resGamesList = await getAllGames();
     List<List<Level>> resLevelsList = [];
     for (var game in resGamesList) {
-      resLevelsList.add(await getAllLevelsByGame(game.id));
+      resLevelsList.add(await getAllLevelsActiveByGame(game.id));
     }
     setState(() {
       gamesList = resGamesList;

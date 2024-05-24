@@ -66,7 +66,8 @@ class _StatsPageState extends State<StatsPage> {
     List<Game> games = await getAllGames();
 
     Game? game = games.where((game) {return game.id == (int.tryParse(selectedGame.split(" : ").first) ?? 0);}).firstOrNull;
-
+    int cpt = 0;
+    List<int> checkedCluster = [];
     for (int i = 0; i < 12; i++) {
       DateTime intervalStart = _startDate!.add(intervalDuration * i);
       DateTime intervalEnd = i == 11 ? _endDate! : intervalStart.add(intervalDuration);
@@ -75,10 +76,16 @@ class _StatsPageState extends State<StatsPage> {
 
       for (StatsPlay partie in filteredParties) {
         DateTime partieDate = DateTime.parse(partie.parTime);
-        if ((partieDate.isAtSameMomentAs(intervalStart) || partieDate.isAfter(intervalStart)) &&
-            (partieDate.isAtSameMomentAs(intervalEnd) || partieDate.isBefore(intervalEnd))) {
-          if (game == null || game.id == partie.gameid) {
-            currentSum += partie.gain;
+        if (game == null || game.id == partie.gameid) {
+          if (i == 0) {
+            if (!checkedCluster.contains(partie.cluster)){
+              cpt++;
+              checkedCluster.add(partie.cluster);
+            }
+          }
+          if ((partieDate.isAtSameMomentAs(intervalStart) || partieDate.isAfter(intervalStart)) &&
+              (partieDate.isAtSameMomentAs(intervalEnd) || partieDate.isBefore(intervalEnd))) {
+            currentSum -= partie.gain;
           }
         }
       }
@@ -87,9 +94,9 @@ class _StatsPageState extends State<StatsPage> {
     }
 
     setState(() {
-      nbPlays = filteredParties.length;
+      nbPlays = cpt;
       total = cumulativeSums.last;
-      mean = filteredParties.isEmpty ? 0 : cumulativeSums.last / filteredParties.length;
+      mean = cpt == 0 ? 0 : cumulativeSums.last / cpt;
       hourlyStats = cumulativeSums;
       xLabels = labels;
     });
@@ -111,12 +118,12 @@ class _StatsPageState extends State<StatsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
               Text(
-                "Total : $total",
+                "Gains : $total€",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: total > 0 ? Colors.lightGreenAccent : Colors.red),
               ),
               const SizedBox(width: 10),
               Text(
-                "Moyenne : ${mean.toStringAsFixed(2)}",
+                "Gains par partie : ${mean.toStringAsFixed(2)}",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: mean > 0 ? Colors.lightGreenAccent : Colors.red),
               ),
               const SizedBox(width: 10),

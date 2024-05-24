@@ -34,7 +34,6 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
 
   TextEditingController searchController = TextEditingController();
   String selectedGame = "All Games";
-  String selectedTimeRange = '24h';
   String sortedBy = 'Score';
 
   bool loading = true;
@@ -97,7 +96,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
       playersList = [];
     });
     List<StatsPlay> plays;
-    if (selectedTimeRange == "24h") {
+    if (AppConfig.selectedTimeRange == "24h") {
       plays = await get24hStatsPlays();
     } else {
       plays = await getAllStatsPlays();
@@ -298,11 +297,11 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
                       const SizedBox(width: 10),
                       DropdownButton<String>(
                         padding: const EdgeInsets.all(5),
-                        value: selectedTimeRange,
+                        value: AppConfig.selectedTimeRange,
                         isExpanded: true,
                         onChanged: (newValue) {
                           setState(() {
-                            selectedTimeRange = newValue!;
+                            AppConfig.selectedTimeRange = newValue!;
                           });
                           _loadPlayersList();
                         },
