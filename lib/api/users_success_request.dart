@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:turbo_market/api/success_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/api_type/success.dart';
 import 'package:turbo_market/type/api_type/users_success.dart';
@@ -7,14 +8,10 @@ import 'package:turbo_market/type/api_type/users_success.dart';
 Future<List<Success>> getAllSuccessByUserId(int userId) async {
   http.Response response = await http.get(Uri.parse(
       "https://obsolete-events.com/turbo-market/api/users_titles?token=${AppConfig.token}"),);
-  http.Response response2 = await http.get(Uri.parse(
-      "https://obsolete-events.com/turbo-market/api/titles?token=${AppConfig.token}"),);
-
-  if (response.statusCode == 200 && response2.statusCode == 200) {
+  if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
-    List<dynamic> responseData2 = json.decode(response2.body);
     List<UsersSuccess> links = responseData.map((successData) => UsersSuccess.fromJson(successData)).toList();
-    List<Success> success = await Future.wait(responseData2.map((successData) => Success.fromJson(successData)));
+    List<Success> success = await getAllSuccess();
     List<Success> validSuccess = [];
     for (UsersSuccess link in links){
       if (link.usrId == userId) {

@@ -21,9 +21,7 @@ class _SuccessPageState extends State<SuccessPage> with TickerProviderStateMixin
 
   @override
   void initState() {
-    setState(() {
-      _controller = GifController(vsync: this);
-    });
+    _controller = GifController(vsync: this);
     _loadSuccess();
     super.initState();
   }

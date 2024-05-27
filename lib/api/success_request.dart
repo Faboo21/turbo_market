@@ -2,14 +2,18 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:turbo_market/api/rarity_request.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/api_type/success.dart';
+
+import '../type/api_type/rarity.dart';
 
 Future<List<Success>> getAllSuccess() async {
   http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/titles?token=${AppConfig.token}"));
   if (response.statusCode == 200) {
     List<dynamic> responseData = json.decode(response.body);
-    List<Success> success = await Future.wait(responseData.map((successData) => Success.fromJson(successData)));
+    List<Rarity> rarities = await getAllRarities();
+    List<Success> success = await Future.wait(responseData.map((successData) => Success.fromJson(successData, rarities)));
     return success;
   }
   return [];

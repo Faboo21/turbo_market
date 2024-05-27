@@ -6,7 +6,6 @@ import 'package:turbo_market/type/api_type/rarity.dart';
 import 'package:turbo_market/type/api_type/stats_play.dart';
 import 'package:turbo_market/type/api_type/transaction.dart';
 import 'package:turbo_market/type/api_type/user.dart';
-import 'package:turbo_market/api/rarity_request.dart';
 import 'game.dart';
 import 'level.dart';
 
@@ -31,8 +30,7 @@ class Success {
     required this.type
   });
 
-  static Future<Success> fromJson(Map<String, dynamic> json) async {
-    List<Rarity> rarities = await getAllRarities();
+  static Future<Success> fromJson(Map<String, dynamic> json, List<Rarity> rarities) async {
     for (Rarity rarity in rarities) {
       if (rarity.id == int.parse(json['tit_rarity'])) {
         return Success(
