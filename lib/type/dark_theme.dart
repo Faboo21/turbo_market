@@ -38,6 +38,7 @@ ThemeData darkTheme = ThemeData(
   ),
   textSelectionTheme: const TextSelectionThemeData(
     cursorColor: Colors.white,
+    selectionColor: Colors.white24,
   ),
   dialogTheme: DialogTheme(
     backgroundColor: Colors.grey[900],

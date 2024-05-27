@@ -65,6 +65,19 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
     });
   }
 
+  String extractCodeBetweenTags(String source, String tagName) {
+    final startTag = '//[START $tagName]';
+    final endTag = '//[END $tagName]';
+
+    final startIndex = source.indexOf(startTag);
+    final endIndex = source.indexOf(endTag);
+
+    if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+      return '';
+    }
+    return source.substring(startIndex + startTag.length, endIndex).trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +119,6 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                 Success success = filteredSuccessList[index];
                 TextEditingController libelleController = TextEditingController(text: success.libelle);
                 TextEditingController rulesController = TextEditingController(text: success.rules);
-                TextEditingController conditionController = TextEditingController(text: success.condition);
 
                 final formKey = GlobalKey<FormState>();
                 success.rarity = rarities.firstWhere((element) => element.id == success.rarity.id, orElse: () => rarities.first);
@@ -238,20 +250,6 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                                 textAlignVertical: TextAlignVertical.top,
                               ),
                               const SizedBox(height: 8.0),
-                              TextFormField(
-                                style: const TextStyle(fontFamily: "Nexa"),
-                                controller: conditionController,
-                                onChanged: (value) => success.condition = value,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                decoration: const InputDecoration(labelText: 'Condition'),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Merci d\'entrer les conditions du Succès';
-                                  }
-                                  return null;
-                                },
-                              ),
                               DropdownButtonFormField<Rarity>(
                                 value: success.rarity,
                                 onChanged: (Rarity? newValue) {
@@ -300,6 +298,7 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                                   DropdownMenuItem(value: 0, child: Text("Tout"),),
                                   DropdownMenuItem(value: 1, child: Text("Partie"),),
                                   DropdownMenuItem(value: 2, child: Text("Lots"),),
+                                  DropdownMenuItem(value: 3, child: Text("Jamais"),),
                                 ],
                                 decoration: const InputDecoration(
                                   labelText: 'Type',
@@ -346,9 +345,34 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                                   ),
                                 ),
                               const SizedBox(height: 15,),
-                              ElevatedButton(
-                                onPressed: _pickImageFromGallery,
-                                child: const Text('Choisir depuis la galerie'),
+                              Center(
+                                child: Column(
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: _pickImageFromGallery,
+                                      child: const Text('Choisir depuis la galerie'),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        List<String> params = [success.condition];
+                                        switch (success.type) {
+                                          case 1:
+                                            params += ["selectedUser", "playsList", "usersList", "gamesList", "levelsList"];
+                                          case 2:
+                                            params += ["selectedUser", "usersList", "prizesList", "transactionsList"];
+                                          default :
+                                            params += ["selectedUser", "playsList", "usersList", "gamesList", "levelsList", "prizesList", "transactionsList"];
+                                        }
+                                        dynamic res = await Navigator.pushNamed(context, "/ide", arguments: params);
+                                        if (res is String) {
+                                          success.condition = extractCodeBetweenTags(res, "code");
+                                        }
+                                      },
+                                      child: const Text("Ouvrir l'IDE"),
+                                    ),
+                                  ],
+                                ),
                               ),
                               const SizedBox(height: 8.0),
                               Row(
@@ -357,20 +381,8 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                                   IconButton(
                                     icon: const Icon(Icons.save),
                                     onPressed: () {
-                                      bool compile = true;
-                                      try {
-                                        ///success.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
-                                      } catch (e) {
-                                        compile = false;
-                                      }
                                       if (formKey.currentState!.validate()) {
-                                        if (compile) {
-                                          updateSuccessManage(success);
-                                        } else {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('Le code ne compile pas')),
-                                          );
-                                        }
+                                        updateSuccessManage(success);
                                       }
                                     },
                                   ),
