@@ -22,7 +22,7 @@ class Level {
       cashPrize: double.parse(json['lev_cashprize']),
       libelle: json['lev_libelle'] ?? "",
       score: int.parse(json['lev_score']),
-      active: int.parse(json['lev_active']) == 1 ? true : false
+      active: int.parse(json['lev_active']) == 1
     );
   }
 
@@ -33,6 +33,7 @@ class Level {
       'lev_cashprize': cashPrize.toString(),
       'lev_libelle': libelle.toString(),
       'lev_score': score.toString(),
+      'lev_active': active ? "1" : "0"
     };
   }
 }

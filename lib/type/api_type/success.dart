@@ -42,7 +42,7 @@ class Success {
           rarity: rarity,
           condition: json['tit_condition'],
           rules: json['tit_rules'],
-          losable: int.parse(json['tit_lose']) == 1 ? true : false,
+          losable: int.parse(json['tit_lose']) == 1,
           type: int.parse(json['tit_type']),
         );
       }
@@ -130,32 +130,38 @@ class Success {
     }
     
     class StatsPlay {
+      final int playId;
       final int gameid;
       final int levStep;
       final String parTime;
       final int gain;
       final int userId;
       final int score;
+      final int cluster;
     
       StatsPlay({
+        required this.playId,
         required this.gameid,
         required this.levStep,
         required this.parTime,
         required this.gain,
         required this.userId,
         required this.score,
+        required this.cluster,
       });
     
       factory StatsPlay.fromJson(Map<String, dynamic> json) {
-        String gain = (json['gain']).toString();
+        String gain = (json['pla_gain']).toString();
         gain = gain.split('.')[0];
         return StatsPlay(
+          playId: int.parse(json['pla_id']),
           gameid: int.parse(json['gam_id']),
           levStep: int.parse(json['lev_step']),
           parTime: json['par_time'],
           gain: int.parse(gain),
           userId: int.parse(json['usr_id']),
-          score: int.parse(json['lev_score'])
+          score: int.parse(json['lev_score']),
+          cluster: int.parse(json['pla_cluster']),
         );
       }
     }
@@ -166,13 +172,15 @@ class Success {
       int cashPrize;
       String libelle;
       int score;
+      bool active;
     
       Level({
         required this.gameId,
         required this.step,
         required this.cashPrize,
         required this.libelle,
-        required this.score
+        required this.score,
+        required this.active
       });
     
       factory Level.fromJson(Map<String, dynamic> json) {
@@ -184,11 +192,11 @@ class Success {
           cashPrize: int.parse(cashprize),
           libelle: json['lev_libelle'] ?? "",
           score: int.parse(json['lev_score']),
+          active: int.parse(json['lev_active']) == 1 ? true : false
         );
       }
     }
     
-        
     class Prize {
       final int id;
       String name;
@@ -224,6 +232,7 @@ class Success {
     }
     
     class Transaction {
+      int traId;
       int usrId;
       int priId;
       String traTime;
@@ -232,6 +241,7 @@ class Success {
     
     
       Transaction({
+        required this.traId,
         required this.usrId,
         required this.priId,
         required this.traTime,
@@ -243,22 +253,13 @@ class Success {
         String amount = (json['tra_amount']).toString();
         amount = amount.split('.')[0];
         return Transaction(
+          traId: int.parse(json['tra_id']),
           usrId: int.parse(json['usr_id']),
           priId: int.tryParse(json['pri_id'] ?? "") ?? 0,
           traTime: json['tra_time'],
           traAmount: int.parse(amount),
           payId: int.tryParse(json['pay_id'] ?? "") ?? 0,
         );
-      }
-    
-      Map<String, dynamic> toJson() {
-        return {
-          'usr_id': usrId.toString(),
-          'pri_id': priId.toString(),
-          'tra_time': traTime.toString(),
-          'tra_amount': traAmount.toString(),
-          'pay_id': payId.toString(),
-        };
       }
     }
 
@@ -322,7 +323,7 @@ class Success {
       List<User> usersList = usersListFromJson(jsonUsersList);
       List<Game> gamesList = gamesListFromJson(jsonGamesList);
       List<Level> levelsList = levelsListFromJson(jsonLevelsList);
-      List<Level> prizesList = prizesListFromJson(jsonPrizesList);
+      List<Prize> prizesList = prizesListFromJson(jsonPrizesList);
       List<Transaction> transactionsList = transactionsListFromJson(jsonTransactionsList);
       $condition
     }
@@ -410,32 +411,38 @@ class Success {
     }
     
     class StatsPlay {
+      final int playId;
       final int gameid;
       final int levStep;
       final String parTime;
       final int gain;
       final int userId;
       final int score;
+      final int cluster;
     
       StatsPlay({
+        required this.playId,
         required this.gameid,
         required this.levStep,
         required this.parTime,
         required this.gain,
         required this.userId,
         required this.score,
+        required this.cluster,
       });
     
       factory StatsPlay.fromJson(Map<String, dynamic> json) {
-        String gain = (json['gain']).toString();
+        String gain = (json['pla_gain']).toString();
         gain = gain.split('.')[0];
         return StatsPlay(
+          playId: int.parse(json['pla_id']),
           gameid: int.parse(json['gam_id']),
           levStep: int.parse(json['lev_step']),
           parTime: json['par_time'],
           gain: int.parse(gain),
           userId: int.parse(json['usr_id']),
-          score: int.parse(json['lev_score'])
+          score: int.parse(json['lev_score']),
+          cluster: int.parse(json['pla_cluster']),
         );
       }
     }
@@ -446,13 +453,15 @@ class Success {
       int cashPrize;
       String libelle;
       int score;
+      bool active;
     
       Level({
         required this.gameId,
         required this.step,
         required this.cashPrize,
         required this.libelle,
-        required this.score
+        required this.score,
+        required this.active
       });
     
       factory Level.fromJson(Map<String, dynamic> json) {
@@ -464,6 +473,7 @@ class Success {
           cashPrize: int.parse(cashprize),
           libelle: json['lev_libelle'] ?? "",
           score: int.parse(json['lev_score']),
+          active: int.parse(json['lev_active']) == 1 ? true : false
         );
       }
     }
@@ -554,7 +564,7 @@ class Success {
         );
       }
     }
-        
+    
     class Prize {
       final int id;
       String name;
@@ -590,13 +600,16 @@ class Success {
     }
     
     class Transaction {
+      int traId;
       int usrId;
       int priId;
       String traTime;
       int traAmount;
       int payId;
     
+    
       Transaction({
+        required this.traId,
         required this.usrId,
         required this.priId,
         required this.traTime,
@@ -608,22 +621,13 @@ class Success {
         String amount = (json['tra_amount']).toString();
         amount = amount.split('.')[0];
         return Transaction(
+          traId: int.parse(json['tra_id']),
           usrId: int.parse(json['usr_id']),
           priId: int.tryParse(json['pri_id'] ?? "") ?? 0,
           traTime: json['tra_time'],
           traAmount: int.parse(amount),
           payId: int.tryParse(json['pay_id'] ?? "") ?? 0,
         );
-      }
-    
-      Map<String, dynamic> toJson() {
-        return {
-          'usr_id': usrId.toString(),
-          'pri_id': priId.toString(),
-          'tra_time': traTime.toString(),
-          'tra_amount': traAmount.toString(),
-          'pay_id': payId.toString(),
-        };
       }
     }
 
@@ -657,7 +661,7 @@ class Success {
     bool check(String jsonSelectedUser, String jsonUsersList, String jsonPrizesList, String jsonTransactionsList) {
       User selectedUser = User.fromJson(jsonDecode(jsonSelectedUser));
       List<User> usersList = usersListFromJson(jsonUsersList);
-      List<Level> prizesList = prizesListFromJson(jsonPrizesList);
+      List<Prize> prizesList = prizesListFromJson(jsonPrizesList);
       List<Transaction> transactionsList = transactionsListFromJson(jsonTransactionsList);
       $condition
     }

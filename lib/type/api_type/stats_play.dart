@@ -34,11 +34,11 @@ class StatsPlay {
 
   Map<String, dynamic> toJson() {
     return {
-      'playId': playId.toString(),
+      'pla_id': playId.toString(),
       'gam_id': gameid.toString(),
       'lev_step': levStep.toString(),
       'par_time': parTime.toString(),
-      'gain': gain.toString(),
+      'pla_gain': gain.toString(),
       'usr_id': userId.toString(),
       'lev_score': score.toString(),
       'pla_cluster': cluster.toString()
