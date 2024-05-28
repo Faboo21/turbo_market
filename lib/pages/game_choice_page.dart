@@ -38,34 +38,6 @@ class _GameChoicePageState extends State<GameChoicePage> {
       body: gameList.isEmpty ? const Center(child: CircularProgressIndicator()) :
       Column(
         children: [
-          if (AppConfig.admin)...[
-            const Divider(),
-            ListTile(
-                onTap: () {
-                  AppConfig.game = 0;
-                  AppConfig.role = 1;
-                  Navigator.pushNamed(context, "/home");
-                },
-                trailing: const Icon(Icons.arrow_forward_ios),
-                leading: const Icon(Icons.home),
-                title: const Text("Admin")
-            ),
-            const Divider(),
-          ],
-          if (AppConfig.banquier)...[
-            const Divider(),
-            ListTile(
-              onTap: () {
-                AppConfig.game = 0;
-                AppConfig.role = 2;
-                Navigator.pushNamed(context, "/home");
-              },
-              trailing: const Icon(Icons.arrow_forward_ios),
-              leading: const Icon(Icons.home),
-              title: const Text("Banquier")
-            ),
-            const Divider(),
-          ],
           Expanded(
             child: ListView.builder(
               itemCount: gameList.length,

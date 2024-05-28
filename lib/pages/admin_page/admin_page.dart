@@ -23,7 +23,16 @@ class _AdminPageState extends State<AdminPage> {
           padding: const EdgeInsets.all(15.0),
           child: ListView(
             children: [
-              const SizedBox(height: 8.0),
+              const Divider(),
+              ListTile(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/stats");
+                  },
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  leading: const Icon(Icons.query_stats),
+                  title: const Text("Stats")
+              ),
+              const Divider(),
               ListTile(
                   onTap: () {
                     Navigator.pushNamed(context, "/manage_payment_method");

@@ -126,10 +126,14 @@ class _ConnexionPageState extends State<ConnexionPage> {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString("token", isAuthenticated);
             AppConfig.token = isAuthenticated;
-            AppConfig.role = 3 - selectedButtonIndex;
-            AppConfig.banquier = (3 - selectedButtonIndex) == 2;
-            AppConfig.admin = (3 - selectedButtonIndex) == 1;
-            Navigator.pushReplacementNamed(context, '/choixGames');
+            int index = (3 - selectedButtonIndex);
+            AppConfig.role = index == 1 || index == 2 ? 2 : 3;
+            AppConfig.banquier = index == 2;
+            AppConfig.admin = index == 1;
+            if (index == 3){
+              Navigator.pushReplacementNamed(context, '/choixGames');
+            }
+            Navigator.pushReplacementNamed(context, '/home');
           }
         } else {
           showDialog(

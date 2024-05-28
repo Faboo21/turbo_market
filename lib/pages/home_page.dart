@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo_market/api/api_request.dart';
 import 'package:turbo_market/private/config.dart';
@@ -47,9 +48,6 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         title: const Text("Turbo Market"),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        actions: [IconButton(onPressed: () {
-          Navigator.pushReplacementNamed(context, "/choixGames");
-        }, icon: const Icon(Icons.list))],
       ),
       body: homeBody(context),
       floatingActionButton: AppConfig.role == 3 ? FloatingActionButton(
@@ -69,6 +67,21 @@ class _HomePageState extends State<HomePage> {
         if (AppConfig.role == 3) ...[
           const SizedBox(height: 8.0),
           NomJeu(game: game),
+        ],
+        if (AppConfig.role == 2 || AppConfig.role == 1) ...[
+          const SizedBox(height: 8.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Center(
+              child: Text(
+                "Banque",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          )
         ],
         const SizedBox(height: 16.0),
         playerListWidget(),
@@ -301,6 +314,7 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+
           if (AppConfig.admin)
             IconButton(
               icon: const Icon(Icons.admin_panel_settings_outlined),
@@ -308,13 +322,18 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/admin');
               },
             ),
-          if (AppConfig.admin)
+          if (AppConfig.banquier || AppConfig.admin)
             IconButton(
-              icon: const Icon(Icons.query_stats),
+              icon: const Icon(FontAwesome5.piggy_bank),
               onPressed: () {
-                Navigator.pushNamed(context, '/stats');
+                AppConfig.game = 0;
+                AppConfig.role = 2;
+                Navigator.pushNamed(context, '/home');
               },
             ),
+          IconButton(onPressed: () {
+            Navigator.pushReplacementNamed(context, "/choixGames");
+          }, icon: const Icon(Icons.games)),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
