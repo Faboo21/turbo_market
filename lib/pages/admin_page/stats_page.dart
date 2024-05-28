@@ -123,7 +123,7 @@ class _StatsPageState extends State<StatsPage> {
               ),
               const SizedBox(width: 10),
               Text(
-                "Gains par partie : ${mean.toStringAsFixed(2)}",
+                "Gains par partie : ${mean.toStringAsFixed(2)}€",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: mean > 0 ? Colors.lightGreenAccent : Colors.red),
               ),
               const SizedBox(width: 10),

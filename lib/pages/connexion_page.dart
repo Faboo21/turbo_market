@@ -132,8 +132,9 @@ class _ConnexionPageState extends State<ConnexionPage> {
             AppConfig.admin = index == 1;
             if (index == 3){
               Navigator.pushReplacementNamed(context, '/choixGames');
+            } else {
+              Navigator.pushReplacementNamed(context, '/home');
             }
-            Navigator.pushReplacementNamed(context, '/home');
           }
         } else {
           showDialog(

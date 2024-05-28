@@ -160,12 +160,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   void updateUserManage(User user) async {
-    bool res = await updateUser(user);
-    if (res) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Utilisateur mis à jour avec succès")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de l'utilisateur")));
-    }
+    updateUser(user).then((res) {
+      if (res) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Utilisateur mis à jour avec succès")));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de l'utilisateur")));
+      }
+      setState(() {});
+    });
   }
 
   void showDeleteConfirmationDialog(User user) {
@@ -196,15 +198,16 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   void deleteUserManage(User user) async {
-    bool res = await deleteUser(user);
-    if (res) {
-      setState(() {
-        userList.remove(user);
-        filteredUserList.remove(user);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Utilisateur supprimé avec succès")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression de l'utilisateur")));
-    }
+    deleteUser(user).then((res) {
+      if (res) {
+        setState(() {
+          userList.remove(user);
+          filteredUserList.remove(user);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Utilisateur supprimé avec succès")));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème suppression de l'utilisateur")));
+      }
+    });
   }
 }

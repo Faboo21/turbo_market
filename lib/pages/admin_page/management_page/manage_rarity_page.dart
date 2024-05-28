@@ -168,9 +168,7 @@ class _RarityManagementPageState extends State<RarityManagementPage> {
   void updateManageRarity(Rarity paymentMethod) async {
     updateRarity(paymentMethod).then((res) {
       if (res) {
-        setState(() {
-          //for refresh color
-        });
+        setState(() {});
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rareté mise à jour avec succès")));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour de la rareté")));

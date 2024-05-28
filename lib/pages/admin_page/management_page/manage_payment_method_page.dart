@@ -188,6 +188,7 @@ class _PaymentMethodManagementPageState extends State<PaymentMethodManagementPag
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du mode de paiement")));
     }
+    setState(() {});
   }
 
   void showDeleteConfirmationDialog(PaymentMethod paymentMethod) {

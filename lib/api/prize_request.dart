@@ -19,6 +19,7 @@ Future<bool> updatePrize(Prize prize) async {
         "pri_price": prize.price.toString(),
         "pri_image": prize.image,
         "pri_stock": prize.stock.toString(),
+        "pri_cost": prize.cost.toString(),
       }));
   if (response.statusCode == 200) {
     return true;
@@ -49,6 +50,7 @@ Future<bool> insertPrize(Prize prize) async {
         "pri_price": prize.price.toString(),
         "pri_image": prize.image,
         "pri_stock": prize.stock.toString(),
+        "pri_cost": prize.cost.toString(),
       }));
   if (response.statusCode == 200) {
     return true;

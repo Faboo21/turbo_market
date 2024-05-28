@@ -42,8 +42,8 @@ class RouteGenerator {
       case '/ajout_user' :
         return MaterialPageRoute(builder: (context) => const UserFormPage());
       case '/ide' :
-        if (args is List<String>) {
-          return MaterialPageRoute(builder: (context) => CodeEditorPage(variables: args.sublist(1), code: args[0]));
+        if (args is Success) {
+          return MaterialPageRoute(builder: (context) => CodeEditorPage(success: args,));
         }
         return MaterialPageRoute(builder: (context) => const HomePage());
       case '/choixGames' :

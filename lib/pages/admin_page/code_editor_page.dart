@@ -2,12 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
 import 'package:highlight/languages/dart.dart';
+import 'package:turbo_market/api/game_request.dart';
+import 'package:turbo_market/api/level_request.dart';
+import 'package:turbo_market/api/prize_request.dart';
+import 'package:turbo_market/api/stats_play_request.dart';
+import 'package:turbo_market/api/transaction_request.dart';
+import 'package:turbo_market/api/user_request.dart';
+import 'package:turbo_market/type/api_type/game.dart';
+import 'package:turbo_market/type/api_type/level.dart';
+import 'package:turbo_market/type/api_type/prize.dart';
+import 'package:turbo_market/type/api_type/stats_play.dart';
+import 'package:turbo_market/type/api_type/success.dart';
+import 'package:turbo_market/type/api_type/transaction.dart';
+import 'package:turbo_market/type/api_type/user.dart';
 
 class CodeEditorPage extends StatefulWidget {
-  const CodeEditorPage({super.key, required this.variables, required this.code});
+  const CodeEditorPage({super.key, required this.success});
 
-  final List<String> variables;
-  final String code;
+  final Success success;
 
   @override
   State<CodeEditorPage> createState() => _CodeEditorPageState();
@@ -16,6 +28,27 @@ class CodeEditorPage extends StatefulWidget {
 class _CodeEditorPageState extends State<CodeEditorPage> {
 
   late CodeController controller;
+  List<String> variables = [];
+
+  List<StatsPlay> playsList = [];
+  List<User> usersList = [];
+  List<Transaction> transactionsList = [];
+  List<Level> levelsList = [];
+  List<Game> gamesList = [];
+  List<Prize> prizesList = [];
+
+  String extractCodeBetweenTags(String source, String tagName) {
+    final startTag = '//[START $tagName]';
+    final endTag = '//[END $tagName]';
+
+    final startIndex = source.indexOf(startTag);
+    final endIndex = source.indexOf(endTag);
+
+    if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+      return '';
+    }
+    return source.substring(startIndex + startTag.length, endIndex).trim();
+  }
 
   @override
   void initState() {
@@ -76,7 +109,7 @@ class Transaction {// [START transaction]
 
 //Ecrire un code qui renvoi un boolean true si le succès est valide false sinon
 //[END readonly]//[START code]
-${widget.code}
+${widget.success.condition}
 
 //[END code]''';
 
@@ -87,7 +120,45 @@ ${widget.code}
     );
     controller.readOnlySectionNames = {'readonly'};
     controller.foldOutsideSections(["code"]);
-    controller.autocompleter.setCustomWords(widget.variables);
+    List<String> params = [];
+    switch (widget.success.type) {
+      case 1:
+        params += ["selectedUser", "playsList", "usersList", "gamesList", "levelsList"];
+      case 2:
+        params += ["selectedUser", "usersList", "prizesList", "transactionsList"];
+      default :
+        params += ["selectedUser", "playsList", "usersList", "gamesList", "levelsList", "prizesList", "transactionsList"];
+    }
+    setState(() {
+      variables = params;
+    });
+    controller.autocompleter.setCustomWords(params);
+    loadList();
+  }
+
+  Future<void> loadList() async {
+    List<User> usersList2 = await getAllUsers();
+    setState(() {
+      usersList = usersList2;
+    });
+    if (widget.success.type != 2) {
+      List<StatsPlay> playsList2 = await getAllStatsPlays();
+      List<Level> levelsList2 = await getAllLevels();
+      List<Game> gamesList2 = await getAllGames();
+      setState(() {
+        playsList = playsList2;
+        levelsList = levelsList2;
+        gamesList = gamesList2;
+      });
+    }
+    if (widget.success.type != 1) {
+      List<Prize> prizesList2 = await getAllPrizes();
+      List<Transaction> transactionsList2 = await getAllTransactions();
+      setState(() {
+        prizesList = prizesList2;
+        transactionsList = transactionsList2;
+      });
+    }
   }
 
   @override
@@ -104,7 +175,7 @@ ${widget.code}
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Variables accessibles:',
+                  'Variables accessibles : ',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -115,7 +186,7 @@ ${widget.code}
                   height: 50,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
-                    children: widget.variables.map((e) => Padding(
+                    children: variables.map((e) => Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -162,7 +233,21 @@ ${widget.code}
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, controller.fullText);
+          String code = extractCodeBetweenTags(controller.fullText, "code");
+          widget.success.condition = code;
+          try {
+            switch (widget.success.type) {
+              case 1:
+                widget.success.evaluatePlay(usersList.first, playsList, usersList, gamesList, levelsList);
+              case 2:
+                widget.success.evaluateTransaction(usersList.first, usersList, prizesList, transactionsList);
+              default :
+                widget.success.evaluate(usersList.first, playsList, usersList, gamesList, levelsList, prizesList, transactionsList);
+            }
+            Navigator.pop(context);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Le code ne compile pas")));
+          }
         },
         child: const Icon(Icons.check),
       ),

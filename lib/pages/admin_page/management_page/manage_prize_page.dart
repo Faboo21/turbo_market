@@ -95,6 +95,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                 Prize prize = filteredPrizeList[index];
                 TextEditingController nameController = TextEditingController(text: prize.name);
                 TextEditingController descriptionController = TextEditingController(text: prize.description);
+                TextEditingController costController = TextEditingController(text: prize.cost.toString());
                 TextEditingController priceController = TextEditingController(text: prize.price.toString());
                 TextEditingController stockController = TextEditingController(text: prize.stock.toString());
 
@@ -131,6 +132,23 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
                                 textAlignVertical: TextAlignVertical.top,
+                              ),
+                              const SizedBox(height: 8.0),
+                              TextFormField(
+                                controller: costController,
+                                onChanged: (value) => prize.cost = double.tryParse(value.replaceAll(',', '.')) ?? 0,
+                                decoration: const InputDecoration(labelText: 'Cout', prefixText: "€"),
+                                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                                validator: (value) {
+                                  value = value?.replaceAll(",", ".");
+                                  if (value!.isEmpty) {
+                                    return 'Merci d\'entrer le cout du prix';
+                                  }
+                                  if (double.tryParse(value) == null) {
+                                    return 'Le cout doit être un nombre';
+                                  }
+                                  return null;
+                                },
                               ),
                               const SizedBox(height: 8.0),
                               TextFormField(
@@ -260,6 +278,7 @@ class _PrizeManagementPageState extends State<PrizeManagementPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du prix")))
       },
+      setState(() {}),
       if (imageChanged) {
           updatePrizeImage(prize.id).then((res) =>  {
         if (res) {

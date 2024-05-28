@@ -182,6 +182,7 @@ class _LevelManagementPageState extends State<LevelManagementPage> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du jeu")))
       }
     });
+    setState(() {});
   }
 
   void showDeleteConfirmationDialog(Level level) {

@@ -6,6 +6,7 @@ class Prize {
   double price;
   String image;
   int stock;
+  double cost;
 
   Prize({
     required this.id,
@@ -15,6 +16,7 @@ class Prize {
     required this.price,
     required this.image,
     required this.stock,
+    required this.cost
   });
 
   factory Prize.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class Prize {
       price: double.parse(json['pri_price']),
       image: json['pri_image'] ?? "",
       stock: int.parse(json['pri_stock']),
+      cost: double.parse(json["pri_cost"])
     );
   }
 
@@ -38,6 +41,7 @@ class Prize {
       'pri_price': price.toString(),
       'pri_image': image.toString(),
       'pri_stock': stock.toString(),
+      'pri_cost': cost.toString(),
     };
   }
 }

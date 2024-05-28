@@ -65,19 +65,6 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
     });
   }
 
-  String extractCodeBetweenTags(String source, String tagName) {
-    final startTag = '//[START $tagName]';
-    final endTag = '//[END $tagName]';
-
-    final startIndex = source.indexOf(startTag);
-    final endIndex = source.indexOf(endTag);
-
-    if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
-      return '';
-    }
-    return source.substring(startIndex + startTag.length, endIndex).trim();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -313,35 +300,155 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                               ),
                               const SizedBox(height: 8.0),
                               if (!imageChanged && success.image != "")
-                                Center(
-                                  child: SizedBox(
-                                    height: 200,
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: Image.network(
-                                          "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
-                                          fit: BoxFit.cover,
+                                success.rarity.id != rarities.last.id ? Center(
+                                  child: Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius
+                                              .circular(500),
+                                          child: Container(
+                                            width: 300,
+                                            height: 300,
+                                            color: success.rarity.displayColor,
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                        SizedBox(
+                                          width: 300,
+                                          height: 300,
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 200,
+                                              child:
+                                              Image.network(
+                                                "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                                width: 200,
+                                                height: 200,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]
+                                  ),
+                                ) :
+                                Center(
+                                  child: Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius
+                                              .circular(500),
+                                          child: Container(
+                                            width: 300,
+                                            height: 300,
+                                            decoration: const BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.red,
+                                                  Colors.orange,
+                                                  Colors.yellow,
+                                                  Colors.green,
+                                                  Colors.blue,
+                                                  Colors.indigo,
+                                                  Colors.purple,
+                                                ],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                stops: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 300,
+                                          height: 300,
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 200,
+                                              child:
+                                              Image.network(
+                                                "${success.image}?random=${DateTime.now().millisecondsSinceEpoch}",
+                                                width: 200,
+                                                height: 200,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]
                                   ),
                                 ),
                               if (imageChanged)
-                                Center(
-                                  child: SizedBox(
-                                    height: 200,
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: Image.network(
-                                          "https://obsolete-events.com/turbo-market/app/images/titles/temp?random=${DateTime.now().millisecondsSinceEpoch}",
-                                          fit: BoxFit.cover,
+                                success.rarity.id != rarities.last.id ? Center(
+                                  child: Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius
+                                              .circular(500),
+                                          child: Container(
+                                            width: 300,
+                                            height: 300,
+                                            color: success.rarity.displayColor,
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                        SizedBox(
+                                          width: 300,
+                                          height: 300,
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 200,
+                                              child:
+                                              Image.network(
+                                                "https://obsolete-events.com/turbo-market/app/images/titles/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                                                width: 200,
+                                                height: 200,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]
+                                  ),
+                                ) :
+                                Center(
+                                  child: Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius
+                                              .circular(500),
+                                          child: Container(
+                                            width: 300,
+                                            height: 300,
+                                            decoration: const BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.red,
+                                                  Colors.orange,
+                                                  Colors.yellow,
+                                                  Colors.green,
+                                                  Colors.blue,
+                                                  Colors.indigo,
+                                                  Colors.purple,
+                                                ],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                stops: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 300,
+                                          height: 300,
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 200,
+                                              child:
+                                              Image.network(
+                                                "https://obsolete-events.com/turbo-market/app/images/titles/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                                                width: 200,
+                                                height: 200,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]
                                   ),
                                 ),
                               const SizedBox(height: 15,),
@@ -355,18 +462,9 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
                                     const SizedBox(height: 8.0),
                                     ElevatedButton(
                                       onPressed: () async {
-                                        List<String> params = [success.condition];
-                                        switch (success.type) {
-                                          case 1:
-                                            params += ["selectedUser", "playsList", "usersList", "gamesList", "levelsList"];
-                                          case 2:
-                                            params += ["selectedUser", "usersList", "prizesList", "transactionsList"];
-                                          default :
-                                            params += ["selectedUser", "playsList", "usersList", "gamesList", "levelsList", "prizesList", "transactionsList"];
-                                        }
-                                        dynamic res = await Navigator.pushNamed(context, "/ide", arguments: params);
+                                        dynamic res = await Navigator.pushNamed(context, "/ide", arguments: success);
                                         if (res is String) {
-                                          success.condition = extractCodeBetweenTags(res, "code");
+                                          success.condition = res;
                                         }
                                       },
                                       child: const Text("Ouvrir l'IDE"),
@@ -414,6 +512,7 @@ class _SuccessManagementPageState extends State<SuccessManagementPage> with Tick
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du Succès")))
       },
+      setState(() {}),
       if (imageChanged) {
         updateSuccessImage(success.id).then((res) =>  {
         if (res) {

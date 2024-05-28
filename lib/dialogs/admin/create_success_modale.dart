@@ -33,7 +33,7 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
     List<Rarity> temp = await getAllRarities();
     setState(() {
       rarities = temp;
-      newSuccess = Success(id: 0, libelle: "libelle", image: "", rarity: temp.first, condition: "condition", rules: "rules", losable: true, type: 0);
+      newSuccess = Success(id: 0, libelle: "libelle", image: "", rarity: temp.first, condition: "return false;", rules: "rules", losable: true, type: 0);
     });
   }
 
@@ -93,20 +93,6 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
                   },
                 ),
                 const SizedBox(height: 8.0),
-                TextFormField(
-                  style: const TextStyle(fontFamily: "Nexa"),
-                  controller: conditionController,
-                  onChanged: (value) => newSuccess.condition = value,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(labelText: 'Condition'),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Merci d\'entrer les conditions du succès';
-                    }
-                    return null;
-                  },
-                ),
                 DropdownButtonFormField<Rarity>(
                   value: newSuccess.rarity,
                   onChanged: (Rarity? newValue) {
@@ -155,6 +141,7 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
                     DropdownMenuItem(value: 0, child: Text("Tout"),),
                     DropdownMenuItem(value: 1, child: Text("Partie"),),
                     DropdownMenuItem(value: 2, child: Text("Lots"),),
+                    DropdownMenuItem(value: 3, child: Text("Jamais"),),
                   ],
                   decoration: const InputDecoration(
                     labelText: 'Type',
@@ -168,80 +155,131 @@ class _CreateSuccessPageState extends State<CreateSuccessPage> {
                   },
                 ),
                 const SizedBox(height: 8.0),
-                if (!imageChanged && newSuccess.image != "")
-                  Center(
-                    child: SizedBox(
-                      height: 200,
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(
-                            "${newSuccess.image}?random=${DateTime.now().millisecondsSinceEpoch}",
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 if (imageChanged)
-                  Center(
-                    child: SizedBox(
-                      height: 200,
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(
-                            "https://obsolete-events.com/turbo-market/app/images/titles/temp?random=${DateTime.now().millisecondsSinceEpoch}",
-                            fit: BoxFit.cover,
+                  newSuccess.rarity.id != rarities.last.id ? Center(
+                    child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius
+                                .circular(500),
+                            child: Container(
+                              width: 300,
+                              height: 300,
+                              color: newSuccess.rarity.displayColor,
+                            ),
                           ),
-                        ),
-                      ),
+                          SizedBox(
+                            width: 300,
+                            height: 300,
+                            child: Center(
+                              child: SizedBox(
+                                width: 200,
+                                child:
+                                Image.network(
+                                  "https://obsolete-events.com/turbo-market/app/images/titles/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                                  width: 200,
+                                  height: 200,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]
+                    ),
+                  ) :
+                  Center(
+                    child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius
+                                .circular(500),
+                            child: Container(
+                              width: 300,
+                              height: 300,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.red,
+                                    Colors.orange,
+                                    Colors.yellow,
+                                    Colors.green,
+                                    Colors.blue,
+                                    Colors.indigo,
+                                    Colors.purple,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  stops: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 300,
+                            height: 300,
+                            child: Center(
+                              child: SizedBox(
+                                width: 200,
+                                child:
+                                Image.network(
+                                  "https://obsolete-events.com/turbo-market/app/images/titles/temp?random=${DateTime.now().millisecondsSinceEpoch}",
+                                  width: 200,
+                                  height: 200,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]
                     ),
                   ),
                 const SizedBox(height: 15,),
-                ElevatedButton(
-                  onPressed: _pickImageFromGallery,
-                  child: const Text('Choisir depuis la galerie'),
+                Center(
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: _pickImageFromGallery,
+                        child: const Text('Choisir depuis la galerie'),
+                      ),
+                      const SizedBox(height: 8.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          dynamic res = await Navigator.pushNamed(context, "/ide", arguments: newSuccess);
+                          if (res is String) {
+                            newSuccess.condition = res;
+                          }
+                        },
+                        child: const Text("Ouvrir l'IDE"),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 8.0),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    bool compile = true;
-                    try {
-                      ///newSuccess.evaluate(User(id: 0, username: "username", email: "email", balance: 0, qr: "qr"));
-                    } catch (e) {
-                      compile = false;
-                    }
-                    if (_formKey.currentState!.validate() && imageChanged == true) {
-                      if (compile) {
+                    if (_formKey.currentState!.validate()) {
+                      if (imageChanged == true) {
                         insertSuccess(
-                          newSuccess
+                            newSuccess
                         ).then((success) {
                           if (success) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Succès créé avec succès')),
+                              const SnackBar(
+                                  content: Text('Succès créé avec succès')),
                             );
                             Navigator.pop(context);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Erreur lors de la création du succès')),
+                              const SnackBar(content: Text(
+                                  'Erreur lors de la création du succès')),
                             );
                           }
                         });
-                      }
-                      else {
+                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Le code ne compile pas')),
+                          const SnackBar(content: Text('Ajoutez une image')),
                         );
                       }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Ajoutez une image')),
-                      );
                     }
                   },
                   child: const Text('Créer'),

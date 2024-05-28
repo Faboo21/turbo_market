@@ -60,8 +60,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ListView homeBody(BuildContext context) {
-    return ListView(
+  Widget homeBody(BuildContext context) {
+    return game.id == 0 && AppConfig.role != 1 && AppConfig.role != 2 ? const Center(child: CircularProgressIndicator(),) : ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       children: [
         if (AppConfig.role == 3) ...[
@@ -325,11 +325,11 @@ class _HomePageState extends State<HomePage> {
           if (AppConfig.banquier || AppConfig.admin)
             IconButton(
               icon: const Icon(FontAwesome5.piggy_bank),
-              onPressed: () {
+              onPressed: !(AppConfig.role == 1) && !(AppConfig.role == 2) ? () {
                 AppConfig.game = 0;
                 AppConfig.role = 2;
                 Navigator.pushNamed(context, '/home');
-              },
+              } : null,
             ),
           IconButton(onPressed: () {
             Navigator.pushReplacementNamed(context, "/choixGames");

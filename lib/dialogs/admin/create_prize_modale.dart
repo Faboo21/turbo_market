@@ -14,6 +14,7 @@ class CreatePrizePage extends StatefulWidget {
 class _CreatePrizePageState extends State<CreatePrizePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController costController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController stockController = TextEditingController();
 
@@ -65,6 +66,21 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Veuillez entrer une description pour le prix';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: costController,
+                decoration: const InputDecoration(labelText: 'Cout', prefixText: "€"),
+                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                validator: (value) {
+                  value = value?.replaceAll(",", ".");
+                  if (value!.isEmpty) {
+                    return 'Veuillez entrer un cout pour le prix';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Le cout doit être un nombre';
                   }
                   return null;
                 },
@@ -129,6 +145,7 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
                           stock: int.parse(stockController.text),
                           createdAt: '',
                           image: '',
+                          cost: double.parse(costController.text),
                         ),
                       ).then((success) {
                         if (success) {

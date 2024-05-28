@@ -286,6 +286,7 @@ class _GameManagementPageState extends State<GameManagementPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Problème de mise à jour du jeu")))
       },
+      setState(() {}),
       if (imageChanged) {
           updateGameImage(game.id).then((res) =>  {
         if (res) {
