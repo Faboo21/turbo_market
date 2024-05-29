@@ -35,6 +35,15 @@ class _AdminPageState extends State<AdminPage> {
               const Divider(),
               ListTile(
                   onTap: () {
+                    Navigator.pushNamed(context, "/accountancy");
+                  },
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  leading: const Icon(Icons.account_balance),
+                  title: const Text("Bilan")
+              ),
+              const Divider(),
+              ListTile(
+                  onTap: () {
                     Navigator.pushNamed(context, "/manage_payment_method");
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_market/Pages/home_page.dart';
+import 'package:turbo_market/pages/admin_page/accountancy_page.dart';
 import 'package:turbo_market/pages/admin_page/code_editor_page.dart';
 import 'package:turbo_market/pages/admin_page/management_page/manage_rarity_page.dart';
 
@@ -37,6 +38,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => const ShowcasePage());
       case '/connexion' :
         return MaterialPageRoute(builder: (context) => const ConnexionPage());
+      case '/accountancy' :
+        return MaterialPageRoute(builder: (context) => const AccountacyPage());
       case '/home' :
         return MaterialPageRoute(builder: (context) => const HomePage());
       case '/ajout_user' :

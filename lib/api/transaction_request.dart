@@ -35,16 +35,6 @@ Future<bool> addTransaction(int usrId, int priId, double traAmount, int payId) a
   return false;
 }
 
-Future<List<Transaction>> getAllTransactionsWeek() async {
-  http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions_week?token=${AppConfig.token}"));
-  if (response.statusCode == 200) {
-    List<dynamic> responseData = json.decode(response.body);
-    List<Transaction> transactions = responseData.map((transactionData) => Transaction.fromJson(transactionData)).toList();
-    return transactions;
-  }
-  return [];
-}
-
 Future<List<Transaction>> getAllTransactions() async {
   http.Response response = await http.get(Uri.parse("https://obsolete-events.com/turbo-market/api/transactions?token=${AppConfig.token}"));
   if (response.statusCode == 200) {

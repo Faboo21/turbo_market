@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:turbo_market/private/config.dart';
 import 'package:turbo_market/type/api_type/payment_method.dart';
 import 'package:turbo_market/type/api_type/prize.dart';
@@ -21,12 +22,14 @@ class _HistoricPageState extends State<HistoricPage> {
   List<Transaction> filteredTransactions = [];
   List<Transaction> transactions = [];
 
+  DateTime? _startDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime? _endDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day+1);
+
   List<Prize> prizes = [];
   List<User> users = [];
   List<PaymentMethod> paymentMethods = [];
 
   List<String> prizesList = [];
-  String selectedTimeRange = "Semaine";
   String selectedPrize = "All";
 
   TextEditingController searchController = TextEditingController();
@@ -38,19 +41,22 @@ class _HistoricPageState extends State<HistoricPage> {
   }
 
   Future<void> loadLists() async {
-    List<Transaction> resTransactions = [];
-    if (selectedTimeRange == "Semaine") {
-      resTransactions = await getAllTransactionsWeek();
-    }
-    else {
-      resTransactions = await getAllTransactions();
-    }
+    List<Transaction> resTransactions = await getAllTransactions();
     List<Prize> resPrizes = await getAllPrizes();
     List<User> resUsers = await getAllUsers();
     List<PaymentMethod> resPaymentMethods = await getAllPaymentMethod();
+    if (_startDate == null || _endDate == null) {
+      return;
+    }
+
+    List<Transaction> filteredTransactions2 = resTransactions.where((partie) {
+      DateTime partieDate = DateTime.parse(partie.traTime);
+      return (partieDate.isAtSameMomentAs(_startDate!) || partieDate.isAfter(_startDate!)) &&
+          (partieDate.isAtSameMomentAs(_endDate!) || partieDate.isBefore(_endDate!));
+    }).toList();
     setState(() {
-      transactions = resTransactions;
-      filteredTransactions = resTransactions;
+      transactions = filteredTransactions2;
+      filteredTransactions = filteredTransactions2;
       prizes = resPrizes;
       prizesList =  ["All", "Prix", "Floppies"] +  List.generate(prizes.length, (index) => prizes[index].name);
       users = resUsers;
@@ -106,20 +112,11 @@ class _HistoricPageState extends State<HistoricPage> {
             padding: const EdgeInsets.all(15),
             child: Row(
               children: [
-                DropdownButton<String>(
-                  value: selectedTimeRange,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedTimeRange = newValue!;
-                    });
-                    loadLists();
+                IconButton(
+                  onPressed: () {
+                    _showDatePicker(context);
                   },
-                  items: <String>['Semaine', 'All time'].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  icon: const Icon(Icons.calendar_month),
                 ),
                 const SizedBox(width: 10,),
                 Expanded(
@@ -180,6 +177,43 @@ class _HistoricPageState extends State<HistoricPage> {
           ),
         ],
       )
+    );
+  }
+
+  void _showDatePicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Date Range'),
+          content: SizedBox(
+            height: 300,
+            width: 300,
+            child: SfDateRangePicker(
+              selectionMode: DateRangePickerSelectionMode.range,
+              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                setState(() {
+                  if (args.value is PickerDateRange) {
+                    setState(() {
+                      _startDate = args.value.startDate;
+                      _endDate = args.value.endDate;
+                    });
+                    loadLists();
+                  }
+                });
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
