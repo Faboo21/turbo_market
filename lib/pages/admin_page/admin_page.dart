@@ -44,11 +44,11 @@ class _AdminPageState extends State<AdminPage> {
               const Divider(),
               ListTile(
                   onTap: () {
-                    Navigator.pushNamed(context, "/manage_payment_method");
+                    Navigator.pushNamed(context, "/historic");
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
-                  leading: const Icon(Icons.credit_card),
-                  title: const Text("Modes de paiement")
+                  leading: const Icon(Icons.history),
+                  title: const Text("Historique")
               ),
               const Divider(),
               ListTile(
@@ -102,21 +102,21 @@ class _AdminPageState extends State<AdminPage> {
               ),
               const Divider(),
               ListTile(
-                onTap: () {
-                  Navigator.pushNamed(context, "/historic");
-                },
-                trailing: const Icon(Icons.arrow_forward_ios),
-                leading: const Icon(Icons.history),
-                title: const Text("Historique")
-              ),
-              const Divider(),
-              ListTile(
                   onTap: () {
                     Navigator.pushNamed(context, "/manage_rarities");
                   },
                   trailing: const Icon(Icons.arrow_forward_ios),
                   leading: const Icon(FontAwesome.star),
                   title: const Text("Raretés")
+              ),
+              const Divider(),
+              ListTile(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/manage_payment_method");
+                  },
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  leading: const Icon(Icons.credit_card),
+                  title: const Text("Modes de paiement")
               ),
               const Divider(),
               ListTile(

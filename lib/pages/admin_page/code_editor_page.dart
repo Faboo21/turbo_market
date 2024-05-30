@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
@@ -27,6 +29,9 @@ class CodeEditorPage extends StatefulWidget {
 
 class _CodeEditorPageState extends State<CodeEditorPage> {
 
+  String oldCode = "";
+  String compilationResult = "";
+
   late CodeController controller;
   List<String> variables = [];
 
@@ -53,6 +58,7 @@ class _CodeEditorPageState extends State<CodeEditorPage> {
   @override
   void initState() {
     super.initState();
+    oldCode = widget.success.condition;
     String initialCode = '''//[START readonly]
 class User {// [START user]
   int id;
@@ -132,7 +138,14 @@ ${widget.success.condition}
     setState(() {
       variables = params;
     });
-    controller.autocompleter.setCustomWords(params);
+    controller.autocompleter.setCustomWords(params + [
+      "id", "username", "email", "balance", "qr",         // User
+      "id", "name", "rules", "createdAt", "price", "nbPlayersMin", "nbPlayersMax", "image",  // Game
+      "gameId", "step", "cashPrize", "libelle", "score", "active", // Level
+      "id", "name", "description", "createdAt", "price", "image", "stock", // Prize
+      "playId", "gameid", "levStep", "parTime", "gain", "userId", "score", "cluster", // StatsPlay
+      "traId", "usrId", "priId", "traTime", "traAmount", "payId" // Transaction
+    ]);
     loadList();
   }
 
@@ -166,6 +179,185 @@ ${widget.success.condition}
     return Scaffold(
       appBar: AppBar(
         title: const Text('Condition du succès'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      drawerEnableOpenDragGesture: true,
+      endDrawer: Drawer(
+        width: 500,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: const <Widget>[
+            DrawerHeader(
+              child: Text(
+                'Mini Tuto Dart',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Parcours d'une liste : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""for (var nom_voulu in List<Object>) {
+  print (nom_voulu.id);
+}""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                  Text("Exemple : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""for (var partie in playsList) {
+  print (partie.usrId);
+}""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Variables : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""Type nom = value;""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                  Text("Exemple : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""int cpt = 0;""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Boucle for classique : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""for (int i = 0; i < 10; i++) {
+  print (i);
+}""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("IF else : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""if (condition) {
+  print ("if");
+} else {
+  print ("else");
+}""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                  Text("Exemple : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""if (user.username == "ToolKit") {
+  print ("oui");
+} else {
+  print ("non");
+}""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Type DateTime : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""DateTime(int year, [int month = 1, int day = 1, int hour = 0, int minute = 0, int second = 0, int millisecond = 0, int microsecond = 0])
+DateTime.parse(String date) """, style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                  Text("Exemple : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""DateTime dateEvent = DateTime(2024, 05, 19);
+DateTime datePartie = DateTime.parse(partie.parTime);
+DateTime maintenant = DateTime.now();""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Comparaison de dates : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""DateTime < DateTime""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                  Text("Exemple : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""if (DateTime(2024, 05, 19) < DateTime.parse(partie.parTime)) return true; """, style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Listes : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""List<Type> nom = [valeur, valeur];
+Type truc = nom[indice];""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                  Text("Exemple : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""List<User> joueursValides = [];
+User joueur = joueursValides[i];
+int taille = joueursValides.length;
+bool vide = joueursValides.isEmpty;""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+            Card(child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Where Liste : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""List<Type> nomResList = nomList.where((element) {return bool;});""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                  Text("Exemple : "),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text("""List<user> userRiches = usersList.where((element) {return element.balance >= 50;});""", style: TextStyle(fontFamily: "Nexa"),),
+                  ),
+                ],
+              ),
+            ),),
+          ],
+        ),
       ),
       body: ListView(
         children: [
@@ -229,28 +421,100 @@ ${widget.success.condition}
               ),
             ),
           ),
+          const Divider(),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text("Resultats de l'execution : "),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(compilationResult),
+          )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          String code = extractCodeBetweenTags(controller.fullText, "code");
-          widget.success.condition = code;
-          try {
-            switch (widget.success.type) {
-              case 1:
-                widget.success.evaluatePlay(usersList.first, playsList, usersList, gamesList, levelsList);
-              case 2:
-                widget.success.evaluateTransaction(usersList.first, usersList, prizesList, transactionsList);
-              default :
-                widget.success.evaluate(usersList.first, playsList, usersList, gamesList, levelsList, prizesList, transactionsList);
-            }
-            Navigator.pop(context);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Le code ne compile pas")));
-          }
-        },
-        child: const Icon(Icons.check),
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  heroTag: "btn1",
+                  onPressed: () {
+                  String code = extractCodeBetweenTags(controller.fullText, "code");
+                    widget.success.condition = code;
+                    try {
+                      String result = capturePrintOutput(() {
+                        switch (widget.success.type) {
+                          case 1:
+                            compilationResult = widget.success.evaluatePlay(usersList.first, playsList, usersList, gamesList, levelsList).toString();
+                          case 2:
+                            compilationResult = widget.success.evaluateTransaction(usersList.first, usersList, prizesList, transactionsList).toString();
+                          default :
+                            compilationResult = widget.success.evaluate(usersList.first, playsList, usersList, gamesList, levelsList, prizesList, transactionsList).toString();
+                        }
+                      });
+                      if (result == "") {
+                        compilationResult = "Exécution réussie";
+                      }
+                      else {
+                        compilationResult = result;
+                      }
+                      setState(() {});
+                      widget.success.condition = oldCode;
+                    } catch (e) {
+                      compilationResult = e.toString();
+                      setState(() {});
+                      widget.success.condition = oldCode;
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Le code ne compile pas")));
+                    }
+                  },
+                  child: const Icon(Icons.play_arrow),
+                ),
+                const SizedBox(width: 16), // Space between the buttons
+                FloatingActionButton(
+                  heroTag: "btn2",
+                  onPressed: () {
+                    String code = extractCodeBetweenTags(controller.fullText, "code");
+                    widget.success.condition = code;
+                    try {
+                      switch (widget.success.type) {
+                        case 1:
+                          compilationResult = widget.success.evaluatePlay(usersList.first, playsList, usersList, gamesList, levelsList).toString();
+                        case 2:
+                          compilationResult = widget.success.evaluateTransaction(usersList.first, usersList, prizesList, transactionsList).toString();
+                        default :
+                          compilationResult = widget.success.evaluate(usersList.first, playsList, usersList, gamesList, levelsList, prizesList, transactionsList).toString();
+                      }
+                      Navigator.pop(context);
+                    } catch (e) {
+                      widget.success.condition = oldCode;
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Le code ne compile pas")));
+                    }
+                  },
+                  child: const Icon(Icons.save),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  String capturePrintOutput(void Function() codeToRun) {
+    final StringBuffer buffer = StringBuffer();
+    final zoneSpecification = ZoneSpecification(
+      print: (self, parent, zone, line) {
+        buffer.writeln(line);
+      },
+    );
+
+    // Exécute le code dans la zone avec la redirection de print
+    Zone.current.fork(specification: zoneSpecification).run(codeToRun);
+
+    return buffer.toString();
   }
 }

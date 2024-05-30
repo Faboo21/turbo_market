@@ -67,6 +67,7 @@ class _PrizesPageState extends State<PrizesPage> {
     List<Success> successList = await getAllSuccess();
     List<Success> validSuccess = [];
     List<Success> oldSuccessUser = oldSuccess.where((element) => element.losable == false).toList();
+    try {
     for (var success in successList) {
       if (success.losable || !oldSuccess.contains(success)) {
         if (success.type == 2 && success.evaluateTransaction(widget.selectedUser, users, prizesList, transactionsList)) {
@@ -97,6 +98,9 @@ class _PrizesPageState extends State<PrizesPage> {
     if (loseSuccess != ""){
       loseSuccess = loseSuccess.substring(0,loseSuccess.length-2);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu : $loseSuccess")));
+    }} catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erreur du chargement des succès")));
+      Navigator.pop(context);
     }
     Navigator.pop(context);
   }

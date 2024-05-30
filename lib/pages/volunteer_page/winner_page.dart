@@ -77,6 +77,7 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
     List<Prize> prizesList = await getAllPrizes();
     List<Success> successList = await getAllSuccess();
     int i = 0;
+    try {
     for (var user in widget.playersList) {
       List<Success> oldSuccessUser = oldSuccess[i].where((element) => element.losable == false).toList();
       List<Success> validSuccess = [];
@@ -120,6 +121,9 @@ class _WinnerChoicePageState extends State<WinnerChoicePage> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Succès perdu ${player.username} : $loseSuccess")));
         }
       }
+    }} catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erreur du chargement des succès")));
+      Navigator.pop(context);
     }
     Navigator.pop(context);
   }
