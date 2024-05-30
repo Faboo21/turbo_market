@@ -244,14 +244,18 @@ class _PrizesPageState extends State<PrizesPage> {
                   bool res = true;
                   for (int i = 0; i < prizesList.length; i++){
                     if (quantityList[i] != 0 && res) {
-                      await insertTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0);
-                      prizesList[i].stock -= quantityList[i];
-                      res = await updatePrize(prizesList[i]) && res;
+                      res = await insertTransaction(widget.selectedUser.id, prizesList[i].id, quantityList[i] as double, 0) && res;
+                      if (res) {
+                        prizesList[i].stock -= quantityList[i];
+                        res = await updatePrize(prizesList[i]) && res;
+                      }
                     }
                   }
                   if (res) {
                     res = await updateUserBalance(widget.selectedUser, widget.selectedUser.balance - totalPrice) && res;
-                    widget.selectedUser.balance -= totalPrice;
+                    if (res) {
+                      widget.selectedUser.balance -= totalPrice;
+                    }
                   }
                   setState(() {
                     btnLoading = false;

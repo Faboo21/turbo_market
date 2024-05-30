@@ -110,7 +110,9 @@ class _ManageBalanceState extends State<ManageBalance> {
                     double amount = double.tryParse(_amountController.text.replaceAll(",", ".")) ?? 0;
                     bool res = true;
                     res = await addTransaction(widget.selectedUser.id, 0, amount, selectedPaymentMethod!.payId);
-                    widget.selectedUser.balance += amount;
+                    if (res) {
+                      widget.selectedUser.balance += amount;
+                    }
                     Navigator.pop(context, res);
                   }
                   setState(() {

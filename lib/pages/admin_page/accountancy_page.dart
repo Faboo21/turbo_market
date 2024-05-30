@@ -19,16 +19,16 @@ class AccountacyPage extends StatefulWidget {
 }
 
 class _AccountacyPageState extends State<AccountacyPage> {
-  List<double> caPerMethods = [];
+  List<double> caPerMethods = [0];
   double prizesCost = 0;
   double benefits = 0;
   double totalCA = 0;
   double total = 0;
 
-  List<PaymentMethod> paymentMethod = [];
+  List<PaymentMethod?> paymentMethod = [null];
 
-  DateTime? _startDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-  DateTime? _endDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day+1);
+  DateTime? _startDate = DateTime(2024);
+  DateTime? _endDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _AccountacyPageState extends State<AccountacyPage> {
   Future<void> loadTotal() async {
     double resTotal = 0;
     List<User> resList = await getAllUsers();
+
     for (var element in resList) {
       resTotal += element.balance;
     }
@@ -74,6 +75,8 @@ class _AccountacyPageState extends State<AccountacyPage> {
       }
     }
 
+    loadTotal();
+
     setState(() {
       paymentMethod = methods;
       caPerMethods = ca;
@@ -90,83 +93,69 @@ class _AccountacyPageState extends State<AccountacyPage> {
         title: const Text('Bilan comptable'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: ListView(children: [
-        IconButton(
-          onPressed: () {
-            _showDatePicker(context);
-          },
-          icon: const Icon(Icons.calendar_month),
-        ),
-        Row(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
           children: [
-            const SizedBox(
-              width: 150,
-              child: Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [SizedBox(width: 150, height: 50,child: Center(child: Text("")))],
+            InkWell(
+              onTap: () {
+                _showDatePicker(context);
+              },
+              child: const Card(
+                elevation: 4,
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: ListTile(
+                  leading: Icon(Icons.calendar_month),
+                  title: Text('Sélectionnez une date'),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [SizedBox(width: 150, height: 50,child: Center(child: Text("CA")))],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [SizedBox(width: 150, height: 50,child: Center(child: Text("CA total")))],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [SizedBox(width: 150, height: 50,child: Center(child: Text("Couts")))],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [SizedBox(width: 150, height: 50,child: Center(child: Text("Bénéfices")))],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [SizedBox(width: 150, height: 50,child: Center(child: Text("Argent Actif en circulation", textAlign: TextAlign.center,)))],
-                ),
-              ],),
+              ),
             ),
-            Expanded(
-              child: Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: paymentMethod.map((e) => SizedBox(width: 150, height: 50,child: Center(child: Text(e.libelle)),)).toList(),
+            const SizedBox(height: 20),
+            Card(
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: [
+                      const DataColumn(label: Text('')),
+                      ...paymentMethod.map((e) => DataColumn(label: Text(e?.libelle ?? ""))),
+                    ],
+                    rows: [
+                      DataRow(cells: [
+                        const DataCell(Center(child: Text('CA'))),
+                        ...paymentMethod.map((e) => DataCell(Center(child: Text(caPerMethods[e?.payId ?? 0].toStringAsFixed(2))))),
+                      ]),
+                      DataRow(cells: [
+                        const DataCell(Center(child: Text('CA total'))),
+                        DataCell(Center(child: Text(totalCA.toStringAsFixed(2))), placeholder: true),
+                        for (var i = 1; i < paymentMethod.length; i++) DataCell.empty,
+                      ]),
+                      DataRow(cells: [
+                        const DataCell(Center(child: Text('Couts'))),
+                        DataCell(Center(child: Text(prizesCost.toStringAsFixed(2))), placeholder: true),
+                        for (var i = 1; i < paymentMethod.length; i++) DataCell.empty,
+                      ]),
+                      DataRow(cells: [
+                        const DataCell(Center(child: Text('Bénéfices'))),
+                        DataCell(Center(child: Text(benefits.toStringAsFixed(2))), placeholder: true),
+                        for (var i = 1; i < paymentMethod.length; i++) DataCell.empty,
+                      ]),
+                      DataRow(cells: [
+                        const DataCell(Center(child: SizedBox(width: 120,child: Text('Argent Actif'),))),
+                        DataCell(Center(child: Text(total.toString())), placeholder: true),
+                        for (var i = 1; i < paymentMethod.length; i++) DataCell.empty,
+                      ]),
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: paymentMethod.map((e) => SizedBox(width: 150, height: 50,child: Center(child: Text(caPerMethods[e.payId].toStringAsFixed(2))),)).toList(),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(width: 150, height: 50,child: Center(child: Text(totalCA.toStringAsFixed(2))))
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(width: 150, height: 50,child: Center(child: Text(prizesCost.toStringAsFixed(2))))
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(width: 150, height: 50,child: Center(child: Text(benefits.toStringAsFixed(2))))
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(width: 150, height: 50,child: Center(child: Text(total.toString())))
-                  ],
-                ),
-              ],),
+              ),
             ),
           ],
-        )
-      ],)
+        ),
+      ),
     );
   }
 

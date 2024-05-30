@@ -152,7 +152,7 @@ class _GamesPageState extends State<GamesPage> {
                                       Text("${level.score} pts", style: const TextStyle(color: Colors.black),)
                                     ],
                                   );}
-                                return const SizedBox(width: 0,);
+                                return Container();
                               }).toList(),
                             ),
                           ),
@@ -178,7 +178,7 @@ class _GamesPageState extends State<GamesPage> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text("Lvl ${level.step}", style: const TextStyle(color: Colors.black),),
-                                            Text(level.libelle == "" ? "${level.cashPrize*AppConfig.rate}ƒ" : "${level.libelle}", style: const TextStyle(color: Colors.black),),
+                                            Text(level.libelle == "" ? "${level.cashPrize*AppConfig.rate}ƒ" : level.libelle, style: const TextStyle(color: Colors.black),),
                                             Text("${level.score} pts", style: const TextStyle(color: Colors.black),),
                                           ],
                                         ),

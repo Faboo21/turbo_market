@@ -26,11 +26,7 @@ Future<String> verifyPassword(int roleId, String password) async {
 
 Future<Map<String, dynamic>> getTokenInfo(String token) async {
   Uri uri = Uri.parse("https://obsolete-events.com/turbo-market/api/token?token=${AppConfig.token}");
-  http.Response response = await http.post(uri,
-      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
-      body: jsonEncode(<String, String>{
-        "token": token,
-      }));
+  http.Response response = await http.get(uri, headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},);
   if (response.statusCode == 200) {
     return jsonDecode(response.body);
   }

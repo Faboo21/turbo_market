@@ -22,7 +22,7 @@ class _HistoricPageState extends State<HistoricPage> {
   List<Transaction> filteredTransactions = [];
   List<Transaction> transactions = [];
 
-  DateTime? _startDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime? _startDate = DateTime(2024);
   DateTime? _endDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day+1);
 
   List<Prize> prizes = [];
