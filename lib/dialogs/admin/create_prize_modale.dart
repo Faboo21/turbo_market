@@ -145,7 +145,7 @@ class _CreatePrizePageState extends State<CreatePrizePage> {
                           stock: int.parse(stockController.text),
                           createdAt: '',
                           image: '',
-                          cost: double.parse(costController.text),
+                          cost: double.parse(costController.text.replaceAll(",", ".")),
                         ),
                       ).then((success) {
                         if (success) {
